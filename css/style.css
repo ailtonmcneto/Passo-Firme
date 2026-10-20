@@ -60,13 +60,14 @@ nav {
 }
 
 
-.menu ul li a:hover {
+.menu ul li a:hover,
+.menu ul li a:focus-visible {
     color: #008c84;
 }
 
 
 main {
-    padding: 110px 20px 30px;
+    padding-top: 80px;
 }
 
 main h1 {
@@ -81,7 +82,8 @@ html {
 
 .pf-hero {
     position: relative;
-    z-index: 1;
+    isolation: isolate;
+    overflow: hidden;
 
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -91,7 +93,7 @@ html {
     width: 100%;
     max-width: 1200px;
 
-    min-height: calc(100svh - 110px);
+    min-height: calc(100svh - 80px);
 
     margin: 0 auto;
     padding: 40px 20px;
@@ -100,12 +102,15 @@ html {
 }
 
 .pf-content {
+    position: relative;
+    z-index: 1;
     grid-column: 2;
     min-width: 0;
     width: 100%;
 }
 
 .pf-hero .pf-title {
+    margin: 0;
     font-family: 'Poppins', sans-serif;
     font-size: clamp(36px, 4.2vw, 58px);
     font-weight: 700;
@@ -127,7 +132,7 @@ html {
 }
 
 .pf-footprints {
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: 0;
 
@@ -170,5 +175,97 @@ html {
 .pf-footprint.pf-right img {
     left: 0;
     transform: scaleX(-1);
+}
+
+.about-us {
+    padding: clamp(64px, 8vw, 112px) 24px;
+    background-color: #14354f;
+    color: #f5f8fa;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(32px, 6vw, 88px);
+    width: 100%;
+    max-width: 1160px;
+    margin: 0 auto;
+}
+
+.about-label {
+    margin: 0 0 20px;
+    color: #88d4cd;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+.about-heading h2 {
+    margin: 0;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -1px;
+}
+
+.about-text {
+    margin: 0;
+    color: #dce6ed;
+    font-size: clamp(16px, 1.4vw, 18px);
+    line-height: 1.8;
+}
+
+.about-summary {
+    margin: 20px 0 0;
+    color: #a9c4d3;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+    nav {
+        padding: 0 16px;
+    }
+
+    .menu img {
+        width: clamp(112px, 28vw, 150px);
+    }
+
+    .menu ul {
+        gap: clamp(10px, 2.6vw, 20px);
+    }
+
+    .menu ul li a {
+        font-size: 12px;
+    }
+
+    .pf-hero {
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding: 64px 24px;
+    }
+
+    .pf-content {
+        grid-column: 1;
+        padding-left: calc(15vw + 12px);
+    }
+
+    .pf-hero .pf-title {
+        font-size: clamp(28px, 5.6vw, 42px);
+        letter-spacing: -1px;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 

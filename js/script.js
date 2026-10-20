@@ -129,7 +129,7 @@ function iniciarAnimacoes() {
         const { x, y, angulo } = caminho[passoAtual];
         const esquerdo = passoAtual % 2 === 0;
         const larguraFaixa =
-            window.innerWidth *
+            trilha.clientWidth *
             (telaPequena.matches ? 0.24 : 0.46);
 
         const separacao =
