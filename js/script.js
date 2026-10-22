@@ -18,7 +18,7 @@ function iniciarAnimacoes() {
     ];
 
     const intervaloTexto = 3000;
-    const intervaloPassos = 520;
+    const intervaloPassos = 780;
     const pausaDoLoop = 1000;
     const duracaoPegada = 4600;
 
@@ -42,7 +42,7 @@ function iniciarAnimacoes() {
 
     let execucao = 0;
 
-    const totalPassos = 16;
+    const totalPassos = 11;
 
     const caminho = Array.from(
         { length: totalPassos },
@@ -133,7 +133,7 @@ function iniciarAnimacoes() {
             (telaPequena.matches ? 0.24 : 0.46);
 
         const separacao =
-            telaPequena.matches ? 12 : 25;
+            telaPequena.matches ? 12 : 37.5;
         const deslocamento =
             esquerdo ? -separacao : separacao;
 

@@ -51,9 +51,13 @@ nav {
 
 
 .menu ul li a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 12px;
     font-family: 'Poppins', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 600;
     color: #14354f;
     text-decoration: none;
     transition: color 0.3s ease;
@@ -102,6 +106,9 @@ html {
 }
 
 .pf-content {
+    --pf-title-size: clamp(36px, 4.2vw, 58px);
+    --pf-title-spacing: -1.8px;
+
     position: relative;
     z-index: 1;
     grid-column: 2;
@@ -112,10 +119,10 @@ html {
 .pf-hero .pf-title {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    font-size: clamp(36px, 4.2vw, 58px);
+    font-size: var(--pf-title-size);
     font-weight: 700;
     line-height: 1.2;
-    letter-spacing: -1.8px;
+    letter-spacing: var(--pf-title-spacing);
 }
 
 .pf-word-box {
@@ -131,6 +138,52 @@ html {
     display: inline-block;
 }
 
+.pf-platform-button {
+    display: inline-grid;
+    grid-template-columns: min-content;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    min-height: 56px;
+    margin-top: 24px;
+    padding: 16px 0;
+    border-radius: 8px;
+    background-color: #007c75;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.pf-platform-button::before {
+    /* Mantém a largura de constância, mesmo durante a troca de palavras. */
+    content: "constância";
+    grid-area: 1 / 1;
+    height: 0;
+    visibility: hidden;
+    white-space: nowrap;
+    font-size: var(--pf-title-size);
+    font-weight: 700;
+    letter-spacing: var(--pf-title-spacing);
+}
+
+.pf-platform-button span {
+    grid-area: 1 / 1;
+    padding: 0 12px;
+}
+
+.pf-platform-button:hover {
+    background-color: #14354f;
+}
+
+.pf-platform-button:focus-visible {
+    outline: 3px solid #14354f;
+    outline-offset: 4px;
+}
+
 .pf-footprints {
     position: absolute;
     inset: 0;
@@ -144,8 +197,8 @@ html {
 .pf-footprint {
     position: absolute;
 
-    width: 40px;
-    height: 80px;
+    width: 60px;
+    height: 120px;
 
     overflow: hidden;
     opacity: 0;
@@ -226,19 +279,20 @@ html {
 
 @media (max-width: 760px) {
     nav {
-        padding: 0 16px;
+        padding: 0 12px;
     }
 
     .menu img {
-        width: clamp(112px, 28vw, 150px);
+        width: clamp(88px, 24vw, 150px);
     }
 
     .menu ul {
-        gap: clamp(10px, 2.6vw, 20px);
+        gap: clamp(6px, 2vw, 16px);
     }
 
     .menu ul li a {
-        font-size: 12px;
+        padding: 8px 2px;
+        font-size: 14px;
     }
 
     .pf-hero {
@@ -248,13 +302,17 @@ html {
     }
 
     .pf-content {
+        --pf-title-size: clamp(28px, 5.6vw, 42px);
+        --pf-title-spacing: -1px;
+
         grid-column: 1;
         padding-left: calc(15vw + 12px);
     }
 
-    .pf-hero .pf-title {
-        font-size: clamp(28px, 5.6vw, 42px);
-        letter-spacing: -1px;
+    .pf-platform-button {
+        margin-top: 20px;
+        padding: 14px 0;
+        font-size: 16px;
     }
 
     .about-content {
