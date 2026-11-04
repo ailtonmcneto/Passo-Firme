@@ -31,21 +31,24 @@ export function demanda(t) {
 }
 
 // Ordem canônica (R1): prioridade decrescente e, no empate, ordem de cadastro crescente.
+// É o único lugar do código que define essa ordem; o alocador e as demais etapas importam
+// este comparador em vez de escrever o seu, para que todos desempatem do mesmo jeito.
+// Recebe { prioridade, ordem } já prontos porque nas etapas seguintes o tópico chega só
+// com a prioridade calculada, sem peso e domínio.
+export function compararCanonico(a, b) {
+  return b.prioridade - a.prioridade || a.ordem - b.ordem;
+}
+
 // Devolve um array novo porque sort() altera o original, e o chamador pode depender dele.
+// Se dois tópicos repetirem `ordem`, ficam na posição de entrada: o sort do JS é estável
+// desde o ES2019, assim como o Collections.sort do Java.
 export function ordenarPorPrioridade(topicos) {
   return topicos
     .map((topico, indice) => ({
       topico,
-      indice,
       prioridade: prioridade(topico),
       ordem: topico.ordem ?? indice,
     }))
-    .sort(
-      (a, b) =>
-        b.prioridade - a.prioridade ||
-        a.ordem - b.ordem ||
-        // Desempate final para `ordem` repetida, para não depender de detalhes do sort.
-        a.indice - b.indice,
-    )
+    .sort(compararCanonico)
     .map((item) => item.topico);
 }

@@ -4,6 +4,7 @@ import {
   prioridade,
   demandaMinima,
   demanda,
+  compararCanonico,
   ordenarPorPrioridade,
 } from '../js/core/prioridade.js';
 import { carregarFixture } from './carregar-fixture.js';
@@ -59,6 +60,32 @@ describe('demanda', () => {
   });
 });
 
+describe('compararCanonico', () => {
+  test('prioridade maior vem antes', () => {
+    assert.ok(compararCanonico({ prioridade: 20, ordem: 5 }, { prioridade: 6, ordem: 0 }) < 0);
+    assert.ok(compararCanonico({ prioridade: 6, ordem: 0 }, { prioridade: 20, ordem: 5 }) > 0);
+  });
+
+  test('no empate de prioridade, a ordem de cadastro menor vem antes', () => {
+    assert.ok(compararCanonico({ prioridade: 6, ordem: 1 }, { prioridade: 6, ordem: 3 }) < 0);
+    assert.ok(compararCanonico({ prioridade: 6, ordem: 3 }, { prioridade: 6, ordem: 1 }) > 0);
+  });
+
+  test('mesma prioridade e mesma ordem empatam', () => {
+    assert.equal(compararCanonico({ prioridade: 6, ordem: 2 }, { prioridade: 6, ordem: 2 }), 0);
+  });
+
+  test('ordena objetos que só têm prioridade pronta, como os do alocador', () => {
+    const topicos = [
+      { id: 'a', prioridade: 6, ordem: 0 },
+      { id: 'b', prioridade: 25, ordem: 1 },
+      { id: 'c', prioridade: 6, ordem: 2 },
+      { id: 'd', prioridade: 9, ordem: 3 },
+    ];
+    assert.deepEqual(topicos.sort(compararCanonico).map((t) => t.id), ['b', 'd', 'a', 'c']);
+  });
+});
+
 describe('ordenarPorPrioridade', () => {
   const { casos } = carregarFixture('prioridade-ordem-canonica.json');
 
@@ -83,6 +110,15 @@ describe('ordenarPorPrioridade', () => {
     assert.deepEqual(entrada, copia);
     assert.notEqual(ordenado, entrada);
     assert.equal(ordenado[0], entrada[1]);
+  });
+
+  test('`ordem` repetida mantém a posição de entrada', () => {
+    const entrada = [
+      { id: 'a', peso: 2, dominio: 3, ordem: 1 },
+      { id: 'b', peso: 2, dominio: 3, ordem: 1 },
+      { id: 'c', peso: 2, dominio: 3, ordem: 0 },
+    ];
+    assert.deepEqual(ordenarPorPrioridade(entrada).map((t) => t.id), ['c', 'a', 'b']);
   });
 
   test('lista vazia', () => {
