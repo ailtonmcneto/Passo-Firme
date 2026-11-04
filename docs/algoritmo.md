@@ -55,6 +55,7 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
   2. **Reduzir demanda (R5):** enquanto houver déficit, tira 1 bloco do tópico de *menor* prioridade (ordem canônica) que ainda tenha demanda > 1. Devolve `{ id, antes, depois }` por tópico e `suficiente` (se o déficit fechou).
   3. **Remover tópicos:** retira tópicos inteiros, do de menor prioridade para o de maior, até `demanda ≤ capacidadeEstudo`. Devolve `removidos` (ids, na ordem de remoção) e `demandaRestante`.
 - **Bloqueio (R16):** `bloqueante = capacidadeEstudo < número de tópicos com demanda > 0`. A função só informa; quem decide o que fazer é o chamador (§10).
+- Para um plano `bloqueante`, só "mais tempo" e "remover tópicos" resolvem. "Reduzir demanda" nunca resolve, porque não baixa nenhum tópico abaixo de 1.
 - O plano é gerado mesmo inviável, com uma exceção: na criação, um plano `bloqueante` não é gerado até o aluno escolher uma escapatória. Na escapatória 2, as demandas `depois` entram no alocador; na 3, os tópicos removidos saem da entrada.
 - **Assinatura:** `avaliarViabilidade({ plano, topicos })`, em que `plano` é a entrada de `calcularCapacidade` e cada tópico tem `{ id, nome, peso, dominio, blocosDesejados?, ordem? }`. Retorna `{ viavel, bloqueante, capacidadeEstudo, demandaTotal, deficit, cobertura: { percentual }, escapatorias }`, com `escapatorias = null` quando o plano é viável. `capacidadeTotal` não faz parte do retorno; quem precisa dele chama `calcularCapacidade`.
 - **Sem tópicos** (`demandaTotal = 0`): o plano é viável e `cobertura.percentual = 100`, para não dividir por zero.
@@ -158,7 +159,7 @@ Invariantes:
 
 ## 10. Replanejamento (`core/replanejador.js`)
 
-- **Quando (R11):** a função é pura e quem chama decide quando rodar. A fachada chama ao abrir o app, se houver bloco PENDENTE com data < hoje ou se a última geração foi em outro dia; depois de `concluirBloco`; e depois de uma edição na planilha.
+- **Quando (R11):** a função é pura e quem chama decide quando rodar. Os gatilhos são definidos pela fachada e estão no docs/front.md §4 (abrir o app, concluir ou pular um bloco, mudar horários ou matérias, aceitar uma sugestão de domínio, escolher uma saída de viabilidade).
 - **Histórico:** blocos com data < hoje e blocos CONCLUIDO nunca mudam. Bloco PENDENTE no passado vira PERDIDO. PULADO é a escolha explícita do aluno de pular e, para a demanda, vale como perdido. Bloco perdido nunca é empurrado para o dia seguinte: volta como demanda.
 - **C2:** cada tópico guarda `blocosAlocados`, o resultado da alocação inicial ou de uma edição de quota. No replanejamento, `demanda = max(0, blocosAlocados − ESTUDOs CONCLUIDO − ESTUDOs fixados futuros)`. O replanejamento não sobrescreve `blocosAlocados`.
 - **C3:** um bloco editado na planilha ganha `fixado: true`. Blocos fixados futuros ficam onde estão e seus slots saem da capacidade. Mudar a quantidade de blocos de um tópico grava `blocosDesejados` e `blocosAlocados`.
