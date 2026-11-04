@@ -1,0 +1,24 @@
+{
+  "descricao": "Mesmo plano de viabilidade-inviavel.json, só com os tópicos a e b: 9 blocos pedidos para 14 de estudo.",
+  "entrada": {
+    "plano": {
+      "inicio": "2026-11-09",
+      "fim": "2026-11-22",
+      "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 },
+      "diasFolga": ["2026-11-18"]
+    },
+    "topicos": [
+      { "id": "a", "nome": "A", "peso": 5, "dominio": 1 },
+      { "id": "b", "nome": "B", "peso": 4, "dominio": 2 }
+    ]
+  },
+  "esperado": {
+    "viavel": true,
+    "bloqueante": false,
+    "capacidadeEstudo": 14,
+    "demandaTotal": 9,
+    "deficit": 0,
+    "cobertura": { "percentual": 100 },
+    "escapatorias": null
+  }
+}
