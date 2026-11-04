@@ -1,0 +1,17 @@
+{
+  "descricao": "blocosNoDia(minutos, duracaoBlocoMin). Sem duracaoBlocoMin, vale o padrão de 30. A sobra vai para o último bloco; abaixo de 15 minutos não há bloco.",
+  "casos": [
+    { "minutos": 140, "esperado": [30, 30, 30, 50] },
+    { "minutos": 60, "esperado": [30, 30] },
+    { "minutos": 59, "esperado": [59] },
+    { "minutos": 30, "esperado": [30] },
+    { "minutos": 29, "esperado": [29] },
+    { "minutos": 15, "esperado": [15] },
+    { "minutos": 14, "esperado": [] },
+    { "minutos": 0, "esperado": [] },
+    { "minutos": 100, "duracaoBlocoMin": 45, "esperado": [45, 55] },
+    { "minutos": 89, "duracaoBlocoMin": 45, "esperado": [89] },
+    { "minutos": 44, "duracaoBlocoMin": 45, "esperado": [44] },
+    { "minutos": 480, "esperado": [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30] }
+  ]
+}

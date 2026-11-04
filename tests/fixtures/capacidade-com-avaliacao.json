@@ -1,0 +1,31 @@
+{
+  "descricao": "O mesmo plano de capacidade-duas-semanas.json, com avaliação na sexta 13/11. A janela vai até 13/11 inclusive (11 blocos, 8 de estudo); os 7 blocos depois dela são reserva inteira.",
+  "entrada": {
+    "inicio": "2026-11-09",
+    "fim": "2026-11-22",
+    "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 },
+    "diasFolga": ["2026-11-18"],
+    "dataAvaliacao": "2026-11-13"
+  },
+  "esperado": {
+    "dias": [
+      { "data": "2026-11-09", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-10", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-11", "blocos": [30, 30, 30, 50], "naJanela": true },
+      { "data": "2026-11-12", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-13", "blocos": [25], "naJanela": true },
+      { "data": "2026-11-14", "blocos": [], "naJanela": false },
+      { "data": "2026-11-15", "blocos": [], "naJanela": false },
+      { "data": "2026-11-16", "blocos": [30, 30], "naJanela": false },
+      { "data": "2026-11-17", "blocos": [30, 30], "naJanela": false },
+      { "data": "2026-11-18", "blocos": [], "naJanela": false },
+      { "data": "2026-11-19", "blocos": [30, 30], "naJanela": false },
+      { "data": "2026-11-20", "blocos": [25], "naJanela": false },
+      { "data": "2026-11-21", "blocos": [], "naJanela": false },
+      { "data": "2026-11-22", "blocos": [], "naJanela": false }
+    ],
+    "capacidadeTotal": 11,
+    "capacidadeEstudo": 8,
+    "capacidadeReserva": 10
+  }
+}

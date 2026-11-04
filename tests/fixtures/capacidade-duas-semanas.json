@@ -1,0 +1,30 @@
+{
+  "descricao": "Duas semanas (seg 09/11 a dom 22/11/2026), sem avaliação, com folga na quarta 18/11. Sexta tem 25 min (um bloco curto) e sábado tem 10 (abaixo do mínimo de 15).",
+  "entrada": {
+    "inicio": "2026-11-09",
+    "fim": "2026-11-22",
+    "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 },
+    "diasFolga": ["2026-11-18"]
+  },
+  "esperado": {
+    "dias": [
+      { "data": "2026-11-09", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-10", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-11", "blocos": [30, 30, 30, 50], "naJanela": true },
+      { "data": "2026-11-12", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-13", "blocos": [25], "naJanela": true },
+      { "data": "2026-11-14", "blocos": [], "naJanela": true },
+      { "data": "2026-11-15", "blocos": [], "naJanela": true },
+      { "data": "2026-11-16", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-17", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-18", "blocos": [], "naJanela": true },
+      { "data": "2026-11-19", "blocos": [30, 30], "naJanela": true },
+      { "data": "2026-11-20", "blocos": [25], "naJanela": true },
+      { "data": "2026-11-21", "blocos": [], "naJanela": true },
+      { "data": "2026-11-22", "blocos": [], "naJanela": true }
+    ],
+    "capacidadeTotal": 18,
+    "capacidadeEstudo": 14,
+    "capacidadeReserva": 4
+  }
+}
