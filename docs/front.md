@@ -147,7 +147,7 @@ Nunca usar "atrasado", "falhou" ou contagem de dias perdidos.
 - **Fixar e desafixar:** um bloco fixado não é mexido pelo replanejamento.
 - **Pular:** o bloco vira PULADO e volta como demanda no próximo replanejamento. Sem confirmação nem penalidade.
 - **Pintar ou despintar depois da criação:** muda a disponibilidade e replaneja. Fixados cuja célula foi despintada perdem a fixação.
-- **Quando o front pede replanejamento:** ao abrir o app (a fachada decide se precisa), ao concluir ou pular um bloco, ao mudar horários, ao aceitar uma sugestão de domínio, ao escolher uma saída de viabilidade.
+- **Quando o front pede replanejamento:** ao abrir o app (a fachada replaneja só se houver bloco PENDENTE com data anterior a hoje ou se a última geração foi em outro dia), ao concluir ou pular um bloco, ao mudar horários, ao aceitar uma sugestão de domínio, ao escolher uma saída de viabilidade.
 - **Nunca:** empurrar bloco para o dia seguinte, marcar algo em vermelho, mostrar sequência de dias, pedir justificativa para pular.
 - **Arrastar e soltar:** fora do MVP. Se vier depois, é só outra forma de disparar "trocar".
 
