@@ -55,6 +55,36 @@ describe('calcularCapacidade', () => {
     }
   });
 
+  test('números da fixture com avaliação: total 11, estudo 8, reserva 3 + 7 = 10', () => {
+    const { entrada } = carregarFixture('capacidade-com-avaliacao.json');
+    const r = calcularCapacidade(entrada);
+    assert.equal(r.capacidadeTotal, 11);
+    assert.equal(r.capacidadeEstudo, 8);
+    assert.equal(r.capacidadeReserva, 10);
+  });
+
+  test('avaliação antes do início: o período inteiro vira reserva', () => {
+    // Caso legítimo no replanejamento depois da prova.
+    const r = calcularCapacidade({
+      inicio: '2026-11-16',
+      fim: '2026-11-22',
+      disponibilidade: { 1: 60, 2: 60 },
+      dataAvaliacao: '2026-11-13',
+    });
+    assert.ok(r.dias.every((d) => !d.naJanela));
+    assert.equal(r.capacidadeTotal, 0);
+    assert.equal(r.capacidadeEstudo, 0);
+    assert.equal(r.capacidadeReserva, 4);
+  });
+
+  test('avaliação depois do fim: o período inteiro é janela', () => {
+    const { entrada, esperado } = carregarFixture('capacidade-duas-semanas.json');
+    const r = calcularCapacidade({ ...entrada, dataAvaliacao: '2026-12-01' });
+    assert.ok(r.dias.every((d) => d.naJanela));
+    assert.equal(r.capacidadeTotal, esperado.capacidadeTotal);
+    assert.equal(r.capacidadeReserva, esperado.capacidadeReserva);
+  });
+
   test('disponibilidade também pode ser um array', () => {
     const { entrada, esperado } = carregarFixture('capacidade-duas-semanas.json');
     const comoArray = [0, 60, 60, 140, 60, 25, 10];

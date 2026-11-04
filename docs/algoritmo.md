@@ -8,8 +8,13 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
 ## 1. Convenções
 
 - **Datas:** strings 'YYYY-MM-DD' no calendário local. A aritmética fica em `js/util/datas.js`, que converte internamente com `Date.UTC` e lê com `getUTC*`. Dia da semana: 0 = domingo … 6 = sábado.
+  - Data inválida lança `RangeError`.
+  - `somarDias(s, n)` exige `n` inteiro; senão lança `RangeError`.
+  - `intervaloDeDatas(inicio, fim)` com `fim` antes de `inicio` devolve `[]`. Quem precisa tratar isso como erro valida antes (a capacidade faz isso, §3).
 - **Inteiros:** nenhuma etapa usa float. Uma divisão `a×b / c` vira `Math.floor(a*b/c)` com resto `(a*b) % c`; frações se comparam por produto cruzado. A retenção (§8) é a única exceção, porque só serve para ordenar e exibir.
 - **Ordem canônica (R1):** tópicos são ordenados por **prioridade decrescente**, desempatando pela **`ordem` de cadastro crescente**. `ordem` é o índice de cadastro do tópico (padrão: a posição no array de entrada). "Menor prioridade" é o último nessa ordem. O pseudo-tópico `RESERVA` fica sempre depois de todos.
+  - A ordem existe uma única vez no código: `compararCanonico(a, b)` em `core/prioridade.js`, que recebe objetos com `{ prioridade, ordem }` já prontos. Toda etapa que desempata pela ordem canônica importa esse comparador.
+  - `ordenarPorPrioridade(topicos)` calcula a prioridade a partir de `peso` e `dominio` e ordena com `compararCanonico`, sem mutar a entrada. Se dois tópicos repetirem `ordem`, mantêm a posição de entrada (ordenação estável).
 - **Pureza:** nenhuma função lê o relógio; "hoje" chega como parâmetro.
 
 ## 2. Fórmulas base (`core/prioridade.js`)
@@ -28,8 +33,11 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
   - `15 ≤ minutos < dur`: um bloco de `minutos`.
   - `minutos < 15`: nenhum bloco.
   - Todo bloco conta 1 na capacidade, qualquer que seja a duração (R6).
+  - `minutos` tem que ser inteiro ≥ 0, e `duracaoBlocoMin` inteiro ≥ `MINIMO_BLOCO_MIN`; senão lança `RangeError`. Duração 0 daria divisão por zero, e um bloco abaixo do mínimo não faz sentido.
 - `calcularCapacidade({ inicio, fim, disponibilidade, diasFolga = [], duracaoBlocoMin = 30, dataAvaliacao = null })`:
-  - `disponibilidade` é um objeto ou array indexado por dia da semana (0–6), com os minutos de cada dia.
+  - `fim` antes de `inicio` lança `RangeError`.
+  - `disponibilidade` é um objeto ou array indexado por dia da semana (0–6), com os minutos de cada dia. Dia da semana sem valor conta como 0 minutos.
+  - `dataAvaliacao` fora de `[inicio, fim]` é aceita sem erro: antes de `inicio`, o período inteiro é reserva; depois de `fim`, o período inteiro é janela. Avaliação antes do início é legítima no replanejamento depois da prova. A validação na criação do plano fica em `util/validacao.js`, não aqui.
   - Percorre `[inicio, fim]` inclusive. Dia que está em `diasFolga` não gera bloco.
   - **Janela de estudo (R8):** sem `dataAvaliacao`, é o período inteiro. Com ela, são os dias até `dataAvaliacao` inclusive, e os dias depois da avaliação são inteiros de reserva. A janela mantém os 20% de reserva, para revisar antes da prova; o período depois dela serve para quem tem avaliação intermediária ou conteúdo cumulativo. Os dois casos são válidos (escola e faculdade).
   - `capacidadeTotal` conta os blocos da janela e `capacidadeEstudo = floor(capacidadeTotal × 4 / 5)` (R3).
