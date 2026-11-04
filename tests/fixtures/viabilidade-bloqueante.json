@@ -1,0 +1,75 @@
+{
+  "descricao": "R16: seg 09/11 a qua 11/11/2026, 30 min por dia, 3 blocos no total e 2 de estudo. `capacidade` confere a saída de calcularCapacidade, que avaliarViabilidade não devolve.",
+  "casos": [
+    {
+      "nome": "3 tópicos para 2 blocos de estudo: bloqueante",
+      "entrada": {
+        "plano": {
+          "inicio": "2026-11-09",
+          "fim": "2026-11-11",
+          "disponibilidade": { "1": 30, "2": 30, "3": 30 }
+        },
+        "topicos": [
+          { "id": "X", "nome": "X", "peso": 5, "dominio": 1 },
+          { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2 },
+          { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4 }
+        ]
+      },
+      "capacidade": { "capacidadeTotal": 3, "capacidadeEstudo": 2 },
+      "esperado": {
+        "viavel": false,
+        "bloqueante": true,
+        "capacidadeEstudo": 2,
+        "demandaTotal": 11,
+        "deficit": 9,
+        "cobertura": { "percentual": 18 },
+        "escapatorias": {
+          "maisTempo": { "minutosPorDia": 120, "diasAMais": 27, "novoFim": "2026-12-08" },
+          "reduzirDemanda": {
+            "topicos": [
+              { "id": "X", "antes": 5, "depois": 1 },
+              { "id": "Y", "antes": 4, "depois": 1 },
+              { "id": "Z", "antes": 2, "depois": 1 }
+            ],
+            "suficiente": false
+          },
+          "removerTopicos": { "removidos": ["Z", "Y", "X"], "demandaRestante": 0 }
+        }
+      }
+    },
+    {
+      "nome": "só X e Y: 2 tópicos para 2 blocos, inviável mas não bloqueante",
+      "entrada": {
+        "plano": {
+          "inicio": "2026-11-09",
+          "fim": "2026-11-11",
+          "disponibilidade": { "1": 30, "2": 30, "3": 30 }
+        },
+        "topicos": [
+          { "id": "X", "nome": "X", "peso": 5, "dominio": 1 },
+          { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2 }
+        ]
+      },
+      "capacidade": { "capacidadeTotal": 3, "capacidadeEstudo": 2 },
+      "esperado": {
+        "viavel": false,
+        "bloqueante": false,
+        "capacidadeEstudo": 2,
+        "demandaTotal": 9,
+        "deficit": 7,
+        "cobertura": { "percentual": 22 },
+        "escapatorias": {
+          "maisTempo": { "minutosPorDia": 90, "diasAMais": 21, "novoFim": "2026-12-02" },
+          "reduzirDemanda": {
+            "topicos": [
+              { "id": "X", "antes": 5, "depois": 1 },
+              { "id": "Y", "antes": 4, "depois": 1 }
+            ],
+            "suficiente": true
+          },
+          "removerTopicos": { "removidos": ["Y", "X"], "demandaRestante": 0 }
+        }
+      }
+    }
+  ]
+}

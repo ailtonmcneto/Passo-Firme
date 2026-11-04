@@ -56,6 +56,16 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
   3. **Remover tópicos:** retira tópicos inteiros, do de menor prioridade para o de maior, até `demanda ≤ capacidadeEstudo`. Devolve `removidos` (ids, na ordem de remoção) e `demandaRestante`.
 - **Bloqueio (R16):** `bloqueante = capacidadeEstudo < número de tópicos com demanda > 0`. A função só informa; quem decide o que fazer é o chamador (§10).
 - O plano é gerado mesmo inviável, com uma exceção: na criação, um plano `bloqueante` não é gerado até o aluno escolher uma escapatória. Na escapatória 2, as demandas `depois` entram no alocador; na 3, os tópicos removidos saem da entrada.
+- **Assinatura:** `avaliarViabilidade({ plano, topicos })`, em que `plano` é a entrada de `calcularCapacidade` e cada tópico tem `{ id, nome, peso, dominio, blocosDesejados?, ordem? }`. Retorna `{ viavel, bloqueante, capacidadeEstudo, demandaTotal, deficit, cobertura: { percentual }, escapatorias }`, com `escapatorias = null` quando o plano é viável. `capacidadeTotal` não faz parte do retorno; quem precisa dele chama `calcularCapacidade`.
+- **Sem tópicos** (`demandaTotal = 0`): o plano é viável e `cobertura.percentual = 100`, para não dividir por zero.
+- **Formato das escapatórias:**
+  - `maisTempo = { minutosPorDia, diasAMais, novoFim }`. `novoFim` é `null` sempre que `diasAMais` é `null`.
+  - As duas buscas reaproveitam `calcularCapacidade`, então os dias de folga continuam sem blocos e a janela continua terminando em `dataAvaliacao`. Os dias somados em `minutosPorDia` são os com disponibilidade > 0, inclusive os que hoje ficam abaixo de 15 min.
+  - `reduzirDemanda = { topicos: [{ id, antes, depois }], suficiente }`. A lista traz todos os tópicos, inclusive os que não mudaram, na ordem de entrada (cadastro), para a interface mostrar a lista como o aluno a montou. A ordem canônica decide só de quem os blocos saem.
+
+### 4.1 Validação na criação (`util/validacao.js`)
+
+`validarPlano(plano)` lança `RangeError` quando `inicio` ou `fim` são inválidos, `fim` vem antes de `inicio`, `dataAvaliacao` está fora de `[inicio, fim]` (as bordas valem), algum dia da semana em `disponibilidade` não é inteiro ≥ 0, ou `duracaoBlocoMin` não é inteiro ≥ `MINIMO_BLOCO_MIN`. Sem `dataAvaliacao` e sem `duracaoBlocoMin`, valem os padrões (`null` e 30). Só `gerarCronograma` a chama; a capacidade, a viabilidade e o replanejamento não, porque avaliação antes do início é legítima depois da prova (§3).
 
 ## 5. Etapa 3 — Alocação (`core/alocador.js`)
 
