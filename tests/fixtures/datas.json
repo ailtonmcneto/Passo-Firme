@@ -1,0 +1,55 @@
+{
+  "descricao": "Casos de js/util/datas.js. Datas são strings 'YYYY-MM-DD' locais.",
+  "diaDaSemana": [
+    { "data": "2026-10-13", "esperado": 2 },
+    { "data": "2026-11-08", "esperado": 0 },
+    { "data": "2026-11-09", "esperado": 1 },
+    { "data": "2026-11-14", "esperado": 6 },
+    { "data": "1970-01-01", "esperado": 4 },
+    { "data": "1969-12-31", "esperado": 3 }
+  ],
+  "somarDias": [
+    { "data": "2026-02-28", "n": 1, "esperado": "2026-03-01" },
+    { "data": "2028-02-28", "n": 1, "esperado": "2028-02-29" },
+    { "data": "2026-12-31", "n": 1, "esperado": "2027-01-01" },
+    { "data": "2027-01-01", "n": -1, "esperado": "2026-12-31" },
+    { "data": "2026-11-09", "n": 0, "esperado": "2026-11-09" },
+    { "data": "2026-10-17", "n": 1, "esperado": "2026-10-18" },
+    { "data": "2026-11-09", "n": 365, "esperado": "2027-11-09" },
+    { "data": "2100-02-28", "n": 1, "esperado": "2100-03-01" },
+    { "data": "2000-02-28", "n": 1, "esperado": "2000-02-29" }
+  ],
+  "diferencaEmDias": [
+    { "a": "2026-11-09", "b": "2026-11-22", "esperado": 13 },
+    { "a": "2026-11-22", "b": "2026-11-09", "esperado": -13 },
+    { "a": "2026-11-09", "b": "2026-11-09", "esperado": 0 },
+    { "a": "2026-12-31", "b": "2027-01-01", "esperado": 1 },
+    { "a": "2028-01-01", "b": "2029-01-01", "esperado": 366 }
+  ],
+  "intervaloDeDatas": [
+    { "inicio": "2026-11-09", "fim": "2026-11-22", "tamanho": 14, "primeira": "2026-11-09", "ultima": "2026-11-22" },
+    { "inicio": "2026-11-09", "fim": "2026-11-09", "tamanho": 1, "primeira": "2026-11-09", "ultima": "2026-11-09" },
+    { "inicio": "2026-12-30", "fim": "2027-01-02", "tamanho": 4, "primeira": "2026-12-30", "ultima": "2027-01-02" },
+    { "inicio": "2026-11-10", "fim": "2026-11-09", "tamanho": 0 }
+  ],
+  "ehDataValida": [
+    { "valor": "2026-02-28", "esperado": true },
+    { "valor": "2026-02-29", "esperado": false },
+    { "valor": "2026-02-30", "esperado": false },
+    { "valor": "2028-02-29", "esperado": true },
+    { "valor": "2100-02-29", "esperado": false },
+    { "valor": "2000-02-29", "esperado": true },
+    { "valor": "2026-04-31", "esperado": false },
+    { "valor": "2026-13-01", "esperado": false },
+    { "valor": "2026-00-10", "esperado": false },
+    { "valor": "2026-01-00", "esperado": false },
+    { "valor": "2026-1-5", "esperado": false },
+    { "valor": "26-01-05", "esperado": false },
+    { "valor": "2026/01/05", "esperado": false },
+    { "valor": " 2026-01-05", "esperado": false },
+    { "valor": "2026-01-05T00:00", "esperado": false },
+    { "valor": "", "esperado": false },
+    { "valor": null, "esperado": false },
+    { "valor": 20260105, "esperado": false }
+  ]
+}
