@@ -1,0 +1,27 @@
+{
+  "descricao": "Ordem canônica (docs/algoritmo.md §1): prioridade decrescente; no empate, `ordem` de cadastro crescente; sem `ordem`, vale o índice no array.",
+  "casos": [
+    {
+      "nome": "empate de prioridade resolvido pelo índice de cadastro",
+      "entrada": [
+        { "id": "a", "peso": 2, "dominio": 3 },
+        { "id": "b", "peso": 5, "dominio": 1 },
+        { "id": "c", "peso": 3, "dominio": 4 },
+        { "id": "d", "peso": 3, "dominio": 3 },
+        { "id": "e", "peso": 1, "dominio": 5 }
+      ],
+      "prioridades": { "a": 6, "b": 25, "c": 6, "d": 9, "e": 1 },
+      "esperado": ["b", "d", "a", "c", "e"]
+    },
+    {
+      "nome": "`ordem` explícita vence a posição no array",
+      "entrada": [
+        { "id": "x", "peso": 2, "dominio": 3, "ordem": 2 },
+        { "id": "y", "peso": 3, "dominio": 4, "ordem": 0 },
+        { "id": "z", "peso": 1, "dominio": 1, "ordem": 1 }
+      ],
+      "prioridades": { "x": 6, "y": 6, "z": 5 },
+      "esperado": ["y", "x", "z"]
+    }
+  ]
+}
