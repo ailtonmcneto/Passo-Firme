@@ -1,0 +1,24 @@
+{
+  "descricao": "Os mesmos tópicos de G com capacidade 11. Piso; resto 7. Rodada única (S = 54): a 3 r13, b 2 r4, c 1 r16, d 0 r21; a sobra vai a d. Ninguém satura.",
+  "entrada": {
+    "capacidade": 11,
+    "topicos": [
+      { "id": "a", "peso": 5, "dominio": 1 },
+      { "id": "b", "peso": 4, "dominio": 2 },
+      { "id": "c", "peso": 2, "dominio": 1 },
+      { "id": "d", "peso": 1, "dominio": 3 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "a", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 0 },
+    { "id": "b", "prioridade": 16, "demanda": 4, "manual": false, "ordem": 1 },
+    { "id": "c", "prioridade": 10, "demanda": 5, "manual": false, "ordem": 2 },
+    { "id": "d", "prioridade": 3, "demanda": 3, "manual": false, "ordem": 3 }
+  ],
+  "esperado": {
+    "blocos": { "a": 4, "b": 3, "c": 2, "d": 2 },
+    "sobra": 0,
+    "viavel": false,
+    "avisos": []
+  }
+}

@@ -4,6 +4,7 @@ import {
   prioridade,
   demandaMinima,
   demanda,
+  ehManual,
   compararCanonico,
   ordenarPorPrioridade,
 } from '../js/core/prioridade.js';
@@ -57,6 +58,16 @@ describe('demanda', () => {
 
   test('tópico automático ainda valida o domínio', () => {
     assert.throws(() => demanda({ peso: 3, dominio: 6 }), RangeError);
+  });
+});
+
+describe('ehManual', () => {
+  test('só blocosDesejados inteiro ≥ 1 torna o tópico manual', () => {
+    assert.equal(ehManual({ blocosDesejados: 1 }), true);
+    assert.equal(ehManual({ blocosDesejados: 10 }), true);
+    for (const blocosDesejados of [undefined, null, 0, -2, 2.5, '7']) {
+      assert.equal(ehManual({ blocosDesejados }), false, String(blocosDesejados));
+    }
   });
 });
 

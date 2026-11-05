@@ -1,0 +1,22 @@
+{
+  "descricao": "Replanejamento inviável: demanda 7, capacidade 4. F (demanda 0) não recebe piso nem aviso. Piso para A e G; resto 2. Rodada 1 (S = 35): A 1 r15, G 0 r20; a sobra vai a G, que satura (falta 1), recebe 1 e sai. Rodada 2: A recebe o bloco que sobra. G fica em 2, não nos 5 que o domínio 1 daria.",
+  "entrada": {
+    "capacidade": 4,
+    "topicos": [
+      { "id": "A", "peso": 5, "dominio": 1 },
+      { "id": "F", "peso": 4, "dominio": 2, "demandaRestante": 0 },
+      { "id": "G", "peso": 2, "dominio": 1, "demandaRestante": 2 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "A", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 0 },
+    { "id": "F", "prioridade": 16, "demanda": 0, "manual": false, "ordem": 1 },
+    { "id": "G", "prioridade": 10, "demanda": 2, "manual": false, "ordem": 2 }
+  ],
+  "esperado": {
+    "blocos": { "A": 2, "F": 0, "G": 2 },
+    "sobra": 0,
+    "viavel": false,
+    "avisos": []
+  }
+}

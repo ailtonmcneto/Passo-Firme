@@ -1,0 +1,20 @@
+{
+  "descricao": "Viável (C1). Demanda 10, capacidade 20: o excedente de 10 vai por maiores restos pela prioridade (25 e 5, S = 30). A: floor(250/30) = 8, resto 10; B: floor(50/30) = 1, resto 20. A sobra 1 vai a B, que tem o maior resto. Total A 5 + 8 = 13, B 5 + 2 = 7.",
+  "entrada": {
+    "capacidade": 20,
+    "topicos": [
+      { "id": "A", "peso": 5, "dominio": 1 },
+      { "id": "B", "peso": 1, "dominio": 1 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "A", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 0 },
+    { "id": "B", "prioridade": 5, "demanda": 5, "manual": false, "ordem": 1 }
+  ],
+  "esperado": {
+    "blocos": { "A": 13, "B": 7 },
+    "sobra": 0,
+    "viavel": true,
+    "avisos": []
+  }
+}

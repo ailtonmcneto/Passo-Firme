@@ -1,0 +1,22 @@
+{
+  "descricao": "Replanejamento viável: F terminou (demandaRestante 0) e G tem domínio 1 mas só lhe restam 2. Demanda 7, capacidade 10. F não entra no excedente; os 3 blocos vão a A e G (S = 35): A floor(75/35) = 2, resto 5; G 0, resto 30; a sobra vai a G.",
+  "entrada": {
+    "capacidade": 10,
+    "topicos": [
+      { "id": "A", "peso": 5, "dominio": 1 },
+      { "id": "F", "peso": 4, "dominio": 2, "demandaRestante": 0 },
+      { "id": "G", "peso": 2, "dominio": 1, "demandaRestante": 2 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "A", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 0 },
+    { "id": "F", "prioridade": 16, "demanda": 0, "manual": false, "ordem": 1 },
+    { "id": "G", "prioridade": 10, "demanda": 2, "manual": false, "ordem": 2 }
+  ],
+  "esperado": {
+    "blocos": { "A": 7, "F": 0, "G": 3 },
+    "sobra": 0,
+    "viavel": true,
+    "avisos": []
+  }
+}
