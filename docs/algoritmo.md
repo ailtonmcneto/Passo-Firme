@@ -22,7 +22,7 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
 - `prioridade = peso × (6 − dominio)`, de 1 a 25.
 - `demandaMinima = 6 − dominio`, de 1 a 5.
 - `peso` e `dominio` são inteiros de 1 a 5; fora disso, a função lança `RangeError`.
-- **Demanda de um tópico:** `blocosDesejados`, quando o aluno preencheu (tópico *manual*); senão, `demandaMinima`. No replanejamento, a demanda é o *restante* (§10).
+- **Demanda de um tópico:** `blocosDesejados`, quando o aluno preencheu (tópico *manual*); senão, `demandaMinima`. `ehManual(t)` é a única definição de "preencheu": `blocosDesejados` inteiro ≥ 1. No replanejamento, a demanda é o *restante* (§10).
 - A autoavaliação alimenta só o SM-2. O domínio declarado não muda automaticamente.
 
 ## 3. Etapa 1 — Capacidade (`core/capacidade.js`)
@@ -101,6 +101,17 @@ Saída: `{ blocos: { [id]: n }, sobra, viavel, avisos: [] }`.
 Invariantes:
 - viável: `Σ blocos + sobra = capacidade`, com cada tópico ≥ demanda;
 - inviável: `Σ blocos = capacidade`, com cada tópico ≤ demanda.
+
+### 5.1 Decisões de implementação
+
+- **`montarEntradaAlocacao(topicos)`** converte `{ id, peso, dominio, blocosDesejados?, demandaRestante?, ordem? }` em `{ id, prioridade, demanda, manual, ordem }`, com `ordem` sempre preenchido (o índice quando falta).
+  - **`demandaRestante`:** se vier (não `undefined` nem `null`), substitui `demanda(t)`, inclusive de tópico manual. Tem que ser inteiro ≥ 0; senão lança `RangeError`. Quem calcula é o replanejador (§10).
+- **Pedido do manual no alocador:** a entrada do alocador não tem `blocosDesejados`; o pedido de um tópico manual é a sua `demanda`. Nos passos 4, 5 e 7, "o que falta" é `demanda − 1` e o `desejado` do aviso é a `demanda`. Na criação isso é o próprio `blocosDesejados`; no replanejamento, o restante.
+- **`maioresRestos(topicos, n)`** devolve um array de inteiros alinhado com a entrada (`quotas[i]` é de `topicos[i]`). `ordem` ausente vale o índice. `n` tem que ser inteiro ≥ 0; `n > 0` com soma das prioridades 0 (inclusive sem tópicos) lança `RangeError`.
+- **Validação de `alocar`:** `capacidade` e cada `demanda` têm que ser inteiros ≥ 0; senão lança `RangeError`. `manual` só é verdadeiro se for `true`.
+- **Tópico com demanda 0:** aparece em `blocos` com 0 nos dois casos e não gera aviso, porque já terminou.
+- **Avisos** saem na ordem de entrada (cadastro), como a lista de `reduzirDemanda` (§4). Só o caso inviável gera avisos.
+- **Enchimento com teto:** tópico automático com demanda 1 já está no teto depois do piso e não começa entre os ativos.
 
 ## 6. Etapa 4 — Sequenciamento (`core/sequenciador.js`)
 
