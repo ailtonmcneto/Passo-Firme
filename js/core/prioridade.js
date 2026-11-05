@@ -21,13 +21,16 @@ export function demandaMinima(t) {
   return 6 - t.dominio;
 }
 
-// Tópico "manual" é aquele em que o aluno escolheu quantos blocos quer; o pedido dele vale
-// mais que a fórmula. Qualquer outro valor (vazio, 0, fração) é tratado como "não preencheu".
+// Tópico "manual" é aquele em que o aluno escolheu quantos blocos quer. Qualquer outro valor
+// (vazio, 0, fração) é tratado como "não preencheu". Fica numa função só porque a demanda e
+// o alocador precisam concordar sobre quem é manual.
+export function ehManual(t) {
+  return Number.isInteger(t.blocosDesejados) && t.blocosDesejados >= 1;
+}
+
+// O pedido do aluno vale mais que a fórmula.
 export function demanda(t) {
-  if (Number.isInteger(t.blocosDesejados) && t.blocosDesejados >= 1) {
-    return t.blocosDesejados;
-  }
-  return demandaMinima(t);
+  return ehManual(t) ? t.blocosDesejados : demandaMinima(t);
 }
 
 // Ordem canônica (R1): prioridade decrescente e, no empate, ordem de cadastro crescente.
