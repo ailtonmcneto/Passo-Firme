@@ -1,0 +1,24 @@
+{
+  "descricao": "Todos manuais, somando exatamente a capacidade: cada um recebe o que pediu e não há sobra. Usado também pelo teste do sequenciador.",
+  "entrada": {
+    "capacidade": 15,
+    "topicos": [
+      { "id": "L", "peso": 5, "dominio": 1, "blocosDesejados": 10 },
+      { "id": "SO", "peso": 1, "dominio": 1, "blocosDesejados": 1 },
+      { "id": "DB", "peso": 1, "dominio": 1, "blocosDesejados": 2 },
+      { "id": "DE", "peso": 1, "dominio": 1, "blocosDesejados": 2 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "L", "prioridade": 25, "demanda": 10, "manual": true, "ordem": 0 },
+    { "id": "SO", "prioridade": 5, "demanda": 1, "manual": true, "ordem": 1 },
+    { "id": "DB", "prioridade": 5, "demanda": 2, "manual": true, "ordem": 2 },
+    { "id": "DE", "prioridade": 5, "demanda": 2, "manual": true, "ordem": 3 }
+  ],
+  "esperado": {
+    "blocos": { "L": 10, "SO": 1, "DB": 2, "DE": 2 },
+    "sobra": 0,
+    "viavel": true,
+    "avisos": []
+  }
+}

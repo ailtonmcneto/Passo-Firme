@@ -1,0 +1,25 @@
+{
+  "descricao": "R7 com dois manuais: demanda 17, capacidade 12. Piso; resto 9. Faltas: manual 7 + 3 = 10, automático 4, F = 14. Parte manual floor(90/14) = 6 (resto 6), automática floor(36/14) = 2 (resto 8); a sobra vai ao automático. Dentro do grupo manual, pelo que falta (S = 10): M1 floor(42/10) = 4 r2, M2 floor(18/10) = 1 r8; a sobra vai a M2. A recebe 3 (falta 4, não satura).",
+  "entrada": {
+    "capacidade": 12,
+    "topicos": [
+      { "id": "M1", "peso": 2, "dominio": 3, "blocosDesejados": 8 },
+      { "id": "M2", "peso": 2, "dominio": 3, "blocosDesejados": 4 },
+      { "id": "A", "peso": 5, "dominio": 1 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "M1", "prioridade": 6, "demanda": 8, "manual": true, "ordem": 0 },
+    { "id": "M2", "prioridade": 6, "demanda": 4, "manual": true, "ordem": 1 },
+    { "id": "A", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 2 }
+  ],
+  "esperado": {
+    "blocos": { "M1": 5, "M2": 3, "A": 4 },
+    "sobra": 0,
+    "viavel": false,
+    "avisos": [
+      { "id": "M1", "tipo": "QUOTA_MANUAL_REDUZIDA", "desejado": 8, "recebido": 5 },
+      { "id": "M2", "tipo": "QUOTA_MANUAL_REDUZIDA", "desejado": 4, "recebido": 3 }
+    ]
+  }
+}

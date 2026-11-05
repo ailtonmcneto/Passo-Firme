@@ -1,0 +1,20 @@
+{
+  "descricao": "Inviável: demanda 7, capacidade 6. Piso; resto 4. Rodada 1 (S = 15): P floor(40/15) = 2, resto 10; Q floor(20/15) = 1, resto 5; a sobra vai a P, que receberia 3 mas só lhe falta 1. P satura, recebe 1 e sai. Rodada 2: Q recebe os 3 que sobram.",
+  "entrada": {
+    "capacidade": 6,
+    "topicos": [
+      { "id": "P", "peso": 5, "dominio": 4 },
+      { "id": "Q", "peso": 1, "dominio": 1 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "P", "prioridade": 10, "demanda": 2, "manual": false, "ordem": 0 },
+    { "id": "Q", "prioridade": 5, "demanda": 5, "manual": false, "ordem": 1 }
+  ],
+  "esperado": {
+    "blocos": { "P": 2, "Q": 4 },
+    "sobra": 0,
+    "viavel": false,
+    "avisos": []
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "descricao": "R7: demanda 15, capacidade 10. Piso; resto 8. Falta ao grupo manual 9 e ao automático 4, F = 13. Parte manual floor(72/13) = 5 (resto 7), automática floor(32/13) = 2 (resto 6); o bloco que sobra vai ao manual. L = 1 + 6 = 7, SO = 1 + 2 = 3. Pela prioridade daria L 5, SO 5, a regra descartada.",
+  "entrada": {
+    "capacidade": 10,
+    "topicos": [
+      { "id": "L", "peso": 3, "dominio": 3, "blocosDesejados": 10 },
+      { "id": "SO", "peso": 3, "dominio": 1 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "L", "prioridade": 9, "demanda": 10, "manual": true, "ordem": 0 },
+    { "id": "SO", "prioridade": 15, "demanda": 5, "manual": false, "ordem": 1 }
+  ],
+  "esperado": {
+    "blocos": { "L": 7, "SO": 3 },
+    "sobra": 0,
+    "viavel": false,
+    "avisos": [
+      { "id": "L", "tipo": "QUOTA_MANUAL_REDUZIDA", "desejado": 10, "recebido": 7 }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "descricao": "R16 no replanejamento: capacidade 2 para 3 tópicos. Os 2 primeiros da ordem canônica recebem 1 e Z fica sem bloco, com aviso.",
+  "entrada": {
+    "capacidade": 2,
+    "topicos": [
+      { "id": "X", "peso": 5, "dominio": 1 },
+      { "id": "Y", "peso": 3, "dominio": 2 },
+      { "id": "Z", "peso": 1, "dominio": 4 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "X", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 0 },
+    { "id": "Y", "prioridade": 12, "demanda": 4, "manual": false, "ordem": 1 },
+    { "id": "Z", "prioridade": 2, "demanda": 2, "manual": false, "ordem": 2 }
+  ],
+  "esperado": {
+    "blocos": { "X": 1, "Y": 1, "Z": 0 },
+    "sobra": 0,
+    "viavel": false,
+    "avisos": [
+      { "id": "Z", "tipo": "TOPICO_SEM_BLOCO" }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "descricao": "Inviável: demanda 11, capacidade 6. Piso de 1 para cada um; resto 3. Enchimento com teto pela prioridade (S = 39): X floor(75/39) = 1, resto 36; Y floor(36/39) = 0, resto 36; Z 0, resto 6. X e Y empatam no resto 36 e o desempate é a ordem canônica (X antes de Y); as 2 sobras vão a X e a Y. Ninguém satura.",
+  "entrada": {
+    "capacidade": 6,
+    "topicos": [
+      { "id": "X", "peso": 5, "dominio": 1 },
+      { "id": "Y", "peso": 3, "dominio": 2 },
+      { "id": "Z", "peso": 1, "dominio": 4 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "X", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 0 },
+    { "id": "Y", "prioridade": 12, "demanda": 4, "manual": false, "ordem": 1 },
+    { "id": "Z", "prioridade": 2, "demanda": 2, "manual": false, "ordem": 2 }
+  ],
+  "esperado": {
+    "blocos": { "X": 3, "Y": 2, "Z": 1 },
+    "sobra": 0,
+    "viavel": false,
+    "avisos": []
+  }
+}

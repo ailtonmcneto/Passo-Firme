@@ -1,0 +1,22 @@
+{
+  "descricao": "Viável com manual: demanda 4 + 5 + 3 = 12, capacidade 15. O manual A fica nos 4 que pediu; o excedente de 3 vai só para B e C (S = 31): B floor(75/31) = 2, resto 13; C floor(18/31) = 0, resto 18; a sobra vai a C.",
+  "entrada": {
+    "capacidade": 15,
+    "topicos": [
+      { "id": "A", "peso": 1, "dominio": 5, "blocosDesejados": 4 },
+      { "id": "B", "peso": 5, "dominio": 1 },
+      { "id": "C", "peso": 2, "dominio": 3 }
+    ]
+  },
+  "entradaAlocacao": [
+    { "id": "A", "prioridade": 1, "demanda": 4, "manual": true, "ordem": 0 },
+    { "id": "B", "prioridade": 25, "demanda": 5, "manual": false, "ordem": 1 },
+    { "id": "C", "prioridade": 6, "demanda": 3, "manual": false, "ordem": 2 }
+  ],
+  "esperado": {
+    "blocos": { "A": 4, "B": 7, "C": 4 },
+    "sobra": 0,
+    "viavel": true,
+    "avisos": []
+  }
+}
