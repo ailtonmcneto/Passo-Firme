@@ -211,3 +211,15 @@ Todas as funções são assíncronas, para que na fase 2 a implementação troqu
 - Detalhes do modo foco: pausa, encerrar antes, som ou notificação no fim.
 - Se entra alguma visão extra, como o calendário do mês.
 - Onboarding: se o cadastro mostra um exemplo preenchido ou começa vazio.
+
+## 10. Demonstração na landing
+
+A seção `about-us` de `index.html` apresenta um painel interativo para explicar a plataforma antes do cadastro. É uma demonstração identificada como tal, com dados fictícios fixos e estado apenas em memória. Não cria planos, não persiste dados, não exige cadastro e não acessa `js/api.js`, `js/core/` ou banco de dados. As interações alternam cenários preparados; não calculam prioridade, capacidade, revisão ou replanejamento. Esta seção não altera o contrato da fachada nem substitui as telas dos §§3 e 4.
+
+O painel tem três abas:
+
+- **Seu passo de hoje**, aberta inicialmente: mostra blocos de 30 minutos com horário, matéria, tipo e motivo previamente escritos. Fazer abre uma prévia do modo foco com `30:00` estático, explicitamente identificado como exemplo sem contagem. Simular a conclusão abre a pergunta "Como foi?" com as três respostas do §3.5. A resposta mostra "Passo dado" e uma explicação demonstrativa das revisões, sem calcular uma data. Pular mostra o estado "Pulado" e um cenário fixo de retorno ao plano, sem exigir justificativa, impor punição ou prometer transferência para o dia seguinte.
+- **Seu percurso**: apresenta uma semana fictícia com os horários e os tipos de bloco. Reflete os estados simulados da aba de hoje e identifica as mudanças do cenário de retorno ao plano. É uma prévia da organização, sem edição real de horários ou geração de cronograma.
+- **Sua assessoria**: explica como matérias, domínio declarado e peso orientam a distribuição dentro dos horários disponíveis, além da verificação de viabilidade, autoavaliação, revisões e ajustes do plano. A assessoria é automatizada; o painel não promete acompanhamento humano nem representa um canal de contato.
+
+Reiniciar exemplo restaura os dados e estados iniciais e volta à aba Seu passo de hoje. Estados usam texto e ícone, sem depender só de cor. As abas permitem navegação pelo teclado, mantêm foco visível e identificam a seleção e o painel correspondente para tecnologias assistivas. Confirmações são anunciadas sem exigir que o visitante procure a mudança. A disposição se adapta a telas pequenas e respeita a preferência por movimento reduzido. Sem JavaScript, uma mensagem informa que a interação precisa dele e o conteúdo introdutório continua legível.
