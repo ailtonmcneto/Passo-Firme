@@ -149,6 +149,14 @@ Para a situação "prova em poucos dias e não cabe tudo". O sistema **detecta e
   - as revisões ficam suspensas até a data-alvo (§9).
 - **Na criação:** é a quinta saída da viabilidade, uma escolha única (não se combina com reduzir passagens nem tirar matérias). Está disponível quando a condição vale e `avaliarRetaFinal` não é bloqueante, inclusive quando o plano normal é bloqueante. Escolher grava `respostaCobertura = { resposta: 'ACEITO', dataAlvo }`.
 
+### 6.2 Decisões de implementação
+
+- **`quotas`** é um objeto `{ [id]: n }`, com `RESERVA` como chave da reserva. Matéria sem chave tem quota 0. Lançam `RangeError`: quota que não é inteiro ≥ 0, quota de um id que não está entre as matérias (não teria como desempatar) e matéria com id `RESERVA`. `ordem` ausente vale o índice, como no alocador.
+- **`mapearParaDias(sequencia, dias)`** lança `RangeError` se o número de slots da janela for diferente do tamanho da sequência.
+- **`sequenciar`** confere a soma das quotas contra `capacidadeTotal` também no modo cobertura: o revezamento não usa N, mas uma soma errada sobraria ou faltaria slot no mapeamento. Devolve o array de blocos na ordem dos dias.
+- **`avaliarRetaFinal`** devolve `{ capacidadeEstudo, demandaTotal, cobertura: { percentual }, bloqueante }`. A demanda vem de `montarEntradaAlocacao` (§5.1), que é a regra da viabilidade e respeita `demandaRestante`. Sem demanda, a cobertura é 100%, como na viabilidade.
+- **`respostaCobertura`** ausente conta como `null`, assim como uma `resposta` que não seja `ACEITO` nem `RECUSADO`.
+
 ## 7. SM-2 (`core/sm2.js`)
 
 - O estado de cada tópico é `{ efCentesimos = 250, intervalo = 0, repeticoes = 0, ultimaRevisao = null, proximaRevisao = null }`.
