@@ -1,0 +1,109 @@
+{
+  "descricao": "estadoDoTopico e estadosPeloHistorico recalculando o SM-2 a partir dos blocos. Só blocos CONCLUIDO contam, na ordem (concluidoEm, sequenciaConclusao), com no máximo uma repetição por dia: vale a última resposta do dia.",
+  "estadoDoTopico": [
+    {
+      "nome": "mesmo dia, 5 e depois 1: vale a última",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 2, "qualidade": 1 }
+      ],
+      "esperado": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 0, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-10" }
+    },
+    {
+      "nome": "mesmo dia, 1 e depois 5",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 1 },
+        { "id": 2, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 2, "qualidade": 5 }
+      ],
+      "esperado": { "efCentesimos": 260, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-10" }
+    },
+    {
+      "nome": "ordem pela sequência, não pelo id: o primeiro caso com os ids invertidos dá o mesmo resultado",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 2, "qualidade": 1 },
+        { "id": 2, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 }
+      ],
+      "esperado": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 0, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-10" }
+    },
+    {
+      "nome": "segunda a quarta, sempre 5: os dois blocos de segunda contam uma vez só",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 2, "qualidade": 5 },
+        { "id": 3, "topicoId": "a", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 3, "qualidade": 5 },
+        { "id": 4, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 4, "qualidade": 5 }
+      ],
+      "esperado": { "efCentesimos": 280, "intervalo": 8, "repeticoes": 3, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-19" }
+    },
+    {
+      "nome": "só concluídos contam: PULADO e PERDIDO com qualidade 1 são ignorados",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "a", "tipo": "ESTUDO", "status": "PULADO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 1 },
+        { "id": 3, "topicoId": "a", "tipo": "REVISAO", "status": "PERDIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 3, "qualidade": 1 }
+      ],
+      "esperado": { "efCentesimos": 260, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-10" }
+    },
+    {
+      "nome": "sem conclusões: estado inicial",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "PENDENTE" },
+        { "id": 2, "topicoId": "a", "tipo": "ESTUDO", "status": "PULADO" }
+      ],
+      "esperado": { "efCentesimos": 250, "intervalo": 0, "repeticoes": 0, "ultimaRevisao": null, "proximaRevisao": null }
+    }
+  ],
+  "estadosPeloHistorico": {
+    "descricao": "Três matérias com conclusões, misturadas no array, e d sem nenhuma conclusão (fica fora do mapa). a: 5 (09), 5 (10). b: 3 (09), 1 (11). c: 1 e 4 no dia 09 (vale o 4), 5 (11).",
+    "blocos": [
+      { "id": 10, "topicoId": "c", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 7, "qualidade": 5 },
+      { "id": 11, "topicoId": "d", "tipo": "ESTUDO", "status": "PENDENTE" },
+      { "id": 12, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+      { "id": 13, "topicoId": "b", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 6, "qualidade": 1 },
+      { "id": 14, "topicoId": "c", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 4, "qualidade": 4 },
+      { "id": 15, "topicoId": "b", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 2, "qualidade": 3 },
+      { "id": 16, "topicoId": "d", "tipo": "ESTUDO", "status": "PULADO" },
+      { "id": 17, "topicoId": "a", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 5, "qualidade": 5 },
+      { "id": 18, "topicoId": "c", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 3, "qualidade": 1 },
+      { "id": 19, "topicoId": null, "tipo": "RESERVA", "status": "PENDENTE" }
+    ],
+    "esperado": {
+      "a": { "efCentesimos": 270, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-10", "proximaRevisao": "2026-11-13" },
+      "b": { "efCentesimos": 236, "intervalo": 1, "repeticoes": 0, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-12" },
+      "c": { "efCentesimos": 260, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-14" }
+    }
+  },
+  "erros": [
+    {
+      "nome": "sequência repetida",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 1, "qualidade": 3 }
+      ]
+    },
+    {
+      "nome": "qualidade 6",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 6 }
+      ]
+    },
+    {
+      "nome": "concluidoEm 2026-02-30 não existe",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-02-30", "sequenciaConclusao": 1, "qualidade": 5 }
+      ]
+    },
+    {
+      "nome": "sequenciaConclusao negativa",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": -1, "qualidade": 5 }
+      ]
+    },
+    {
+      "nome": "sequenciaConclusao fracionária",
+      "blocos": [
+        { "id": 1, "topicoId": "a", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1.5, "qualidade": 5 }
+      ]
+    }
+  ]
+}
