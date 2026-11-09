@@ -178,6 +178,14 @@ O SM-2 decide quando cada matéria deve voltar como revisão. O estado dele **n�
   - `ENTENDI_MAS_TRAVARIA` = 3
   - `NAO_ENTROU` = 1
 
+### 7.1 Decisões de implementação
+
+- **`proximaRevisao`** devolve só `{ efCentesimos, intervalo, repeticoes }`. As datas ficam com `estadoDoTopico`, que sabe em que dia cada repetição aconteceu. O intervalo da terceira repetição em diante usa o ef já atualizado, como no SM-2 original.
+- **`conclusoesEmOrdem(blocos)`** também é exportada: filtra os blocos CONCLUIDO, valida e ordena (§7). É o único lugar com a ordem das conclusões; o estimador (§12) a importa, como as etapas importam `compararCanonico`. Blocos PENDENTE, PULADO e PERDIDO são ignorados sem validação.
+- **Validação (RangeError)**, só nos blocos CONCLUIDO: `qualidade` que não seja inteiro de 0 a 5, `concluidoEm` inválido, `sequenciaConclusao` que não seja inteiro ≥ 0 e duas conclusões com a mesma `sequenciaConclusao`. Em `estadosPeloHistorico`, a repetição é conferida entre todas as matérias, porque a sequência é única no plano.
+- **Bloco sem `topicoId`** (uma RESERVA) não é matéria e fica fora de `estadosPeloHistorico`.
+- **Sem conclusões**, `estadoDoTopico` devolve uma cópia de `ESTADO_INICIAL` (que é congelado).
+
 ## 8. Retenção e explicabilidade (`core/retencao.js`)
 
 - `retencao(diasDesdeUltima, S) = e^(−t/S)`, com `t` = dias desde `ultimaRevisao` e `S = max(1, intervalo)`, os dois tirados do estado do SM-2 (§7) (R14). É float, mas só serve para ordenar e exibir; os testes comparam com tolerância.
@@ -190,6 +198,12 @@ O SM-2 decide quando cada matéria deve voltar como revisão. O estado dele **n�
   - REVISAO extra: "revisão extra: N é o assunto que você estudou há mais tempo".
   - RESERVA: "horário livre".
   - Frases sem ponto final e sem exclamação (docs/front.md §7). N é o nome da matéria.
+
+### 8.1 Decisões de implementação
+
+- **`compararPorRetencao(a, b)`** recebe `{ diasDesdeUltima, intervalo }` e devolve `b.dias·max(1, a.intervalo) − a.dias·max(1, b.intervalo)`: negativo quando `a` tem menor retenção. Empate devolve 0, e quem chama encadeia o próximo critério.
+- **`diasDesdeUltima(estado, data)`** com `estado` null ou `ultimaRevisao` null lança `RangeError`: matéria sem conclusão não tem retenção.
+- **`motivoDoBloco`** lança `RangeError` para REVISAO comum sem estado (uma revisão comum só nasce de uma conclusão), para `tipo` desconhecido e para peso ou domínio fora de 1 a 5 num ESTUDO. `extra` só vale se for `true`. "Atrasada" é `diferencaEmDias(proximaRevisao, bloco.data) > 0`.
 
 ## 9. Revisões na reserva (`core/revisoes.js`)
 
@@ -252,3 +266,11 @@ A autoavaliação nunca muda o domínio sozinha; ela gera uma sugestão que o al
   - Tópico manual: `blocosAlocados` não muda, porque o aluno pediu uma quantidade; só a prioridade muda.
   - Depois, quem chama roda `replanejar`.
 - `recusarAjusteDominio(topico, blocosDoTopico)`: devolve o tópico com `dominioRevisadoApos` igual ao número de blocos CONCLUIDO. Assim a mesma sugestão só volta depois de uma nova sequência de respostas.
+
+### 12.1 Decisões de implementação
+
+- **Respostas exatas:** "para baixo" exige qualidade exatamente 1 (`NAO_ENTROU`) e "para cima", exatamente 5 (`EXPLIQUEI_SEM_CONSULTAR`). As qualidades 0, 2 e 4 não são oferecidas pela tela e não disparam sugestão.
+- **Motivo de subir:** usa o texto do botão da tela (docs/front.md §3.5): "você marcou 'consegui explicar sem consultar' nas 3 últimas vezes em SO; o domínio declarado é 2".
+- **ESTUDOs já concluídos**, o piso de `blocosAlocados`, incluem os extras (estudo antecipado), que contam como ESTUDO concluído no C2 (§9).
+- **Validação (RangeError):** `dominio` ou `novoDominio` fora de 1 a 5; tópico automático sem `blocosAlocados` inteiro ≥ 0 em `aplicarAjusteDominio`; e os mesmos erros de bloco do SM-2 (§7.1), porque a ordem vem de `conclusoesEmOrdem`.
+- `aplicarAjusteDominio` e `recusarAjusteDominio` devolvem um tópico novo e não mutam a entrada.
