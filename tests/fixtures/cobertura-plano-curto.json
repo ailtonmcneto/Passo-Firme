@@ -1,0 +1,93 @@
+{
+  "descricao": "Reta final num plano curto: seg 09/11 a qui 12/11/2026, 60 min por dia (8 blocos, 6 de estudo). A demanda 17 não cabe e a prova (o fim) está a 3 dias. Com o modo ativo, a alocação usa os 8 blocos e a sequência é o revezamento na ordem canônica.",
+  "entrada": {
+    "plano": {
+      "inicio": "2026-11-09",
+      "fim": "2026-11-12",
+      "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 60, "4": 60, "5": 0, "6": 0 }
+    },
+    "topicos": [
+      { "id": "a", "nome": "a", "peso": 5, "dominio": 1 },
+      { "id": "b", "nome": "b", "peso": 4, "dominio": 2 },
+      { "id": "c", "nome": "c", "peso": 2, "dominio": 1 },
+      { "id": "d", "nome": "d", "peso": 1, "dominio": 3 }
+    ],
+    "hoje": "2026-11-09"
+  },
+  "esperado": {
+    "viabilidade": {
+      "capacidadeEstudo": 6,
+      "demandaTotal": 17,
+      "viavel": false,
+      "cobertura": { "percentual": 35 }
+    },
+    "condicao": true,
+    "retaFinal": {
+      "capacidadeEstudo": 8,
+      "demandaTotal": 17,
+      "cobertura": { "percentual": 47 },
+      "bloqueante": false
+    },
+    "alocacao": { "blocos": { "a": 3, "b": 2, "c": 2, "d": 1 }, "sobra": 0 },
+    "sequencia": ["a", "b", "c", "d", "a", "b", "c", "a"],
+    "blocos": [
+      { "data": "2026-11-09", "ordem": 1, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-09", "ordem": 2, "topicoId": "b", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-10", "ordem": 1, "topicoId": "c", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-10", "ordem": 2, "topicoId": "d", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-11", "ordem": 1, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-11", "ordem": 2, "topicoId": "b", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-12", "ordem": 1, "topicoId": "c", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-12", "ordem": 2, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30 }
+    ]
+  },
+  "quatroDiasAntes": {
+    "descricao": "O mesmo plano começando no domingo 08/11 (sem horário) e hoje 08/11: faltam 4 dias e a condição não vale.",
+    "plano": {
+      "inicio": "2026-11-08",
+      "fim": "2026-11-12",
+      "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 60, "4": 60, "5": 0, "6": 0 }
+    },
+    "hoje": "2026-11-08",
+    "condicao": false
+  },
+  "estados": [
+    {
+      "nome": "sem resposta",
+      "hoje": "2026-11-09",
+      "respostaCobertura": null,
+      "esperado": "PERGUNTAR"
+    },
+    {
+      "nome": "recusou esta prova",
+      "hoje": "2026-11-09",
+      "respostaCobertura": { "resposta": "RECUSADO", "dataAlvo": "2026-11-12" },
+      "esperado": "RECUSADA"
+    },
+    {
+      "nome": "aceitou esta prova",
+      "hoje": "2026-11-09",
+      "respostaCobertura": { "resposta": "ACEITO", "dataAlvo": "2026-11-12" },
+      "esperado": "ATIVA"
+    },
+    {
+      "nome": "resposta de outra data-alvo conta como sem resposta",
+      "hoje": "2026-11-09",
+      "respostaCobertura": { "resposta": "ACEITO", "dataAlvo": "2026-11-20" },
+      "esperado": "PERGUNTAR"
+    },
+    {
+      "nome": "aceitou, mas só com d o plano cabe",
+      "hoje": "2026-11-09",
+      "respostaCobertura": { "resposta": "ACEITO", "dataAlvo": "2026-11-12" },
+      "topicos": ["d"],
+      "esperado": "NAO_SE_APLICA"
+    },
+    {
+      "nome": "depois da data-alvo",
+      "hoje": "2026-11-13",
+      "respostaCobertura": { "resposta": "ACEITO", "dataAlvo": "2026-11-12" },
+      "esperado": "NAO_SE_APLICA"
+    }
+  ]
+}

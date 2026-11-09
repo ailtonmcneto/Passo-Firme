@@ -1,0 +1,39 @@
+{
+  "descricao": "Capacidade de capacidade-com-avaliacao.json (total 11, estudo 8) e a alocação dos tópicos do caso G com capacidade 8 (a 3, b 2, c 2, d 1, sobra 0). RESERVA 3, N = 11. a e RESERVA empatam (quota 3 as duas) e a vem antes. Os dias depois da avaliação (13/11) são inteiros RESERVA.",
+  "entrada": {
+    "fixtureCapacidade": "capacidade-com-avaliacao.json",
+    "alocacao": { "blocos": { "a": 3, "b": 2, "c": 2, "d": 1 }, "sobra": 0 },
+    "topicos": [
+      { "id": "a", "prioridade": 25, "ordem": 0 },
+      { "id": "b", "prioridade": 16, "ordem": 1 },
+      { "id": "c", "prioridade": 10, "ordem": 2 },
+      { "id": "d", "prioridade": 3, "ordem": 3 }
+    ],
+    "modoCobertura": false
+  },
+  "esperado": {
+    "quotaReserva": 3,
+    "N": 11,
+    "sequencia": ["a", "RESERVA", "b", "c", "d", "a", "RESERVA", "b", "c", "a", "RESERVA"],
+    "blocos": [
+      { "data": "2026-11-09", "ordem": 1, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-09", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-10", "ordem": 1, "topicoId": "b", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-10", "ordem": 2, "topicoId": "c", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-11", "ordem": 1, "topicoId": "d", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-11", "ordem": 2, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-11", "ordem": 3, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-11", "ordem": 4, "topicoId": "b", "tipo": "ESTUDO", "duracaoMin": 50 },
+      { "data": "2026-11-12", "ordem": 1, "topicoId": "c", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-12", "ordem": 2, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30 },
+      { "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 25 },
+      { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-16", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-17", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-17", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-19", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-19", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30 },
+      { "data": "2026-11-20", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 25 }
+    ]
+  }
+}

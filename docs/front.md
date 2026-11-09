@@ -83,8 +83,9 @@ Depois, uma de três situações:
    - **Mais tempo:** os minutos a mais por dia viram "pinte mais K horário(s) em cada dia em que você já estuda", com K = minutos ÷ 30, arredondado para cima. Os dias a mais viram "termine em dd/mm em vez de dd/mm". Opção ausente quando o algoritmo devolve null.
    - **Reduzir passagens:** a lista de matérias com o antes e o depois de cada uma.
    - **Tirar matérias:** quais sairiam.
+   - **Reta final** (só aparece quando a prova, ou o fim do período, está a 3 dias ou menos): "Em vez de guardar 20% para revisões, todos os seus N horários viram estudo e as matérias se revezam, uma passada por cada uma antes de voltar à primeira. Cobertura: C% em vez de C0%. As revisões voltam depois da prova." Os números vêm de `viabilidade.retaFinal`. É uma escolha única: não se combina com as outras saídas.
    - **Montar assim mesmo**, sabendo que a cobertura é parcial.
-3. **Bloqueado** (mais matérias do que blocos de estudo): "São N matérias e só M blocos de estudo." O aluno precisa pintar mais horários, estender o período ou tirar matérias (as saídas "mais tempo" e "tirar matérias" do algoritmo). "Reduzir passagens" não resolve esse caso, e não existe "montar assim mesmo". O botão continua visível e, se tocado, explica o motivo em vez de ficar desabilitado.
+3. **Bloqueado** (mais matérias do que blocos de estudo): "São N matérias e só M blocos de estudo." O aluno precisa pintar mais horários, estender o período ou tirar matérias (as saídas "mais tempo" e "tirar matérias" do algoritmo). "Reduzir passagens" não resolve esse caso, e não existe "montar assim mesmo". O botão continua visível e, se tocado, explica o motivo em vez de ficar desabilitado. Exceção: se `viabilidade.retaFinal` existir e não for bloqueante, a reta final aparece como saída também aqui, porque ela resolve o bloqueio.
 
 ### 3.5 Seu passo de hoje (tela principal)
 
@@ -102,6 +103,7 @@ Depois, uma de três situações:
 - **Pular** está disponível em todo bloco pendente de hoje ou do futuro, sem pedir justificativa.
 - Dia sem horário pintado: "Hoje não tem estudo marcado."
 - Reserva livre só aparece quando o algoritmo não encontrou nada para pôr nela. Nesse caso, ela aparece como folga, nunca como tarefa.
+- **Reta final:** conforme `cobertura` devolvido por `obterHoje`. PERGUNTAR: um cartão com o mesmo texto da §3.4 e os botões Ativar e Agora não. RECUSADA: só um botão discreto "Ativar reta final". ATIVA: uma linha curta avisando que o plano está em reta final até dd/mm. NAO_SE_APLICA: nada. A pergunta aparece uma vez por prova; recusar não gera nova pergunta.
 
 ### 3.6 Seu percurso (grade da semana)
 
@@ -147,7 +149,7 @@ Nunca usar "atrasado", "falhou" ou contagem de dias perdidos.
 - **Fixar e desafixar:** um bloco fixado não é mexido pelo replanejamento.
 - **Pular:** o bloco vira PULADO e volta como demanda no próximo replanejamento. Sem confirmação nem penalidade.
 - **Pintar ou despintar depois da criação:** muda a disponibilidade e replaneja. Fixados cuja célula foi despintada perdem a fixação.
-- **Quando o front pede replanejamento:** ao abrir o app (a fachada replaneja só se houver bloco PENDENTE com data anterior a hoje ou se a última geração foi em outro dia), ao concluir ou pular um bloco, ao mudar horários ou matérias, ao aceitar uma sugestão de domínio, ao escolher uma saída de viabilidade.
+- **Quando o front pede replanejamento:** ao abrir o app (a fachada replaneja só se houver bloco PENDENTE com data anterior a hoje ou se a última geração foi em outro dia), ao concluir ou pular um bloco, ao mudar horários ou matérias, ao aceitar uma sugestão de domínio, ao escolher uma saída de viabilidade, ao responder à reta final.
 - **Nunca:** empurrar bloco para o dia seguinte, marcar algo em vermelho, mostrar sequência de dias, pedir justificativa para pular.
 - **Arrastar e soltar:** fora do MVP. Se vier depois, é só outra forma de disparar "trocar".
 
@@ -157,9 +159,9 @@ Todas as funções são assíncronas, para que na fase 2 a implementação troqu
 
 | Função | Recebe | Devolve |
 |---|---|---|
-| `avaliarRascunho(rascunho)` | `{ plano, topicos, celulas }` ainda não salvos | `viabilidade` (sem gravar nada) |
-| `criarPlano(rascunho, escolha?)` | rascunho e a saída escolhida, se houver | `{ planoId, bloqueado, viabilidade }` |
-| `obterHoje(planoId, hoje)` | — | `{ data, blocos, sugestao, mudancas }`; replaneja antes, se for preciso |
+| `avaliarRascunho(rascunho, hoje)` | `{ plano, topicos, celulas }` ainda não salvos; `hoje` porque a reta final depende da data | `viabilidade` (sem gravar nada) |
+| `criarPlano(rascunho, escolha?)` | rascunho e a saída escolhida, se houver; a escolha pode ser `{ tipo: 'COBERTURA' }` | `{ planoId, bloqueado, viabilidade }` |
+| `obterHoje(planoId, hoje)` | — | `{ data, blocos, sugestao, mudancas, cobertura }`, com `cobertura` um dos estados da §6.1 do algoritmo; replaneja antes, se for preciso |
 | `obterSemana(planoId, inicioSemana)` | data da segunda-feira | `{ dias: [{ data, blocos }] }` |
 | `concluirBloco(blocoId, resposta, hoje)` | uma das três respostas | `{ proximaRevisao, sugestao, mudancas }` |
 | `pularBloco(blocoId, hoje)` | — | `{ mudancas }` |
@@ -168,10 +170,11 @@ Todas as funções são assíncronas, para que na fase 2 a implementação troqu
 | `atualizarCelulas(planoId, celulas, hoje)` | nova lista de células | `{ viabilidade, mudancas }` |
 | `atualizarTopicos(planoId, topicos, hoje)` | matérias alteradas | `{ viabilidade, mudancas }` |
 | `responderSugestao(topicoId, aceitar, hoje)` | true ou false | `{ viabilidade, mudancas }` |
+| `responderCobertura(planoId, aceitar, hoje)` | true ou false | `{ viabilidade, mudancas }` |
 
 - **Bloco, como a tela recebe:** `{ id, data, hora, ordem, topicoId, topicoNome, tipo, extra, status, fixado, motivo, duracaoMin }`, com `tipo` ESTUDO, REVISAO ou RESERVA, e `status` PENDENTE, CONCLUIDO, PULADO ou PERDIDO. `hora` é preenchida pela fachada a partir das células (§3.3).
-- **Mudanças:** `[{ antes: bloco | null, depois: bloco | null, causa }]`, com `causa` PERDIDO_VOLTOU, PULADO_VOLTOU, REVISAO_AGENDADA, AJUSTE_DOMINIO ou HORARIOS_ALTERADOS. Quem calcula é a fachada, comparando os blocos futuros antes e depois do replanejamento.
-- **Viabilidade:** o objeto devolvido por `avaliarViabilidade` (algoritmo §4), acrescido pela fachada de `capacidadeTotal` e `capacidadeReserva` (de `calcularCapacidade`), que a tela usa nos números do §3.4. A tradução para "pinte mais K horários" é feita na tela.
+- **Mudanças:** `[{ antes: bloco | null, depois: bloco | null, causa }]`, com `causa` PERDIDO_VOLTOU, PULADO_VOLTOU, REVISAO_AGENDADA, AJUSTE_DOMINIO, HORARIOS_ALTERADOS ou RETA_FINAL. Quem calcula é a fachada, comparando os blocos futuros antes e depois do replanejamento.
+- **Viabilidade:** o objeto devolvido por `avaliarViabilidade` (algoritmo §4), acrescido pela fachada de `capacidadeTotal` e `capacidadeReserva` (de `calcularCapacidade`) e de `retaFinal` (resultado de `avaliarRetaFinal`, algoritmo §6.1, ou null quando a condição da reta final não vale), que a tela usa nos números do §3.4. A tradução para "pinte mais K horários" é feita na tela.
 - **Erros:** a fachada lança `RangeError` com mensagem em português quando a entrada é inválida, e a tela mostra a mensagem junto do campo.
 - Este contrato é o ponto de encontro entre quem faz as telas e quem faz a lógica. Qualquer mudança passa primeiro por este documento.
 

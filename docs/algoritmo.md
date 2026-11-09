@@ -12,7 +12,7 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
   - `somarDias(s, n)` exige `n` inteiro; senão lança `RangeError`.
   - `intervaloDeDatas(inicio, fim)` com `fim` antes de `inicio` devolve `[]`. Quem precisa tratar isso como erro valida antes (a capacidade faz isso, §3).
 - **Inteiros:** nenhuma etapa usa float. Uma divisão `a×b / c` vira `Math.floor(a*b/c)` com resto `(a*b) % c`; frações se comparam por produto cruzado. A retenção (§8) é a única exceção, porque só serve para ordenar e exibir.
-- **Ordem canônica (R1):** tópicos são ordenados por **prioridade decrescente**, desempatando pela **`ordem` de cadastro crescente**. `ordem` é o índice de cadastro do tópico (padrão: a posição no array de entrada). "Menor prioridade" é o último nessa ordem. O pseudo-tópico `RESERVA` fica sempre depois de todos.
+- **Ordem canônica (R1):** tópicos são ordenados por **prioridade decrescente**, desempatando pela **`ordem` de cadastro crescente**. `ordem` é o índice de cadastro do tópico (padrão: a posição no array de entrada). "Menor prioridade" é o último nessa ordem. O pseudo-tópico `RESERVA` não entra na ordem canônica: ele não é matéria e só existe no sequenciador, que tem a sua própria regra para ele (§6).
   - A ordem existe uma única vez no código: `compararCanonico(a, b)` em `core/prioridade.js`, que recebe objetos com `{ prioridade, ordem }` já prontos. Toda etapa que desempata pela ordem canônica importa esse comparador.
   - `ordenarPorPrioridade(topicos)` calcula a prioridade a partir de `peso` e `dominio` e ordena com `compararCanonico`, sem mutar a entrada. Se dois tópicos repetirem `ordem`, mantêm a posição de entrada (ordenação estável).
 - **Pureza:** nenhuma função lê o relógio; "hoje" chega como parâmetro.
@@ -115,19 +115,47 @@ Invariantes:
 
 ## 6. Etapa 4 — Sequenciamento (`core/sequenciador.js`)
 
-- **Reserva (C4):** é o pseudo-tópico `RESERVA`, com quota igual aos blocos de reserva da janela mais a `sobra` do alocador. Entra no sequenciamento como qualquer tópico, o que espalha os slots livres pelo período. Os dias depois da avaliação são inteiros `RESERVA` e não entram no N.
-- **Posição ideal:** N é o número de slots da janela. A posição do k-ésimo bloco (k = 0 … quota−1) é `(2k+1)·N / (2·quota)`. Para comparar `(a, kₐ)` com `(b, k_b)`, compare `(2kₐ+1)·q_b` com `(2k_b+1)·qₐ`.
-- **Empate:** menor quota primeiro; depois a ordem canônica (RESERVA por último); depois menor k.
-- **Anti-adjacência (R13):** só conta a adjacência dentro do mesmo dia; RESERVA nunca conta como conflito. A passada vai da esquerda para a direita, com janela W = 3:
-  - Quando o slot i repete o tópico de i−1 no mesmo dia, procure o primeiro j em i+1 … i+W com tópico diferente do de i.
-  - Troque i com j se, depois da troca, nenhum dos slots i−1, i, j e j+1 ficar em conflito. Senão, desfaça e tente o próximo j.
-  - Sem troca válida, siga em frente. É melhor-esforço, não garantia.
+O sequenciador decide **em que ordem** os blocos de cada matéria aparecem. Quantos são, já veio da alocação (§5).
+
+- **Entrada:** a capacidade (§3), a alocação (§5) e as matérias no formato `{ id, prioridade, ordem }` (a saída de `montarEntradaAlocacao`). O sequenciador não decide o modo: recebe `modoCobertura` (true ou false) de quem chama.
+- **Reserva (C4):** é o pseudo-tópico `RESERVA`. Sua quota é `capacidadeTotal − capacidadeEstudo + sobra`; no modo cobertura, só `sobra`. Ela entra no sequenciamento como as matérias, o que espalha os blocos livres pelo período. Os dias depois da avaliação (`naJanela` false) são inteiros `RESERVA` e não entram no N.
+  - A RESERVA não é matéria: não tem prioridade nem ordem de cadastro. Por isso a regra dela fica no sequenciador, e o `compararCanonico` continua comparando só matérias.
+- **Posição ideal:** N é `capacidadeTotal`, o número de slots da janela, e tem que ser igual à soma das quotas (matérias + RESERVA); senão, `RangeError`. A posição do k-ésimo bloco (k = 0 … quota−1) é `(2k+1)·N / (2·quota)`. Para comparar `(a, kₐ)` com `(b, k_b)`, compare `(2kₐ+1)·q_b` com `(2k_b+1)·qₐ`.
+- **Desempate**, nesta ordem:
+  1. menor quota primeiro;
+  2. a `RESERVA` vem depois da matéria: o estudo acontece primeiro e o bloco livre logo depois, que é onde as revisões (que vencem dias depois do estudo) precisam dele;
+  3. entre matérias, `compararCanonico` (§1).
+  - Não há outro critério. Dois blocos da mesma matéria nunca têm a mesma posição, e duas matérias empatadas na posição e na quota têm o mesmo k. Verificado por força bruta em 09/11/2026 (1 a 6 matérias, quotas de 1 a 12): nenhum empate passa do critério 3.
+- **Blocos seguidos (R13):** não há correção. A posição ideal já intercala as matérias quando a proporção permite; quando uma matéria ocupa a maior parte do período, blocos seguidos são aceitos.
 - **Mapeamento:** consome os blocos de cada dia na ordem e gera `{ data, ordem (1..n no dia), topicoId, tipo, duracaoMin }`, com `tipo` `ESTUDO`, ou `RESERVA` com `topicoId` null.
-- **Modo cobertura (R9):** é ativado quando a data-alvo (`dataAvaliacao` ou, se não houver, `fim`) está a ≤ 3 dias de hoje e o plano é inviável. Nesse modo:
-  - a reserva da janela vira estudo (`capacidadeEstudo = capacidadeTotal`);
-  - a alocação é a normal;
-  - o sequenciamento é um round-robin na ordem canônica (rodada 1 com um bloco de cada tópico, rodada 2 e seguintes pulando quem esgotou), sem passada de adjacência;
-  - as revisões ficam suspensas até a data-alvo.
+
+### 6.1 Reta final (modo cobertura, R9) — `core/cobertura.js`
+
+Para a situação "prova em poucos dias e não cabe tudo". O sistema **detecta e pergunta**; nunca ativa sozinho.
+
+- **Data-alvo:** `dataAvaliacao` ou, sem ela, `fim`.
+- **Condição:** o plano não cabe (`viavel` false na viabilidade normal, §4) **e** `0 ≤ diferencaEmDias(hoje, dataAlvo) ≤ 3`. Exemplo: hoje 09, prova 12 → vale; hoje 08 → não vale.
+- **Resposta do aluno:** `plano.respostaCobertura = null | { resposta: 'ACEITO' | 'RECUSADO', dataAlvo }`. A resposta só vale se a sua `dataAlvo` for a data-alvo atual do plano; se a prova mudou de data, conta como `null`. Assim a pergunta é feita uma vez por prova.
+- **Ativa se e só se** a resposta válida é `ACEITO` **e** a condição vale. Se o plano voltar a caber, o modo se desliga sem nova pergunta; se deixar de caber de novo antes da prova, volta sem perguntar.
+- `estadoCobertura({ plano, viabilidade, hoje })` devolve:
+  - `NAO_SE_APLICA`: a condição não vale (mesmo com ACEITO guardado);
+  - `PERGUNTAR`: a condição vale e não há resposta válida;
+  - `RECUSADA`: a condição vale e a resposta é RECUSADO (a tela oferece o botão para ativar);
+  - `ATIVA`: a condição vale e a resposta é ACEITO.
+- `avaliarRetaFinal({ plano, topicos })` dá os números da quinta saída: `capacidadeEstudo = capacidadeTotal` (a reserva da janela vira estudo), `cobertura.percentual = floor(100·min(capacidadeTotal, demandaTotal) / demandaTotal)` e `bloqueante = capacidadeTotal < número de matérias com demanda > 0`. A demanda segue as mesmas regras da viabilidade (inclusive `demandaRestante`).
+- **Com o modo ativo:**
+  - a alocação usa `capacidade = capacidadeTotal` (quem faz isso é o pipeline);
+  - a sequência é um **revezamento** na ordem canônica: uma rodada com um bloco de cada matéria, depois as seguintes pulando quem esgotou; se houver `RESERVA` (sobra), ela entra por último em cada rodada;
+  - as revisões ficam suspensas até a data-alvo (§9).
+- **Na criação:** é a quinta saída da viabilidade, uma escolha única (não se combina com reduzir passagens nem tirar matérias). Está disponível quando a condição vale e `avaliarRetaFinal` não é bloqueante, inclusive quando o plano normal é bloqueante. Escolher grava `respostaCobertura = { resposta: 'ACEITO', dataAlvo }`.
+
+### 6.2 Decisões de implementação
+
+- **`quotas`** é um objeto `{ [id]: n }`, com `RESERVA` como chave da reserva. Matéria sem chave tem quota 0. Lançam `RangeError`: quota que não é inteiro ≥ 0, quota de um id que não está entre as matérias (não teria como desempatar) e matéria com id `RESERVA`. `ordem` ausente vale o índice, como no alocador.
+- **`mapearParaDias(sequencia, dias)`** lança `RangeError` se o número de slots da janela for diferente do tamanho da sequência.
+- **`sequenciar`** confere a soma das quotas contra `capacidadeTotal` também no modo cobertura: o revezamento não usa N, mas uma soma errada sobraria ou faltaria slot no mapeamento. Devolve o array de blocos na ordem dos dias.
+- **`avaliarRetaFinal`** devolve `{ capacidadeEstudo, demandaTotal, cobertura: { percentual }, bloqueante }`. A demanda vem de `montarEntradaAlocacao` (§5.1), que é a regra da viabilidade e respeita `demandaRestante`. Sem demanda, a cobertura é 100%, como na viabilidade.
+- **`respostaCobertura`** ausente conta como `null`, assim como uma `resposta` que não seja `ACEITO` nem `RECUSADO`.
 
 ## 7. SM-2 (`core/sm2.js`)
 
@@ -174,11 +202,11 @@ Invariantes:
 - **Histórico:** blocos com data < hoje e blocos CONCLUIDO nunca mudam. Bloco PENDENTE no passado vira PERDIDO. PULADO é a escolha explícita do aluno de pular e, para a demanda, vale como perdido. Bloco perdido nunca é empurrado para o dia seguinte: volta como demanda.
 - **C2:** cada tópico guarda `blocosAlocados`, o resultado da alocação inicial ou de uma edição de quota. No replanejamento, `demanda = max(0, blocosAlocados − ESTUDOs CONCLUIDO − ESTUDOs fixados futuros)`. O replanejamento não sobrescreve `blocosAlocados`.
 - **C3:** um bloco editado na planilha ganha `fixado: true`. Blocos fixados futuros ficam onde estão e seus slots saem da capacidade. Mudar a quantidade de blocos de um tópico grava `blocosDesejados` e `blocosAlocados`.
-- **Bloqueio só na criação (R16):** `gerarCronograma` devolve `{ bloqueado: true, viabilidade }`, sem blocos, quando a viabilidade é `bloqueante`. A interface mostra as escapatórias e só gera depois da escolha. `replanejar` nunca bloqueia: gera o que cabe, com o aviso `TOPICO_SEM_BLOCO` (§5) e as escapatórias calculadas, para o aluno não ficar sem plano.
+- **Bloqueio só na criação (R16):** `gerarCronograma` devolve `{ bloqueado: true, viabilidade }`, sem blocos, quando a viabilidade é `bloqueante`. A interface mostra as escapatórias e só gera depois da escolha. `replanejar` nunca bloqueia: gera o que cabe, com o aviso `TOPICO_SEM_BLOCO` (§5) e as escapatórias calculadas, para o aluno não ficar sem plano. Exceção: se a saída escolhida for a reta final (§6.1) e ela não for bloqueante, o plano é gerado.
 - **Passos:**
   1. Calcula a capacidade de `max(hoje, inicio)` até `fim`, menos os slots fixados.
   2. Roda a viabilidade e a alocação com a demanda restante.
-  3. Sequencia nos slots livres.
+  3. Sequencia nos slots livres, em revezamento se `estadoCobertura` for ATIVA (§6.1).
   4. Encaixa as revisões a partir do estado SM-2 atual (R12: revisões futuras não fixadas são sempre regeneradas).
   5. Preenche a reserva livre de hoje (§9).
 - **Aluno sumido (R10):** sai naturalmente das regras acima. Os blocos perdidos voltam como demanda, há no máximo uma revisão atrasada por tópico e a viabilidade é recalculada com números honestos.
@@ -196,6 +224,7 @@ Invariantes:
 - `topicos`:
   - `efCentesimos` substitui `easeFactor`;
   - ganha `blocosAlocados`, `ultimaRevisao`, `proximaRevisao` e `dominioRevisadoApos` (§12).
+- `planos` ganha `respostaCobertura: null | { resposta: 'ACEITO' | 'RECUSADO', dataAlvo }` (§6.1).
 
 ## 12. Sugestão de ajuste do domínio (`core/estimador.js`)
 
