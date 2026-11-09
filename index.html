@@ -62,144 +62,79 @@
                 </div>
                 <div class="demonstracao" id="demonstracao" aria-labelledby="demonstracao-titulo">
                     <div class="demonstracao-introducao">
-                        <div>
-                            <p class="demonstracao-selo"><span aria-hidden="true">✦</span> Exemplo interativo</p>
-                            <h3 id="demonstracao-titulo">Veja seu plano ganhar forma.</h3>
-                            <p>Explore uma rotina fictícia e descubra como a assessoria organiza seus estudos.</p>
-                        </div>
-                        <button class="demonstracao-reiniciar" id="demonstracao-reiniciar" type="button" disabled>
-                            <span aria-hidden="true">↺</span> Reiniciar exemplo
-                        </button>
+                        <p class="demonstracao-selo">Na prática</p>
+                        <h3 id="demonstracao-titulo">Do seu tempo ao seu plano.</h3>
+                        <p>Explore um exemplo de como a assessoria organiza seus estudos.</p>
                     </div>
 
                     <div class="demonstracao-janela">
-                        <div class="demonstracao-barra">
-                            <span class="demonstracao-marca"><span class="demonstracao-simbolo" aria-hidden="true">pf.</span> Passo Firme <span class="demonstracao-barra-separador">/</span> <span class="demonstracao-barra-legenda">Seu espaço de estudos</span></span>
-                            <span class="demonstracao-aviso">Dados fictícios</span>
+                        <div class="demonstracao-navegacao">
+                            <div class="demonstracao-abas" role="tablist" aria-label="Explore o exemplo" aria-orientation="horizontal">
+                                <button type="button" role="tab" id="aba-rotina" data-aba="rotina" aria-controls="exemplo-rotina" aria-selected="false" tabindex="-1" disabled>Sua rotina</button>
+                                <button type="button" role="tab" id="aba-plano" data-aba="plano" aria-controls="exemplo-plano" aria-selected="true" tabindex="0" disabled>Seu plano</button>
+                                <button type="button" role="tab" id="aba-ajustes" data-aba="ajustes" aria-controls="exemplo-ajustes" aria-selected="false" tabindex="-1" disabled>Ajustes</button>
+                            </div>
+                            <button class="demonstracao-reiniciar" id="demonstracao-reiniciar" type="button" disabled><span aria-hidden="true">↺</span> Reiniciar</button>
                         </div>
 
-                        <div class="demonstracao-estrutura">
-                            <div class="demonstracao-lateral">
-                                <p class="demonstracao-menu-legenda">Explore a plataforma</p>
-                                <div class="demonstracao-abas" role="tablist" aria-label="Telas da demonstração" aria-orientation="vertical">
-                                    <button type="button" role="tab" id="aba-hoje" data-aba="hoje" aria-controls="exemplo-hoje" aria-selected="true" tabindex="0" disabled><span aria-hidden="true">◷</span> Seu passo de hoje</button>
-                                    <button type="button" role="tab" id="aba-percurso" data-aba="percurso" aria-controls="exemplo-percurso" aria-selected="false" tabindex="-1" disabled><span aria-hidden="true">▦</span> Seu percurso</button>
-                                    <button type="button" role="tab" id="aba-assessoria" data-aba="assessoria" aria-controls="exemplo-assessoria" aria-selected="false" tabindex="-1" disabled><span aria-hidden="true">✧</span> Sua assessoria</button>
-                                </div>
-                                <div class="demonstracao-perfil">
-                                    <span class="demonstracao-avatar" aria-hidden="true">A</span>
-                                    <div><strong>Alex, estudante</strong><span>Uma rotina de exemplo</span></div>
-                                </div>
+                        <section class="demonstracao-painel" role="tabpanel" id="exemplo-rotina" aria-labelledby="aba-rotina" tabindex="0" hidden>
+                            <div class="demonstracao-cabecalho">
+                                <h4>O ponto de partida é você.</h4>
+                                <p>Suas matérias, o que já sabe e o tempo que tem.</p>
                             </div>
-
-                            <div class="demonstracao-conteudo">
-                                <section class="demonstracao-painel" role="tabpanel" id="exemplo-hoje" aria-labelledby="aba-hoje" tabindex="0">
-                                    <div class="demonstracao-cabecalho">
-                                        <p class="demonstracao-sobretitulo">Segunda-feira · semana de exemplo</p>
-                                        <h4>Seu passo de hoje</h4>
-                                        <p>Um bloco de cada vez, dentro do seu tempo.</p>
-                                    </div>
-                                    <div class="demonstracao-resumo"><span><strong>3</strong> matérias</span><span><strong>30 min</strong> por bloco</span><span>Nos horários que você escolheu</span></div>
-
-                                    <article class="demonstracao-bloco" id="demonstracao-bloco" data-estado="pendente" aria-labelledby="demonstracao-materia">
-                                        <div class="demonstracao-bloco-topo"><span class="demonstracao-horario">18:00 — 18:30</span><span class="demonstracao-etiqueta" id="demonstracao-etiqueta">Próximo bloco</span></div>
-                                        <p class="demonstracao-tipo">Estudo</p>
-                                        <h5 id="demonstracao-materia">JavaScript</h5>
-                                        <p class="demonstracao-motivo"><span aria-hidden="true">↳</span> Peso alto, domínio baixo.</p>
-                                        <div class="demonstracao-acoes" id="demonstracao-acoes">
-                                            <button class="demonstracao-botao" type="button" data-acao="fazer" disabled><span aria-hidden="true">▷</span> Fazer exemplo</button>
-                                            <button class="demonstracao-botao-texto" type="button" data-acao="pular" disabled>Pular no exemplo <span aria-hidden="true">↗</span></button>
-                                        </div>
-                                        <div class="demonstracao-foco" id="demonstracao-foco" hidden>
-                                            <h5 id="demonstracao-foco-titulo" tabindex="-1">Uma coisa de cada vez.</h5>
-                                            <span class="demonstracao-relogio" aria-label="30 minutos">30:00</span>
-                                            <p>Prévia do modo foco. O relógio fica parado nesta demonstração.</p>
-                                            <div class="demonstracao-acoes">
-                                                <button class="demonstracao-botao" type="button" data-acao="encerrar">Simular fim do bloco</button>
-                                                <button class="demonstracao-botao-texto" type="button" data-acao="voltar">Voltar</button>
-                                            </div>
-                                        </div>
-                                        <div class="demonstracao-avaliacao" id="demonstracao-avaliacao" hidden>
-                                            <h5 id="demonstracao-avaliacao-titulo" tabindex="-1">Como foi?</h5>
-                                            <p>Sua resposta ajuda a orientar as próximas revisões.</p>
-                                            <div class="demonstracao-respostas">
-                                                <button type="button" data-resposta="EXPLIQUEI_SEM_CONSULTAR">Consegui explicar sem consultar <span aria-hidden="true">↗</span></button>
-                                                <button type="button" data-resposta="ENTENDI_MAS_TRAVARIA">Entendi, mas travaria numa questão <span aria-hidden="true">↗</span></button>
-                                                <button type="button" data-resposta="NAO_ENTROU">Não entrou <span aria-hidden="true">↗</span></button>
-                                            </div>
-                                        </div>
-                                        <div class="demonstracao-resultado" id="demonstracao-resultado" hidden>
-                                            <p id="demonstracao-confirmacao" tabindex="-1"></p>
-                                            <button class="demonstracao-botao-texto" type="button" data-acao="ver-percurso">Ver no percurso <span aria-hidden="true">→</span></button>
-                                        </div>
-                                    </article>
-
-                                    <div class="demonstracao-proximos" aria-label="Outros blocos do exemplo">
-                                        <div class="demonstracao-bloco-menor"><span class="demonstracao-horario">18:30</span><div><strong>Banco de dados</strong><p>Estudo · distribuição pela prioridade.</p></div><span class="demonstracao-duracao">30 min</span></div>
-                                        <div class="demonstracao-bloco-menor"><span class="demonstracao-horario">19:00</span><div><strong>Redes</strong><p>Revisão · estudado há 3 dias.</p></div><span class="demonstracao-duracao">30 min</span></div>
-                                    </div>
-                                </section>
-
-                                <section class="demonstracao-painel" role="tabpanel" id="exemplo-percurso" aria-labelledby="aba-percurso" tabindex="0" hidden>
-                                    <div class="demonstracao-cabecalho">
-                                        <p class="demonstracao-sobretitulo">Uma visão da sua rotina</p>
-                                        <h4>Seu percurso</h4>
-                                        <p>Você reserva os horários. As matérias encontram seu lugar.</p>
-                                    </div>
-                                    <div class="demonstracao-grade-rolagem" role="region" aria-label="Grade de exemplo, role para ver os dias" tabindex="0">
-                                        <table class="demonstracao-grade">
-                                            <caption>Recorte de uma semana fictícia · blocos de 30 minutos</caption>
-                                            <thead><tr><th scope="col">Horário</th><th scope="col">Segunda <span>Hoje no exemplo</span></th><th scope="col">Terça</th><th scope="col">Quinta</th></tr></thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row">18:00</th>
-                                                    <td><div class="demonstracao-celula" id="demonstracao-semana-atual" data-estado="pendente"><strong>JavaScript</strong><span id="demonstracao-semana-status">Estudo</span></div></td>
-                                                    <td><div class="demonstracao-celula" id="demonstracao-semana-proximo" data-estado="reserva"><strong>Reserva</strong><span id="demonstracao-proximo-tipo">Para revisões</span></div></td>
-                                                    <td><div class="demonstracao-celula demonstracao-celula-redes"><strong>Redes</strong><span>Estudo</span></div></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">18:30</th>
-                                                    <td><div class="demonstracao-celula demonstracao-celula-banco"><strong>Banco de dados</strong><span>Estudo</span></div></td>
-                                                    <td><div class="demonstracao-celula demonstracao-celula-redes"><strong>Redes</strong><span>Estudo</span></div></td>
-                                                    <td><div class="demonstracao-celula demonstracao-celula-banco"><strong>Banco de dados</strong><span>Revisão</span></div></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">19:00</th>
-                                                    <td><div class="demonstracao-celula demonstracao-celula-redes"><strong>Redes</strong><span>Revisão</span></div></td>
-                                                    <td class="demonstracao-sem-horario">Sem horário</td>
-                                                    <td class="demonstracao-sem-horario">Sem horário</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <p class="demonstracao-nota"><span aria-hidden="true">↳</span> Estudo, revisão e estados aparecem por escrito. Um bloco pulado volta para o plano, sem penalidade.</p>
-                                    <button class="demonstracao-botao-texto" type="button" data-acao="ver-assessoria">Entender a assessoria <span aria-hidden="true">→</span></button>
-                                </section>
-
-                                <section class="demonstracao-painel" role="tabpanel" id="exemplo-assessoria" aria-labelledby="aba-assessoria" tabindex="0" hidden>
-                                    <div class="demonstracao-cabecalho">
-                                        <p class="demonstracao-sobretitulo">Planejar, estudar, ajustar</p>
-                                        <h4>Sua assessoria</h4>
-                                        <p>Orientação automatizada para organizar o que estudar e quando revisar.</p>
-                                    </div>
-                                    <ol class="demonstracao-etapas">
-                                        <li><span aria-hidden="true">01</span><div><h5>Parte do que você precisa</h5><p>Você informa as matérias, o quanto domina cada uma e o peso delas no seu objetivo.</p><div class="demonstracao-exemplo">JavaScript · lembro de ter visto · pesa bastante</div></div></li>
-                                        <li><span aria-hidden="true">02</span><div><h5>Encontra espaço na sua rotina</h5><p>Você escolhe o período e os horários livres. A plataforma verifica o que cabe e distribui os blocos de estudo e a reserva para revisões.</p><div class="demonstracao-exemplo">Segunda, 18:00 · um horário que você escolheu</div></div></li>
-                                        <li><span aria-hidden="true">03</span><div><h5>Acompanha e reorganiza</h5><p>Depois do estudo, você conta como foi. Isso orienta as revisões. Se um bloco não for feito, ele volta para o plano.</p><div class="demonstracao-exemplo">Sua rotina mudou? Os próximos blocos se ajustam.</div></div></li>
-                                    </ol>
-                                    <button class="demonstracao-botao" type="button" data-acao="ver-hoje">Experimentar um bloco <span aria-hidden="true">→</span></button>
-                                </section>
+                            <ul class="demonstracao-materias" aria-label="Matérias do exemplo">
+                                <li><strong>JavaScript</strong><span>Lembro de ter visto · pesa bastante</span></li>
+                                <li><strong>Banco de dados</strong><span>Resolvo consultando · peso normal</span></li>
+                            </ul>
+                            <div class="demonstracao-disponibilidade">
+                                <div><strong id="demonstracao-dias">Segunda a sexta</strong><span id="demonstracao-horario">18:00–19:00</span></div>
+                                <span class="demonstracao-tempo" id="demonstracao-tempo">1 hora por dia</span>
                             </div>
+                            <button class="demonstracao-link" type="button" data-acao="ver-plano" disabled>Ver como fica o plano <span aria-hidden="true">→</span></button>
+                        </section>
 
-                            <aside class="demonstracao-orientacao" aria-labelledby="demonstracao-orientacao-titulo">
-                                <span class="demonstracao-orientacao-icone" aria-hidden="true">✧</span>
-                                <p class="demonstracao-sobretitulo">Por trás do plano</p>
-                                <h4 id="demonstracao-orientacao-titulo">Você escolhe quando. O plano organiza o quê.</h4>
-                                <p id="demonstracao-orientacao-texto">O peso e o domínio de cada matéria orientam a distribuição. Cada bloco explica por que está ali.</p>
-                                <div class="demonstracao-orientacao-rodape"><span aria-hidden="true">↳</span> Um plano que respeita a sua rotina.</div>
-                            </aside>
-                        </div>
-                        <div class="demonstracao-rodape"><span id="demonstracao-instrucao">Ative o JavaScript para experimentar os botões deste exemplo.</span><span>Somente demonstração · nada é salvo</span></div>
+                        <section class="demonstracao-painel" role="tabpanel" id="exemplo-plano" aria-labelledby="aba-plano" tabindex="0" data-estado="normal">
+                            <div class="demonstracao-cabecalho">
+                                <h4>Seu tempo bem distribuído.</h4>
+                                <p id="demonstracao-resumo-plano">10 blocos na semana · 30 min cada</p>
+                            </div>
+                            <ul class="demonstracao-distribuicao" aria-label="Distribuição dos blocos no exemplo">
+                                <li data-materia="javascript">
+                                    <strong>JavaScript</strong>
+                                    <span class="demonstracao-marcadores" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+                                    <span class="demonstracao-quantidade">5 blocos</span>
+                                </li>
+                                <li data-materia="banco">
+                                    <strong>Banco de dados</strong>
+                                    <span class="demonstracao-marcadores" aria-hidden="true"><span></span><span></span><span></span></span>
+                                    <span class="demonstracao-quantidade">3 blocos</span>
+                                </li>
+                                <li data-materia="reserva">
+                                    <strong>Reserva para revisões</strong>
+                                    <span class="demonstracao-marcadores" aria-hidden="true"><span></span><span></span></span>
+                                    <span class="demonstracao-quantidade">2 blocos</span>
+                                </li>
+                            </ul>
+                            <p class="demonstracao-nota" id="demonstracao-aviso-plano">Mais espaço para o que pesa mais e você domina menos.</p>
+                            <button class="demonstracao-link" type="button" data-acao="ver-ajustes" disabled>Ver ajustes de tempo <span aria-hidden="true">→</span></button>
+                        </section>
+
+                        <section class="demonstracao-painel" role="tabpanel" id="exemplo-ajustes" aria-labelledby="aba-ajustes" tabindex="0" hidden>
+                            <div class="demonstracao-cabecalho">
+                                <h4>A rotina mudou? Veja as opções.</h4>
+                                <p>O plano mostra o que cabe e como ajustar.</p>
+                            </div>
+                            <div class="demonstracao-diagnostico" id="demonstracao-diagnostico" data-estado="normal">
+                                <h5 id="demonstracao-situacao" tabindex="-1">Cabe no seu tempo.</h5>
+                                <p id="demonstracao-numeros">10 no período · 8 para estudo · 6 pedidos</p>
+                            </div>
+                            <p class="demonstracao-nota" id="demonstracao-explicacao">Experimente estudar em três dias da semana.</p>
+                            <button class="demonstracao-botao" type="button" data-acao="reduzir" disabled>Simular menos dias <span aria-hidden="true">→</span></button>
+                            <button class="demonstracao-botao" type="button" data-acao="ajustar" disabled hidden>Adicionar 30 min por dia <span aria-hidden="true">→</span></button>
+                            <button class="demonstracao-botao" type="button" data-acao="ver-plano" disabled hidden>Ver distribuição <span aria-hidden="true">→</span></button>
+                        </section>
+
+                        <p class="demonstracao-rodape" id="demonstracao-instrucao">Ative o JavaScript para explorar o exemplo.</p>
                     </div>
                     <p class="demonstracao-status" id="demonstracao-status" role="status" aria-live="polite" aria-atomic="true"></p>
                 </div>
