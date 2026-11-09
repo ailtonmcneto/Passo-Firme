@@ -159,31 +159,43 @@ Para a situação "prova em poucos dias e não cabe tudo". O sistema **detecta e
 
 ## 7. SM-2 (`core/sm2.js`)
 
-- O estado de cada tópico é `{ efCentesimos = 250, intervalo = 0, repeticoes = 0, ultimaRevisao = null, proximaRevisao = null }`.
-- `proximaRevisao(estado, qualidade)`:
+O SM-2 decide quando cada matéria deve voltar como revisão. O estado dele **não é gravado**: é sempre recalculado a partir dos blocos concluídos, do mesmo jeito que o cronograma é sempre regenerado. Assim não existe estado que possa ficar diferente do histórico.
+
+- **Estado** de uma matéria: `{ efCentesimos, intervalo, repeticoes, ultimaRevisao, proximaRevisao }`. O inicial é `{ 250, 0, 0, null, null }`.
+- **Inteiros:** o ease factor fica em centésimos (250 = 2,50). Em ponto flutuante, 1,94 vira 1,9399999999999997, e 25 × 1,94 = 48,5 arredonda para 48 em vez de 49; numa varredura de todas as sequências de até 10 respostas, 4.965 intervalos saíram diferentes do valor exato. Com inteiros, a conta é exata em JS, em Java e no papel.
+- `proximaRevisao(estado, qualidade)`, a fórmula de uma repetição:
   - qualidade < 3: `{ ef inalterado, intervalo 1, repeticoes 0 }`;
   - senão: `ef = max(130, ef + 10 − (5−q)·(8 + (5−q)·2))`, que dá +10 para q = 5, 0 para q = 4 e −14 para q = 3;
   - o intervalo é 1 se repeticoes = 0, 3 se repeticoes = 1, e `floor((intervalo·ef + 50) / 100)` nos demais casos (arredondamento meio-para-cima, só com inteiros);
   - as repetições somam 1.
-- `aplicarConclusao(estado, qualidade, dataConclusao)` devolve o novo estado com `ultimaRevisao = dataConclusao` e `proximaRevisao = dataConclusao + intervalo`.
-- **C5:** qualquer bloco concluído do tópico, de ESTUDO ou de REVISAO, passa por `aplicarConclusao`.
-- **Autoavaliação (R15):**
+- **Ordem das conclusões:** `concluidoEm` crescente, depois `sequenciaConclusao` crescente. Nunca pelo `id`, que é a ordem de criação dos blocos, não a de conclusão.
+- **Uma repetição por dia:** repetir no mesmo dia não espaça. Por isso cada matéria conta no máximo uma repetição por dia, e vale a **última** resposta daquele dia.
+- **C5:** qualquer bloco concluído da matéria, de ESTUDO ou de REVISAO (inclusive os extras), conta. Blocos PENDENTE, PULADO e PERDIDO não contam.
+- `estadoDoTopico(blocosDoTopico)`: percorre os blocos concluídos da matéria na ordem das conclusões, agrupa por `concluidoEm` e aplica `proximaRevisao` uma vez por dia, com a qualidade da última conclusão do dia. `ultimaRevisao` é o último dia com conclusão, e `proximaRevisao = ultimaRevisao + intervalo`.
+- `estadosPeloHistorico(blocos)`: devolve um `Map` de `topicoId` para o estado, só com as matérias que têm pelo menos uma conclusão. Agrupa os blocos por matéria e chama `estadoDoTopico` em cada grupo: O(n log n) no total. Quem precisa dos estados (revisões, retenção, replanejamento) chama esta função **uma vez** e consulta o mapa; nunca recalcula bloco a bloco.
+- **Autoavaliação (R15):** `QUALIDADE_POR_RESPOSTA`:
   - `EXPLIQUEI_SEM_CONSULTAR` = 5
   - `ENTENDI_MAS_TRAVARIA` = 3
   - `NAO_ENTROU` = 1
 
 ## 8. Retenção e explicabilidade (`core/retencao.js`)
 
-- `retencao(diasDesdeUltima, S) = e^(−t/S)`, com `S = max(1, intervalo)` (R14). É float, mas só serve para ordenar e exibir; os testes comparam com tolerância.
+- `retencao(diasDesdeUltima, S) = e^(−t/S)`, com `t` = dias desde `ultimaRevisao` e `S = max(1, intervalo)`, os dois tirados do estado do SM-2 (§7) (R14). É float, mas só serve para ordenar e exibir; os testes comparam com tolerância.
 - O desempate por retenção é feito por inteiros: ordene por `diasDesdeUltima / S` decrescente, comparando por produto cruzado. Isso equivale a ordenar a retenção do menor para o maior.
-- `motivoDoBloco(bloco, topico, contexto)` gera uma frase curta: "peso alto, domínio baixo", "revisão: estudado há 3 dias", "não revisado há 6 dias".
-  - Peso ≥ 4 é "alto", ≤ 2 é "baixo"; domínio ≤ 2 é "baixo", ≥ 4 é "alto".
+- `motivoDoBloco(bloco, topico, estado)` gera a frase curta que explica o bloco. `estado` é o estado do SM-2 da matéria (§7), ou null se ela nunca foi concluída. Os dias são contados até `bloco.data`, não até hoje, porque o motivo é gerado para blocos futuros também.
+  - ESTUDO: "peso P, domínio D", com P e D em {"alto", "médio", "baixo"}. Peso ≥ 4 é alto, 3 é médio, ≤ 2 é baixo; domínio ≤ 2 é baixo, 3 é médio, ≥ 4 é alto. Ex.: "peso alto, domínio baixo".
+  - ESTUDO extra (estudo antecipado): "estudo antecipado: sobrou tempo hoje e N é a matéria de maior prioridade que ainda falta".
+  - REVISAO no dia devido ou antes: "revisão: estudado há X dias" (X = dias de `ultimaRevisao` até `bloco.data`; "há 1 dia" no singular).
+  - REVISAO atrasada (`bloco.data > proximaRevisao`): "não revisado há X dias".
+  - REVISAO extra: "revisão extra: N é o assunto que você estudou há mais tempo".
+  - RESERVA: "horário livre".
+  - Frases sem ponto final e sem exclamação (docs/front.md §7). N é o nome da matéria.
 
 ## 9. Revisões na reserva (`core/revisoes.js`)
 
-- Cada tópico tem **no máximo uma revisão pendente**: a da `proximaRevisao` atual. A próxima só nasce quando esta é concluída, o que encadeia as revisões e evita que estourem a reserva.
+- Cada tópico tem **no máximo uma revisão pendente**: a da `proximaRevisao` do estado do SM-2 (§7). A próxima só nasce quando esta é concluída, o que encadeia as revisões e evita que estourem a reserva.
 - `encaixarRevisoes({ blocos, topicos, hoje, modoCobertura })`:
-  1. Candidatos são os tópicos com `proximaRevisao` não nula e ≤ último dia do plano. Revisão atrasada (`proximaRevisao < hoje`) conta como devida hoje (R10).
+  1. Candidatos são os tópicos cujo estado do SM-2 (§7) tem `proximaRevisao` não nula e ≤ último dia do plano. Revisão atrasada (`proximaRevisao < hoje`) conta como devida hoje (R10). O mapa de estados é calculado uma vez, no início, com `estadosPeloHistorico`.
   2. **C5:** se existe um bloco ESTUDO do tópico com `hoje ≤ data ≤ max(hoje, proximaRevisao)`, não agenda revisão, porque o estudo cumpre esse papel.
   3. A ordem de encaixe é: data devida crescente; depois menor retenção (§8); depois a ordem canônica.
   4. Cada revisão ocupa o primeiro slot RESERVA livre com `data ≥ max(hoje, devida)`, que vira `tipo REVISAO` com o `topicoId` do tópico. Se não houver slot livre até o fim, gera o aviso `{ id, tipo: 'REVISAO_SEM_ESPACO', devida }`.
@@ -207,7 +219,7 @@ Para a situação "prova em poucos dias e não cabe tudo". O sistema **detecta e
   1. Calcula a capacidade de `max(hoje, inicio)` até `fim`, menos os slots fixados.
   2. Roda a viabilidade e a alocação com a demanda restante.
   3. Sequencia nos slots livres, em revezamento se `estadoCobertura` for ATIVA (§6.1).
-  4. Encaixa as revisões a partir do estado SM-2 atual (R12: revisões futuras não fixadas são sempre regeneradas).
+  4. Calcula os estados do SM-2 com `estadosPeloHistorico` (§7) e encaixa as revisões a partir deles (R12: revisões futuras não fixadas são sempre regeneradas).
   5. Preenche a reserva livre de hoje (§9).
 - **Aluno sumido (R10):** sai naturalmente das regras acima. Os blocos perdidos voltam como demanda, há no máximo uma revisão atrasada por tópico e a viabilidade é recalculada com números honestos.
 - **Terminou antes do prazo:** demanda 0 em todos os tópicos. Todos os slots viram RESERVA e o plano passa a ter só revisões e sugestões.
@@ -218,12 +230,11 @@ Para a situação "prova em poucos dias e não cabe tudo". O sistema **detecta e
 - `blocos`:
   - `status: 'PENDENTE' | 'CONCLUIDO' | 'PULADO' | 'PERDIDO'` substitui `concluido`;
   - `tipo: 'ESTUDO' | 'REVISAO' | 'RESERVA'`;
-  - ganha `fixado` e `motivo`.
-  - O atraso é derivado de `concluidoEm − data`, sem campo próprio.
+  - ganha `fixado` e `motivo`;
+  - ao ser concluído, o bloco grava `qualidade` (0 a 5, de `QUALIDADE_POR_RESPOSTA`), `concluidoEm` ('YYYY-MM-DD', a data local em que o aluno marcou Feito) e `sequenciaConclusao` (inteiro, único no plano, crescente na ordem das conclusões, gerado pela fachada).
+  - O atraso é derivado de `diferencaEmDias(data, concluidoEm)`, sem campo próprio.
 - `blocos` ganha também `extra` (revisão extra ou estudo antecipado, §9).
-- `topicos`:
-  - `efCentesimos` substitui `easeFactor`;
-  - ganha `blocosAlocados`, `ultimaRevisao`, `proximaRevisao` e `dominioRevisadoApos` (§12).
+- `topicos`: não guarda estado do SM-2 (§7: ele é recalculado pelo histórico); ganha `blocosAlocados` e `dominioRevisadoApos` (§12).
 - `planos` ganha `respostaCobertura: null | { resposta: 'ACEITO' | 'RECUSADO', dataAlvo }` (§6.1).
 
 ## 12. Sugestão de ajuste do domínio (`core/estimador.js`)
@@ -231,7 +242,7 @@ Para a situação "prova em poucos dias e não cabe tudo". O sistema **detecta e
 A autoavaliação nunca muda o domínio sozinha; ela gera uma sugestão que o aluno aceita ou recusa. Esta é a implementação inicial da interface `EstimadorDificuldade` prevista no contexto: uma regra determinística que um modelo pode substituir depois.
 
 - `sugerirAjusteDominio(topico, blocosDoTopico)`:
-  - Ordena os blocos CONCLUIDO do tópico por `concluidoEm` e depois por `id`, e ignora os `topico.dominioRevisadoApos` primeiros (padrão 0). Assim só contam as respostas dadas depois da última sugestão aceita ou recusada, sem depender de relógio.
+  - Ordena os blocos CONCLUIDO do tópico na ordem das conclusões (§7: `concluidoEm`, depois `sequenciaConclusao`), e ignora os `topico.dominioRevisadoApos` primeiros (padrão 0). Assim só contam as respostas dadas depois da última sugestão aceita ou recusada, sem depender de relógio. Aqui cada conclusão conta, mesmo duas no mesmo dia: o estimador olha as respostas, não o espaçamento.
   - **Para baixo:** se as 2 últimas qualidades forem 1 ("não entrou") e o domínio for > 1, sugere `{ id, de: dominio, para: dominio − 1, motivo }`.
   - **Para cima:** se as 3 últimas qualidades forem 5 ("expliquei sem consultar") e o domínio for < 5, sugere `para: dominio + 1`.
   - Senão, devolve null.
