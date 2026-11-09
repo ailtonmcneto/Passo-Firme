@@ -1,0 +1,130 @@
+{
+  "descricao": "Sugestão de ajuste do domínio (§12). As qualidades seguem a ordem das conclusões (concluidoEm, depois sequenciaConclusao) e cada conclusão conta, mesmo duas no mesmo dia.",
+  "sugerir": [
+    {
+      "nome": "[5,1,1] com domínio 4 sugere 4→3",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 4 },
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 1 },
+        { "id": 3, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 3, "qualidade": 1 }
+      ],
+      "esperado": { "id": "so", "de": 4, "para": 3, "motivo": "você marcou 'não entrou' nas 2 últimas vezes em SO; o domínio declarado é 4" }
+    },
+    {
+      "nome": "[1,1] com domínio 1 não sugere (não existe domínio 0)",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 1 },
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 1 },
+        { "id": 2, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 1 }
+      ],
+      "esperado": null
+    },
+    {
+      "nome": "[3,5,5,5] com domínio 2 sugere 2→3",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 2 },
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 3 },
+        { "id": 2, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 5 },
+        { "id": 3, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 3, "qualidade": 5 },
+        { "id": 4, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-14", "sequenciaConclusao": 4, "qualidade": 5 }
+      ],
+      "esperado": { "id": "so", "de": 2, "para": 3, "motivo": "você marcou 'consegui explicar sem consultar' nas 3 últimas vezes em SO; o domínio declarado é 2" }
+    },
+    {
+      "nome": "[5,5] não sugere (subir pede três)",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 3 },
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 5 }
+      ],
+      "esperado": null
+    },
+    {
+      "nome": "duas conclusões no mesmo dia, 1 e 1, com domínio 3 sugere 3→2 (o estimador conta cada resposta, ao contrário do SM-2)",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 3 },
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 1 },
+        { "id": 2, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 2, "qualidade": 1 }
+      ],
+      "esperado": { "id": "so", "de": 3, "para": 2, "motivo": "você marcou 'não entrou' nas 2 últimas vezes em SO; o domínio declarado é 3" }
+    },
+    {
+      "nome": "ordem pela sequência, não pelo id: [5,1,1] pela sequência; pelos ids seria [1,1,5] e daria null",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 4 },
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 2, "qualidade": 1 },
+        { "id": 2, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 3, "qualidade": 1 },
+        { "id": 3, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 }
+      ],
+      "esperado": { "id": "so", "de": 4, "para": 3, "motivo": "você marcou 'não entrou' nas 2 últimas vezes em SO; o domínio declarado é 4" }
+    },
+    {
+      "nome": "PULADO e PERDIDO não contam: [1, PULADO, PERDIDO] não tem duas respostas",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 3 },
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 1 },
+        { "id": 2, "topicoId": "so", "tipo": "ESTUDO", "status": "PULADO" },
+        { "id": 3, "topicoId": "so", "tipo": "ESTUDO", "status": "PERDIDO" }
+      ],
+      "esperado": null
+    }
+  ],
+  "recusa": {
+    "descricao": "[5,1,1] com domínio 4 sugere; o aluno recusa (dominioRevisadoApos = 3). Mais um 1: só uma resposta depois da recusa, null. Mais outro 1: duas seguidas, sugere de novo.",
+    "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 4 },
+    "blocos": [
+      { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+      { "id": 2, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 1 },
+      { "id": 3, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 3, "qualidade": 1 }
+    ],
+    "topicoRecusado": { "id": "so", "nome": "SO", "peso": 3, "dominio": 4, "dominioRevisadoApos": 3 },
+    "passos": [
+      {
+        "novoBloco": { "id": 4, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-12", "sequenciaConclusao": 4, "qualidade": 1 },
+        "esperado": null
+      },
+      {
+        "novoBloco": { "id": 5, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-13", "sequenciaConclusao": 5, "qualidade": 1 },
+        "esperado": { "id": "so", "de": 4, "para": 3, "motivo": "você marcou 'não entrou' nas 2 últimas vezes em SO; o domínio declarado é 4" }
+      }
+    ]
+  },
+  "aplicar": [
+    {
+      "nome": "4→3 num tópico automático com blocosAlocados 2 dá blocosAlocados 3",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 4, "blocosAlocados": 2 },
+      "novoDominio": 3,
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 1 },
+        { "id": 3, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 3, "qualidade": 1 },
+        { "id": 4, "topicoId": "so", "tipo": "ESTUDO", "status": "PENDENTE" }
+      ],
+      "esperado": { "id": "so", "nome": "SO", "peso": 3, "dominio": 3, "blocosAlocados": 3, "dominioRevisadoApos": 3 }
+    },
+    {
+      "nome": "num tópico manual, blocosAlocados não muda",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 4, "blocosDesejados": 4, "blocosAlocados": 4 },
+      "novoDominio": 3,
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 1 },
+        { "id": 3, "topicoId": "so", "tipo": "REVISAO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 3, "qualidade": 1 }
+      ],
+      "esperado": { "id": "so", "nome": "SO", "peso": 3, "dominio": 3, "blocosDesejados": 4, "blocosAlocados": 4, "dominioRevisadoApos": 3 }
+    },
+    {
+      "nome": "2→5 com blocosAlocados 4 e 3 ESTUDOs concluídos dá 3 (4 + 1 − 4 = 1 ficaria abaixo do que já foi feito)",
+      "topico": { "id": "so", "nome": "SO", "peso": 3, "dominio": 2, "blocosAlocados": 4 },
+      "novoDominio": 5,
+      "blocos": [
+        { "id": 1, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-09", "sequenciaConclusao": 1, "qualidade": 5 },
+        { "id": 2, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-10", "sequenciaConclusao": 2, "qualidade": 5 },
+        { "id": 3, "topicoId": "so", "tipo": "ESTUDO", "status": "CONCLUIDO", "concluidoEm": "2026-11-11", "sequenciaConclusao": 3, "qualidade": 5 },
+        { "id": 4, "topicoId": "so", "tipo": "ESTUDO", "status": "PENDENTE" }
+      ],
+      "esperado": { "id": "so", "nome": "SO", "peso": 3, "dominio": 5, "blocosAlocados": 3, "dominioRevisadoApos": 3 }
+    }
+  ]
+}
