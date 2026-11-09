@@ -1,0 +1,21 @@
+{
+  "descricao": "Reta final resolvendo o bloqueio, com o plano e os tópicos do primeiro caso de viabilidade-bloqueante.json (3 blocos, 2 de estudo, 3 matérias). Com os 3 blocos como estudo, cabe 1 por matéria. Acrescentando W, são 4 matérias para 3 blocos e a reta final também bloqueia: não aparece como saída.",
+  "fixtureViabilidade": "viabilidade-bloqueante.json",
+  "hoje": "2026-11-09",
+  "normal": { "capacidadeEstudo": 2, "bloqueante": true },
+  "retaFinal": {
+    "capacidadeEstudo": 3,
+    "demandaTotal": 11,
+    "cobertura": { "percentual": 27 },
+    "bloqueante": false
+  },
+  "comW": {
+    "topicoAMais": { "id": "W", "nome": "W", "peso": 1, "dominio": 1 },
+    "retaFinal": {
+      "capacidadeEstudo": 3,
+      "demandaTotal": 16,
+      "cobertura": { "percentual": 18 },
+      "bloqueante": true
+    }
+  }
+}
