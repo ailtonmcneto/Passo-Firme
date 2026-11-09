@@ -1,0 +1,14 @@
+{
+  "descricao": "Golden do caso F do alocador (alocador-f-10-1-2-2.json): L 10, SO 1, DB 2, DE 2, sem reserva, N = 15. Em 3,75 e 11,25, L, DB e DE empatam na posição; a menor quota põe DB e DE antes de L. Os blocos seguidos de L são esperados (R13: não há correção).",
+  "entrada": {
+    "quotas": { "L": 10, "SO": 1, "DB": 2, "DE": 2 },
+    "topicos": [
+      { "id": "L", "prioridade": 25, "ordem": 0 },
+      { "id": "SO", "prioridade": 5, "ordem": 1 },
+      { "id": "DB", "prioridade": 5, "ordem": 2 },
+      { "id": "DE", "prioridade": 5, "ordem": 3 }
+    ],
+    "N": 15
+  },
+  "esperado": ["L", "L", "DB", "DE", "L", "L", "L", "SO", "L", "L", "DB", "DE", "L", "L", "L"]
+}
