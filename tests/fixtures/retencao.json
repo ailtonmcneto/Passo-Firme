@@ -1,0 +1,93 @@
+{
+  "descricao": "Retenção e^(−t/S), ordenação por retenção (por produto cruzado) e as frases de motivoDoBloco (§8).",
+  "retencao": {
+    "tolerancia": 0.0001,
+    "casos": [
+      { "t": 0, "S": 5, "esperado": 1 },
+      { "t": 5, "S": 5, "esperado": 0.36788, "nota": "e^(−1)" },
+      { "t": 3, "S": 1, "esperado": 0.04979, "nota": "e^(−3)" },
+      { "t": 3, "S": 0, "esperado": 0.04979, "nota": "S < 1 é tratado como 1: igual a retencao(3, 1)" }
+    ]
+  },
+  "ordenacao": {
+    "descricao": "Menor retenção primeiro, ou seja, maior diasDesdeUltima / intervalo primeiro. Razões: A = 3/1 = 3; C = 4/3 ≈ 1,33; B = 6/8 = 0,75.",
+    "entrada": [
+      { "id": "A", "diasDesdeUltima": 3, "intervalo": 1 },
+      { "id": "B", "diasDesdeUltima": 6, "intervalo": 8 },
+      { "id": "C", "diasDesdeUltima": 4, "intervalo": 3 }
+    ],
+    "esperado": ["A", "C", "B"]
+  },
+  "motivoDoBloco": [
+    {
+      "nome": "ESTUDO, peso alto e domínio baixo",
+      "bloco": { "data": "2026-11-12", "tipo": "ESTUDO" },
+      "topico": { "id": "js", "nome": "JavaScript", "peso": 5, "dominio": 1 },
+      "estado": null,
+      "esperado": "peso alto, domínio baixo"
+    },
+    {
+      "nome": "ESTUDO, peso médio e domínio médio",
+      "bloco": { "data": "2026-11-12", "tipo": "ESTUDO" },
+      "topico": { "id": "db", "nome": "Banco de dados", "peso": 3, "dominio": 3 },
+      "estado": null,
+      "esperado": "peso médio, domínio médio"
+    },
+    {
+      "nome": "ESTUDO, peso baixo e domínio alto",
+      "bloco": { "data": "2026-11-12", "tipo": "ESTUDO" },
+      "topico": { "id": "so", "nome": "Sistemas operacionais", "peso": 2, "dominio": 4 },
+      "estado": null,
+      "esperado": "peso baixo, domínio alto"
+    },
+    {
+      "nome": "ESTUDO extra (estudo antecipado)",
+      "bloco": { "data": "2026-11-09", "tipo": "ESTUDO", "extra": true },
+      "topico": { "id": "db", "nome": "Banco de dados", "peso": 3, "dominio": 2 },
+      "estado": null,
+      "esperado": "estudo antecipado: sobrou tempo hoje e Banco de dados é a matéria de maior prioridade que ainda falta"
+    },
+    {
+      "nome": "REVISAO no dia devido",
+      "bloco": { "data": "2026-11-12", "tipo": "REVISAO" },
+      "topico": { "id": "js", "nome": "JavaScript", "peso": 5, "dominio": 1 },
+      "estado": { "efCentesimos": 270, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-12" },
+      "esperado": "revisão: estudado há 3 dias"
+    },
+    {
+      "nome": "REVISAO antes do dia devido",
+      "bloco": { "data": "2026-11-11", "tipo": "REVISAO" },
+      "topico": { "id": "js", "nome": "JavaScript", "peso": 5, "dominio": 1 },
+      "estado": { "efCentesimos": 270, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-12" },
+      "esperado": "revisão: estudado há 2 dias"
+    },
+    {
+      "nome": "REVISAO no dia seguinte: há 1 dia, no singular",
+      "bloco": { "data": "2026-11-10", "tipo": "REVISAO" },
+      "topico": { "id": "js", "nome": "JavaScript", "peso": 5, "dominio": 1 },
+      "estado": { "efCentesimos": 260, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-10" },
+      "esperado": "revisão: estudado há 1 dia"
+    },
+    {
+      "nome": "REVISAO atrasada (bloco.data > proximaRevisao)",
+      "bloco": { "data": "2026-11-15", "tipo": "REVISAO" },
+      "topico": { "id": "js", "nome": "JavaScript", "peso": 5, "dominio": 1 },
+      "estado": { "efCentesimos": 260, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-10" },
+      "esperado": "não revisado há 6 dias"
+    },
+    {
+      "nome": "REVISAO extra",
+      "bloco": { "data": "2026-11-09", "tipo": "REVISAO", "extra": true },
+      "topico": { "id": "so", "nome": "SO", "peso": 2, "dominio": 4 },
+      "estado": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-05", "proximaRevisao": "2026-11-06" },
+      "esperado": "revisão extra: SO é o assunto que você estudou há mais tempo"
+    },
+    {
+      "nome": "RESERVA",
+      "bloco": { "data": "2026-11-09", "tipo": "RESERVA" },
+      "topico": null,
+      "estado": null,
+      "esperado": "horário livre"
+    }
+  ]
+}

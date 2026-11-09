@@ -1,0 +1,50 @@
+{
+  "descricao": "proximaRevisao aplicada passo a passo a partir do estado inicial (ef 250, intervalo 0, repetições 0). Cada passo é uma resposta num dia diferente. O campo `conta` mostra de onde vem cada intervalo: 1 na primeira repetição, 3 na segunda e floor((intervalo·ef + 50) / 100) a partir da terceira, com o ef já atualizado.",
+  "sequencias": [
+    {
+      "respostas": [5, 5, 5],
+      "passos": [
+        { "efCentesimos": 260, "intervalo": 1, "repeticoes": 1, "conta": "repetições 0 → 1; ef 250 + 10" },
+        { "efCentesimos": 270, "intervalo": 3, "repeticoes": 2, "conta": "repetições 1 → 3; ef 260 + 10" },
+        { "efCentesimos": 280, "intervalo": 8, "repeticoes": 3, "conta": "floor((3·280+50)/100) = floor(890/100) = 8" }
+      ]
+    },
+    {
+      "respostas": [4, 4, 4],
+      "passos": [
+        { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "conta": "repetições 0 → 1; q = 4 não muda o ef" },
+        { "efCentesimos": 250, "intervalo": 3, "repeticoes": 2, "conta": "repetições 1 → 3" },
+        { "efCentesimos": 250, "intervalo": 8, "repeticoes": 3, "conta": "floor((3·250+50)/100) = floor(800/100) = 8" }
+      ]
+    },
+    {
+      "respostas": [5, 1, 5],
+      "passos": [
+        { "efCentesimos": 260, "intervalo": 1, "repeticoes": 1, "conta": "repetições 0 → 1; ef 250 + 10" },
+        { "efCentesimos": 260, "intervalo": 1, "repeticoes": 0, "conta": "q < 3: intervalo 1, repetições 0, ef inalterado" },
+        { "efCentesimos": 270, "intervalo": 1, "repeticoes": 1, "conta": "a sequência recomeçou: repetições 0 → 1; ef 260 + 10" }
+      ]
+    },
+    {
+      "respostas": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+      "passos": [
+        { "efCentesimos": 236, "intervalo": 1, "repeticoes": 1, "conta": "repetições 0 → 1; ef 250 − 14" },
+        { "efCentesimos": 222, "intervalo": 3, "repeticoes": 2, "conta": "repetições 1 → 3; ef 236 − 14" },
+        { "efCentesimos": 208, "intervalo": 6, "repeticoes": 3, "conta": "floor((3·208+50)/100) = floor(674/100) = 6" },
+        { "efCentesimos": 194, "intervalo": 12, "repeticoes": 4, "conta": "floor((6·194+50)/100) = floor(1214/100) = 12" },
+        { "efCentesimos": 180, "intervalo": 22, "repeticoes": 5, "conta": "floor((12·180+50)/100) = floor(2210/100) = 22" },
+        { "efCentesimos": 166, "intervalo": 37, "repeticoes": 6, "conta": "floor((22·166+50)/100) = floor(3702/100) = 37" },
+        { "efCentesimos": 152, "intervalo": 56, "repeticoes": 7, "conta": "floor((37·152+50)/100) = floor(5674/100) = 56" },
+        { "efCentesimos": 138, "intervalo": 77, "repeticoes": 8, "conta": "floor((56·138+50)/100) = floor(7778/100) = 77" },
+        { "efCentesimos": 130, "intervalo": 100, "repeticoes": 9, "conta": "ef max(130, 138 − 14 = 124) = 130; floor((77·130+50)/100) = floor(10060/100) = 100" },
+        { "efCentesimos": 130, "intervalo": 130, "repeticoes": 10, "conta": "ef fica no mínimo 130; floor((100·130+50)/100) = floor(13050/100) = 130" }
+      ]
+    }
+  ],
+  "casoInteiros": {
+    "descricao": "O caso que justifica o ef em centésimos. Com inteiros: floor((25·194+50)/100) = floor(4900/100) = 49. Em ponto flutuante, o ef 1,94 chega como 1,9399999999999997 depois de quatro respostas 3, e Math.round(25 × 1,9399999999999997) = Math.round(48,49999…) = 48.",
+    "estado": { "efCentesimos": 194, "intervalo": 25, "repeticoes": 5 },
+    "qualidade": 4,
+    "esperado": { "efCentesimos": 194, "intervalo": 49, "repeticoes": 6 }
+  }
+}
