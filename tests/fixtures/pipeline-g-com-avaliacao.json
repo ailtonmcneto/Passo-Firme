@@ -1,0 +1,51 @@
+{
+  "descricao": "G (criação). O plano com avaliação em 13/11, hoje 09/11. A reserva de hoje (11-09#2) vira estudo antecipado de a; depois da prova, tudo é RESERVA.",
+  "entrada": {
+    "plano": { "inicio": "2026-11-09", "fim": "2026-11-22", "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 }, "diasFolga": ["2026-11-18"], "dataAvaliacao": "2026-11-13" },
+    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3 }],
+    "hoje": "2026-11-09"
+  },
+  "esperado": {
+    "bloqueado": false,
+    "blocos": [
+      { "data": "2026-11-09", "ordem": 1, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
+      { "data": "2026-11-09", "ordem": 2, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": true, "fixado": false, "motivo": "estudo antecipado: sobrou tempo hoje e a é a matéria de maior prioridade que ainda falta" },
+      { "data": "2026-11-10", "ordem": 1, "topicoId": "b", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
+      { "data": "2026-11-10", "ordem": 2, "topicoId": "c", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio baixo" },
+      { "data": "2026-11-11", "ordem": 1, "topicoId": "d", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio médio" },
+      { "data": "2026-11-11", "ordem": 2, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
+      { "data": "2026-11-11", "ordem": 3, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-11", "ordem": 4, "topicoId": "b", "tipo": "ESTUDO", "duracaoMin": 50, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
+      { "data": "2026-11-12", "ordem": 1, "topicoId": "c", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio baixo" },
+      { "data": "2026-11-12", "ordem": 2, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
+      { "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 25, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-16", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-17", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-17", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-19", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-19", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
+      { "data": "2026-11-20", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 25, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" }
+    ],
+    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1, "blocosAlocados": 3 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2, "blocosAlocados": 2 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1, "blocosAlocados": 2 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3, "blocosAlocados": 1 }],
+    "viabilidade": {
+      "viavel": false,
+      "bloqueante": false,
+      "capacidadeEstudo": 8,
+      "demandaTotal": 17,
+      "deficit": 9,
+      "cobertura": { "percentual": 47 },
+      "escapatorias": {
+        "maisTempo": { "minutosPorDia": 70, "diasAMais": null, "novoFim": null },
+        "reduzirDemanda": {
+          "topicos": [{ "id": "a", "antes": 5, "depois": 5 }, { "id": "b", "antes": 4, "depois": 1 }, { "id": "c", "antes": 5, "depois": 1 }, { "id": "d", "antes": 3, "depois": 1 }],
+          "suficiente": true
+        },
+        "removerTopicos": { "removidos": ["d", "c", "b"], "demandaRestante": 5 }
+      }
+    },
+    "retaFinal": null,
+    "cobertura": "NAO_SE_APLICA",
+    "avisos": []
+  }
+}
