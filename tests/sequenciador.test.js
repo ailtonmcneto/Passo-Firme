@@ -118,6 +118,22 @@ describe('mapearParaDias', () => {
     ]);
   });
 
+  test('dia com `ordens` (slots ocupados, §3) numera pelos slots que sobraram', () => {
+    // No dia 09 a posição 2 está ocupada por um bloco mantido: os livres são a 1 e a 3.
+    const dias = [
+      { data: '2026-11-09', blocos: [30, 50], naJanela: true, ordens: [1, 3] },
+      { data: '2026-11-10', blocos: [30, 30], naJanela: true },
+      { data: '2026-11-11', blocos: [30], naJanela: false, ordens: [2] },
+    ];
+    assert.deepEqual(mapearParaDias(['a', 'b', RESERVA, 'a'], dias), [
+      { data: '2026-11-09', ordem: 1, topicoId: 'a', tipo: 'ESTUDO', duracaoMin: 30 },
+      { data: '2026-11-09', ordem: 3, topicoId: 'b', tipo: 'ESTUDO', duracaoMin: 50 },
+      { data: '2026-11-10', ordem: 1, topicoId: null, tipo: 'RESERVA', duracaoMin: 30 },
+      { data: '2026-11-10', ordem: 2, topicoId: 'a', tipo: 'ESTUDO', duracaoMin: 30 },
+      { data: '2026-11-11', ordem: 2, topicoId: null, tipo: 'RESERVA', duracaoMin: 30 },
+    ]);
+  });
+
   test('sequência de tamanho diferente dos slots da janela lança RangeError', () => {
     const dias = [{ data: '2026-11-09', blocos: [30, 30], naJanela: true }];
     assert.throws(() => mapearParaDias(['a'], dias), RangeError);

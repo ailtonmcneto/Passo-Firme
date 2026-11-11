@@ -100,6 +100,8 @@ export function sequenciarRevezamento(quotas, topicos) {
 
 // Distribui a sequência pelos blocos de cada dia, na ordem. Os dias fora da janela (depois da
 // avaliação) não consomem a sequência: são inteiros de reserva.
+// Num dia com slots ocupados (§3), a posição real de cada slot livre vem em `dia.ordens`;
+// nos outros, é só a posição na lista.
 export function mapearParaDias(sequencia, dias) {
   const slotsNaJanela = dias
     .filter((dia) => dia.naJanela)
@@ -118,7 +120,7 @@ export function mapearParaDias(sequencia, dias) {
       const ehReserva = id === RESERVA;
       blocos.push({
         data: dia.data,
-        ordem: i + 1,
+        ordem: dia.ordens ? dia.ordens[i] : i + 1,
         topicoId: ehReserva ? null : id,
         tipo: ehReserva ? 'RESERVA' : 'ESTUDO',
         duracaoMin,
