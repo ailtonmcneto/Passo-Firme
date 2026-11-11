@@ -140,3 +140,28 @@ describe('ordenarPorPrioridade', () => {
     assert.throws(() => ordenarPorPrioridade([{ id: 'a', peso: 0, dominio: 3 }]), RangeError);
   });
 });
+
+// §2: a regra de demandaRestante mora em demanda(t), e o alocador, a viabilidade e a reta
+// final a herdam de lá.
+describe('demanda com demandaRestante', () => {
+  test('substitui a fórmula e o pedido do tópico manual', () => {
+    assert.equal(demanda({ peso: 2, dominio: 1, demandaRestante: 3 }), 3);
+    assert.equal(demanda({ peso: 2, dominio: 1, blocosDesejados: 9, demandaRestante: 3 }), 3);
+  });
+
+  test('0 é um valor válido: a matéria já terminou', () => {
+    assert.equal(demanda({ peso: 2, dominio: 1, demandaRestante: 0 }), 0);
+  });
+
+  test('undefined e null são o mesmo que ausente', () => {
+    assert.equal(demanda({ peso: 2, dominio: 1, demandaRestante: undefined }), 5);
+    assert.equal(demanda({ peso: 2, dominio: 1, demandaRestante: null }), 5);
+    assert.equal(demanda({ peso: 2, dominio: 1, blocosDesejados: 9, demandaRestante: null }), 9);
+  });
+
+  for (const invalido of [-1, 1.5, '2', NaN]) {
+    test(`demandaRestante ${String(invalido)} lança RangeError`, () => {
+      assert.throws(() => demanda({ peso: 2, dominio: 1, demandaRestante: invalido }), RangeError);
+    });
+  }
+});

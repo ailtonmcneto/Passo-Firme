@@ -28,8 +28,20 @@ export function ehManual(t) {
   return Number.isInteger(t.blocosDesejados) && t.blocosDesejados >= 1;
 }
 
-// O pedido do aluno vale mais que a fórmula.
+// O pedido do aluno vale mais que a fórmula. E, no replanejamento, o que ainda falta vale
+// mais que os dois: `demandaRestante` (calculada pelo replanejador, §10.4) substitui a
+// demanda, inclusive de tópico manual. A regra mora só aqui (§2), então o alocador, a
+// viabilidade e a reta final enxergam a mesma demanda sem repetir este `if`.
+// null conta como "não veio", porque um campo vazio lido do banco chega assim.
 export function demanda(t) {
+  if (t.demandaRestante !== undefined && t.demandaRestante !== null) {
+    if (!Number.isInteger(t.demandaRestante) || t.demandaRestante < 0) {
+      throw new RangeError(
+        `demandaRestante deve ser um inteiro ≥ 0, recebido ${JSON.stringify(t.demandaRestante)}`,
+      );
+    }
+    return t.demandaRestante;
+  }
   return ehManual(t) ? t.blocosDesejados : demandaMinima(t);
 }
 

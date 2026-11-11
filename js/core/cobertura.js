@@ -38,7 +38,7 @@ export function estadoCobertura({ plano, viabilidade, hoje }) {
 }
 
 // Os números da quinta saída. A demanda vem de montarEntradaAlocacao, que é a mesma regra da
-// viabilidade (demanda(t)) e ainda respeita `demandaRestante` no replanejamento. Não chama
+// viabilidade (demanda(t), que respeita `demandaRestante` no replanejamento, §2). Não chama
 // avaliarViabilidade porque ela não devolve quantas matérias têm demanda, que o bloqueio
 // precisa, e calcularia as escapatórias à toa.
 export function avaliarRetaFinal({ plano, topicos }) {
