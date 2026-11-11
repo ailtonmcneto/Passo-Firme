@@ -1,0 +1,54 @@
+{
+  "descricao": "preencherReservaDeHoje (§9). Mesmas convenções de revisoes-encaixar.json. Hoje 13/11.",
+  "topicos": [{ "id": "x", "prioridade": 20, "demanda": 3, "manual": false, "ordem": 0 }, { "id": "y", "prioridade": 10, "demanda": 2, "manual": false, "ordem": 1 }, { "id": "z", "prioridade": 5, "demanda": 0, "manual": false, "ordem": 2 }],
+  "casos": [
+    {
+      "nome": "P1",
+      "descricao": "x tem estudo hoje e não ganha revisão extra; y ganha. No segundo slot não sobra matéria estudada e entra o estudo antecipado de x, a de maior prioridade",
+      "entrada": {
+        "blocos": [
+          { "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-13", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-13", "ordem": 3, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+        ],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-12" }, "y": { "efCentesimos": 250, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-14" } },
+        "hoje": "2026-11-13"
+      },
+      "esperado": [
+        { "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "REVISAO", "duracaoMin": 30, "status": "PENDENTE", "extra": true, "fixado": false },
+        { "data": "2026-11-13", "ordem": 2, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": true, "fixado": false },
+        { "data": "2026-11-13", "ordem": 3, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+        { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+      ]
+    },
+    {
+      "nome": "P2",
+      "descricao": "nada estudado: estudo antecipado de x e de y; z tem demanda 0 e o terceiro slot continua livre",
+      "entrada": {
+        "blocos": [
+          { "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-13", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-13", "ordem": 3, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+        ],
+        "estados": {},
+        "hoje": "2026-11-13"
+      },
+      "esperado": [
+        { "data": "2026-11-13", "ordem": 1, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": true, "fixado": false },
+        { "data": "2026-11-13", "ordem": 2, "topicoId": "y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": true, "fixado": false },
+        { "data": "2026-11-13", "ordem": 3, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+      ]
+    },
+    {
+      "nome": "P3",
+      "descricao": "y foi pulada hoje e fica fora dos dois passos",
+      "entrada": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PULADO", "extra": false, "fixado": false }, { "data": "2026-11-13", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "estados": { "y": { "efCentesimos": 250, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-14" } },
+        "hoje": "2026-11-13"
+      },
+      "esperado": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PULADO", "extra": false, "fixado": false }, { "data": "2026-11-13", "ordem": 2, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": true, "fixado": false }]
+    }
+  ]
+}
