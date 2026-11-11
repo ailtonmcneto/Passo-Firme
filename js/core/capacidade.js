@@ -50,6 +50,7 @@ export function calcularCapacidade({
   diasFolga = [],
   duracaoBlocoMin = 30,
   dataAvaliacao = null,
+  ocupados = [],
 }) {
   exigirData(inicio, 'inicio');
   exigirData(fim, 'fim');
@@ -63,6 +64,14 @@ export function calcularCapacidade({
   for (const folga of diasFolga) exigirData(folga, 'diasFolga');
 
   const folgas = new Set(diasFolga);
+
+  // Slots já usados por blocos mantidos no replanejamento (§10.1): concluídos ou pulados de
+  // hoje e blocos fixados. Agrupados por data para a consulta ser direta dentro do laço.
+  const ordensOcupadas = new Map();
+  for (const { data, ordem } of ocupados) {
+    if (!ordensOcupadas.has(data)) ordensOcupadas.set(data, new Set());
+    ordensOcupadas.get(data).add(ordem);
+  }
   const dias = [];
   let capacidadeTotal = 0;
   let blocosDepoisDaAvaliacao = 0;
@@ -70,11 +79,22 @@ export function calcularCapacidade({
   for (const data of intervaloDeDatas(inicio, fim)) {
     // Dia da semana sem valor cadastrado conta como 0 minutos (dia sem estudo).
     const minutos = disponibilidade[diaDaSemana(data)] ?? 0;
-    const blocos = folgas.has(data) ? [] : blocosNoDia(minutos, duracaoBlocoMin);
+    const todos = folgas.has(data) ? [] : blocosNoDia(minutos, duracaoBlocoMin);
     // R8: a janela termina no dia da avaliação, inclusive; o que vem depois é reserva inteira.
     const naJanela = dataAvaliacao === null || diferencaEmDias(data, dataAvaliacao) >= 0;
 
-    dias.push({ data, blocos, naJanela });
+    // O slot ocupado sai do dia antes de contar a capacidade. As `ordens` guardam a posição
+    // real (1..n) de cada slot que sobrou, para o bloco novo não ser numerado em cima do
+    // mantido. Um ocupado que não corresponde a nenhum slot (o dia ficou com menos blocos
+    // depois de mudar os horários) simplesmente não é encontrado aqui, e é ignorado.
+    const ocupadasNoDia = ordensOcupadas.get(data);
+    const ordens = todos.map((_, i) => i + 1).filter((ordem) => !ocupadasNoDia?.has(ordem));
+    const blocos = ordens.map((ordem) => todos[ordem - 1]);
+
+    const dia = { data, blocos, naJanela };
+    // Só o dia que perdeu slot ganha o campo: quem não usa `ocupados` recebe a saída de sempre.
+    if (blocos.length < todos.length) dia.ordens = ordens;
+    dias.push(dia);
     if (naJanela) capacidadeTotal += blocos.length;
     else blocosDepoisDaAvaliacao += blocos.length;
   }
