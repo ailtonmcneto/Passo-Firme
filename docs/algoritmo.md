@@ -234,6 +234,16 @@ Roda depois de `encaixarRevisoes`, fora da reta final. Para cada slot livre com 
 - Dias futuros não são preenchidos: são regenerados a cada replanejamento.
 - Bloco extra é como qualquer outro: o aluno pode pular sem penalidade; concluído, passa pelo SM-2 (C5), e o ESTUDO extra concluído conta como ESTUDO concluído no C2 (§10.4).
 
+### 9.1 Decisões de implementação
+
+- **Saída na ordem da entrada:** as duas funções devolvem uma lista nova com os blocos na mesma ordem em que vieram. O bloco que não muda é devolvido como veio (o mesmo objeto); o slot que muda é trocado por um objeto novo. Quem ordena a saída final é o `montarFuturo` (§10.2).
+- **RESERVA fixada não é slot livre:** uma RESERVA PENDENTE com `fixado: true` é um mantido (§10.1). O aluno quis aquele horário livre, então nem revisão nem bloco extra entram ali.
+- **Candidatas:** só as matérias que estão em `topicos`. Um estado no mapa de uma matéria que saiu do plano é ignorado.
+- **C5:** vale qualquer ESTUDO PENDENTE da matéria com data ≥ hoje, inclusive um fixado ou um extra mantido. A comparação é pela data: um estudo no mesmo dia do slot, mesmo numa `ordem` maior, já conta como "chega antes".
+- **Pulado hoje e reta final juntos:** as duas restrições do passo 4 se somam (data ≥ amanhã e data > `dataAlvo`).
+- **"Usada neste preenchimento"** é uma lista só para os passos 1 e 2 de `preencherReservaDeHoje`: a matéria que ganhou revisão extra não ganha também estudo antecipado no mesmo dia. Cada matéria recebe no máximo um bloco extra por preenchimento.
+- **Estudo antecipado** olha só `demanda > 0`. Não confere se a matéria já tem estudo marcado hoje (caso P1) nem se os blocos alocados já cobrem a demanda.
+
 ## 10. Pipeline e replanejamento (`core/pipeline.js`, `core/replanejador.js`)
 
 O cronograma é sempre derivado, nunca acumulado. Criar e replanejar rodam as mesmas etapas, de hoje em diante, sobre o que ainda falta: regenerar é a operação normal, não a excepcional.
@@ -278,6 +288,18 @@ O cronograma é sempre derivado, nunca acumulado. Criar e replanejar rodam as me
 - Devolve `{ perdidos, blocosFuturos, viabilidade, retaFinal, cobertura, avisos }`. `blocosFuturos` traz todos os blocos com data ≥ hoje em ordem de data e `ordem`: os mantidos, iguais e com `id`, e os novos, sem `id`. A fachada apaga os PENDENTE não fixados com data ≥ hoje e grava os novos.
 - **Aluno sumido (R10):** sai das regras acima. Os blocos perdidos voltam como demanda, há no máximo uma revisão por matéria e a viabilidade é recalculada com números honestos. Se faltar pouco para a prova, a reta final é oferecida (PERGUNTAR), nunca ligada sozinha.
 - **Terminou antes do prazo:** demanda 0 em todas as matérias. Todos os slots viram RESERVA, e o plano passa a ter só revisões e blocos extras.
+
+### 10.5 Decisões de implementação
+
+- **`calcularDemandaRestante({ topicos, blocos, hoje })`** é exportada por `core/replanejador.js`: devolve os tópicos com `demandaRestante` (C2), sem alterar os originais. `replanejar` a usa, e os testes conferem a demanda por matéria com ela, porque a saída de `replanejar` não traz a alocação. Uma `demandaRestante` que já venha no tópico é descartada e recalculada.
+- **Ordem em `gerarCronograma`:** a função chama `montarFuturo` e só depois confere o bloqueio, descartando os blocos se for o caso. O resultado é o mesmo de conferir antes, e a viabilidade, a cobertura e a reta final são calculadas num lugar só. No bloqueio com `reduzirDemanda: true`, a `viabilidade` devolvida é a recalculada com a demanda reduzida.
+- **`reduzirDemanda: true` num plano que já cabe** não muda nada: sem escapatórias, não há `depois` para aplicar.
+- **Reconhecer o mantido:** em `montarFuturo`, um bloco é mantido se ocupa o slot (data, `ordem`) de um mantido. Nenhum bloco novo pode ter esse slot, porque a capacidade já o tirou (§3).
+- **Mantido sem slot** (o dia ficou com menos blocos, virou folga ou saiu do período): o bloco continua em `blocosFuturos` como está. Só o `ocupado` dele é ignorado na capacidade (§3), e ele não colide com bloco novo porque a sua `ordem` é maior que as do dia.
+- **Mantido de matéria removida:** fica como está. A matéria não entra na alocação nem recebe revisão.
+- **RESERVA PENDENTE fixada** é mantida como qualquer bloco fixado (§9.1).
+- **`ocupados`** não é validado em `calcularCapacidade`: quem o monta é o `montarFuturo`, a partir de blocos que já existem.
+- **`hoje` igual a `fim`** ainda monta o futuro (o último dia faz parte do plano); "depois do fim" é só `hoje > fim`.
 
 ## 11. Modelo de dados — campos novos ou alterados
 
