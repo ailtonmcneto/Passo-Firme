@@ -22,7 +22,7 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
 - `prioridade = peso × (6 − dominio)`, de 1 a 25.
 - `demandaMinima = 6 − dominio`, de 1 a 5.
 - `peso` e `dominio` são inteiros de 1 a 5; fora disso, a função lança `RangeError`.
-- **Demanda de um tópico:** `blocosDesejados`, quando o aluno preencheu (tópico *manual*); senão, `demandaMinima`. `ehManual(t)` é a única definição de "preencheu": `blocosDesejados` inteiro ≥ 1. No replanejamento, a demanda é o *restante* (§10).
+- **Demanda de um tópico:** `blocosDesejados`, quando o aluno preencheu (tópico *manual*); senão, `demandaMinima`. `ehManual(t)` é a única definição de "preencheu": `blocosDesejados` inteiro ≥ 1. No replanejamento, a demanda é o *restante* (§10). Se o tópico tiver `demandaRestante` (inteiro ≥ 0, não `undefined` nem `null`), ela substitui a demanda, inclusive de tópico manual; valor inválido lança `RangeError`. Esta é a única definição da regra: `montarEntradaAlocacao` (§5), `avaliarViabilidade` (§4) e `avaliarRetaFinal` (§6.1) usam `demanda(t)`.
 - A autoavaliação alimenta só o SM-2. O domínio declarado não muda automaticamente.
 
 ## 3. Etapa 1 — Capacidade (`core/capacidade.js`)
@@ -43,6 +43,8 @@ Pipeline: capacidade → viabilidade → alocação → sequenciamento → revis
   - `capacidadeTotal` conta os blocos da janela e `capacidadeEstudo = floor(capacidadeTotal × 4 / 5)` (R3).
   - `capacidadeReserva` é `capacidadeTotal − capacidadeEstudo` mais todos os blocos depois da avaliação.
   - Retorna `{ dias: [{ data, blocos: [durações], naJanela }], capacidadeTotal, capacidadeEstudo, capacidadeReserva }`.
+- **Slots ocupados:** `calcularCapacidade` aceita `ocupados = []`, uma lista de `{ data, ordem }` de slots já usados por blocos mantidos no replanejamento (§10.1). O slot é tirado do dia antes de contar a capacidade. Um ocupado sem slot correspondente (o dia tem menos blocos, por exemplo depois de mudar os horários) é ignorado.
+- O dia que perdeu algum slot ganha `ordens`: as posições reais (1..n) dos slots que sobraram, alinhadas com `blocos`. Os outros dias não têm o campo, para a saída não mudar para quem não usa `ocupados`.
 
 ## 4. Etapa 2 — Viabilidade (`core/viabilidade.js`)
 
@@ -105,7 +107,7 @@ Invariantes:
 ### 5.1 Decisões de implementação
 
 - **`montarEntradaAlocacao(topicos)`** converte `{ id, peso, dominio, blocosDesejados?, demandaRestante?, ordem? }` em `{ id, prioridade, demanda, manual, ordem }`, com `ordem` sempre preenchido (o índice quando falta).
-  - **`demandaRestante`:** se vier (não `undefined` nem `null`), substitui `demanda(t)`, inclusive de tópico manual. Tem que ser inteiro ≥ 0; senão lança `RangeError`. Quem calcula é o replanejador (§10).
+  - **`demandaRestante`:** a regra está na §2, dentro de `demanda(t)`; `montarEntradaAlocacao` só chama `demanda(t)`. Quem calcula o valor é o replanejador (§10.4).
 - **Pedido do manual no alocador:** a entrada do alocador não tem `blocosDesejados`; o pedido de um tópico manual é a sua `demanda`. Nos passos 4, 5 e 7, "o que falta" é `demanda − 1` e o `desejado` do aviso é a `demanda`. Na criação isso é o próprio `blocosDesejados`; no replanejamento, o restante.
 - **`maioresRestos(topicos, n)`** devolve um array de inteiros alinhado com a entrada (`quotas[i]` é de `topicos[i]`). `ordem` ausente vale o índice. `n` tem que ser inteiro ≥ 0; `n > 0` com soma das prioridades 0 (inclusive sem tópicos) lança `RangeError`.
 - **Validação de `alocar`:** `capacidade` e cada `demanda` têm que ser inteiros ≥ 0; senão lança `RangeError`. `manual` só é verdadeiro se for `true`.
@@ -127,7 +129,7 @@ O sequenciador decide **em que ordem** os blocos de cada matéria aparecem. Quan
   3. entre matérias, `compararCanonico` (§1).
   - Não há outro critério. Dois blocos da mesma matéria nunca têm a mesma posição, e duas matérias empatadas na posição e na quota têm o mesmo k. Verificado por força bruta em 09/11/2026 (1 a 6 matérias, quotas de 1 a 12): nenhum empate passa do critério 3.
 - **Blocos seguidos (R13):** não há correção. A posição ideal já intercala as matérias quando a proporção permite; quando uma matéria ocupa a maior parte do período, blocos seguidos são aceitos.
-- **Mapeamento:** consome os blocos de cada dia na ordem e gera `{ data, ordem (1..n no dia), topicoId, tipo, duracaoMin }`, com `tipo` `ESTUDO`, ou `RESERVA` com `topicoId` null.
+- **Mapeamento:** consome os blocos de cada dia na ordem e gera `{ data, ordem (1..n no dia), topicoId, tipo, duracaoMin }`, com `tipo` `ESTUDO`, ou `RESERVA` com `topicoId` null. A `ordem` de cada bloco é `dia.ordens[i]` quando o dia tem `ordens` (§3), e `i + 1` nos outros.
 
 ### 6.1 Reta final (modo cobertura, R9) — `core/cobertura.js`
 
@@ -207,37 +209,97 @@ O SM-2 decide quando cada matéria deve voltar como revisão. O estado dele **n�
 
 ## 9. Revisões na reserva (`core/revisoes.js`)
 
-- Cada tópico tem **no máximo uma revisão pendente**: a da `proximaRevisao` do estado do SM-2 (§7). A próxima só nasce quando esta é concluída, o que encadeia as revisões e evita que estourem a reserva.
-- `encaixarRevisoes({ blocos, topicos, hoje, modoCobertura })`:
-  1. Candidatos são os tópicos cujo estado do SM-2 (§7) tem `proximaRevisao` não nula e ≤ último dia do plano. Revisão atrasada (`proximaRevisao < hoje`) conta como devida hoje (R10). O mapa de estados é calculado uma vez, no início, com `estadosPeloHistorico`.
-  2. **C5:** se existe um bloco ESTUDO do tópico com `hoje ≤ data ≤ max(hoje, proximaRevisao)`, não agenda revisão, porque o estudo cumpre esse papel.
-  3. A ordem de encaixe é: data devida crescente; depois menor retenção (§8); depois a ordem canônica.
-  4. Cada revisão ocupa o primeiro slot RESERVA livre com `data ≥ max(hoje, devida)`, que vira `tipo REVISAO` com o `topicoId` do tópico. Se não houver slot livre até o fim, gera o aviso `{ id, tipo: 'REVISAO_SEM_ESPACO', devida }`.
-  5. No modo cobertura, as revisões só são encaixadas depois da data-alvo.
-- **Reserva livre de hoje:** depois de encaixar as revisões devidas, `preencherReservaDeHoje({ blocos, topicos, hoje })` preenche cada slot RESERVA ainda livre com data = hoje (dias futuros são regenerados de qualquer jeito, então não são preenchidos).
-  1. Vira `REVISAO` com `extra: true`, para o tópico estudado (com ao menos um bloco CONCLUIDO) de menor retenção (§8). Um tópico diferente por slot, seguindo a ordem de retenção.
-  2. Se não houver tópico estudado disponível, vira `ESTUDO` com `extra: true` (estudo antecipado) do tópico de maior prioridade que ainda tenha demanda restante. Quando concluído, conta como ESTUDO concluído no C2 e reduz a demanda.
-  3. Se nem isso houver, o slot continua RESERVA, e a interface o mostra como folga.
-  - Bloco extra é como qualquer outro: o aluno pode pular sem penalidade, e a conclusão passa pelo SM-2 (C5).
-  - O `motivo` diz que é extra: "revisão extra: c é o assunto que você estudou há mais tempo".
-  - No modo cobertura, não vale esta regra.
+As revisões ocupam os blocos RESERVA que o sequenciador espalhou pelo período (§6). Elas não são guardadas: a cada replanejamento saem de novo do estado do SM-2 (R12).
 
-## 10. Replanejamento (`core/replanejador.js`)
+- **Entrada comum:** `blocos` (todos os blocos com data ≥ hoje: os novos do sequenciador e os mantidos, §10.1), `topicos` no formato de `montarEntradaAlocacao` (`{ id, prioridade, demanda, manual, ordem }`), `estados` (o `Map` de `estadosPeloHistorico`, §7, calculado uma vez por quem chama) e `hoje`.
+- Os slots são percorridos por data crescente e depois `ordem`. Um **slot livre** é um bloco RESERVA PENDENTE. As duas funções devolvem blocos novos e não mutam a entrada.
+- **Pulado hoje:** matéria com bloco PULADO hoje não recebe revisão hoje nem bloco extra hoje. Pular é escolha do aluno (o plano é sugestão); a revisão pode cair de amanhã em diante.
 
-- **Quando (R11):** a função é pura e quem chama decide quando rodar. Os gatilhos são definidos pela fachada e estão no docs/front.md §4 (abrir o app, concluir ou pular um bloco, mudar horários ou matérias, aceitar uma sugestão de domínio, escolher uma saída de viabilidade).
-- **Histórico:** blocos com data < hoje e blocos CONCLUIDO nunca mudam. Bloco PENDENTE no passado vira PERDIDO. PULADO é a escolha explícita do aluno de pular e, para a demanda, vale como perdido. Bloco perdido nunca é empurrado para o dia seguinte: volta como demanda.
-- **C2:** cada tópico guarda `blocosAlocados`, o resultado da alocação inicial ou de uma edição de quota. No replanejamento, `demanda = max(0, blocosAlocados − ESTUDOs CONCLUIDO − ESTUDOs fixados futuros)`. O replanejamento não sobrescreve `blocosAlocados`.
-- **C3:** um bloco editado na planilha ganha `fixado: true`. Blocos fixados futuros ficam onde estão e seus slots saem da capacidade. Mudar a quantidade de blocos de um tópico grava `blocosDesejados` e `blocosAlocados`.
-- **Bloqueio só na criação (R16):** `gerarCronograma` devolve `{ bloqueado: true, viabilidade }`, sem blocos, quando a viabilidade é `bloqueante`. A interface mostra as escapatórias e só gera depois da escolha. `replanejar` nunca bloqueia: gera o que cabe, com o aviso `TOPICO_SEM_BLOCO` (§5) e as escapatórias calculadas, para o aluno não ficar sem plano. Exceção: se a saída escolhida for a reta final (§6.1) e ela não for bloqueante, o plano é gerado.
-- **Passos:**
-  1. Calcula a capacidade de `max(hoje, inicio)` até `fim`, menos os slots fixados.
-  2. Roda a viabilidade e a alocação com a demanda restante.
-  3. Sequencia nos slots livres, em revezamento se `estadoCobertura` for ATIVA (§6.1).
-  4. Calcula os estados do SM-2 com `estadosPeloHistorico` (§7) e encaixa as revisões a partir deles (R12: revisões futuras não fixadas são sempre regeneradas).
-  5. Preenche a reserva livre de hoje (§9).
-- **Aluno sumido (R10):** sai naturalmente das regras acima. Os blocos perdidos voltam como demanda, há no máximo uma revisão atrasada por tópico e a viabilidade é recalculada com números honestos.
-- **Terminou antes do prazo:** demanda 0 em todos os tópicos. Todos os slots viram RESERVA e o plano passa a ter só revisões e sugestões.
-- Saída: `{ blocosFuturos, viabilidade, avisos }`.
+### `encaixarRevisoes({ blocos, topicos, estados, hoje, fim, modoCobertura = false, dataAlvo = null })` → `{ blocos, avisos }`
+
+1. **Candidatos:** matérias com estado no mapa e `proximaRevisao ≤ fim`. Matéria que já tem REVISAO PENDENTE entre os blocos (uma revisão fixada, §10.1) não é candidata: cada matéria tem no máximo uma revisão pendente.
+2. **Data devida:** `max(hoje, proximaRevisao)`. Revisão atrasada conta como devida hoje (R10).
+3. **Ordem de encaixe:** devida crescente; depois menor retenção em `hoje` (`compararPorRetencao` com `diasDesdeUltima(estado, hoje)` e o `intervalo` do estado, §8); depois `compararCanonico`.
+4. Para cada candidata, nessa ordem, procure o primeiro slot livre com data ≥ devida. Se a matéria tem bloco PULADO hoje, a data mínima é amanhã. No modo cobertura, só valem slots com data > `dataAlvo` (as revisões voltam depois da prova).
+5. **C5:** se existe bloco ESTUDO PENDENTE da matéria com `hoje ≤ data ≤ data do slot encontrado`, não agenda: o estudo chega antes e cumpre o papel da revisão. Sem slot, vale qualquer ESTUDO PENDENTE futuro da matéria.
+6. Senão, o slot vira `{ tipo: 'REVISAO', topicoId, extra: false }`. Sem slot e sem estudo futuro, gera o aviso `{ id, tipo: 'REVISAO_SEM_ESPACO', devida }`, exceto no modo cobertura, em que as revisões estão suspensas de propósito.
+
+### `preencherReservaDeHoje({ blocos, topicos, estados, hoje })` → `blocos`
+
+Roda depois de `encaixarRevisoes`, fora da reta final. Para cada slot livre com data = hoje, em ordem:
+1. **Revisão extra:** vira `REVISAO` com `extra: true` para a matéria estudada (com estado no mapa) de menor retenção em hoje (desempate por `compararCanonico`) que ainda não foi usada neste preenchimento e não tem bloco PENDENTE (ESTUDO ou REVISAO) hoje.
+2. **Estudo antecipado:** senão, vira `ESTUDO` com `extra: true` para a matéria com `demanda > 0` de maior prioridade (`compararCanonico`) ainda não usada neste preenchimento.
+3. Senão, continua RESERVA, e a tela o mostra como folga.
+- As matérias com bloco PULADO hoje ficam fora dos passos 1 e 2.
+- Dias futuros não são preenchidos: são regenerados a cada replanejamento.
+- Bloco extra é como qualquer outro: o aluno pode pular sem penalidade; concluído, passa pelo SM-2 (C5), e o ESTUDO extra concluído conta como ESTUDO concluído no C2 (§10.4).
+
+### 9.1 Decisões de implementação
+
+- **Saída na ordem da entrada:** as duas funções devolvem uma lista nova com os blocos na mesma ordem em que vieram. O bloco que não muda é devolvido como veio (o mesmo objeto); o slot que muda é trocado por um objeto novo. Quem ordena a saída final é o `montarFuturo` (§10.2).
+- **RESERVA fixada não é slot livre:** uma RESERVA PENDENTE com `fixado: true` é um mantido (§10.1). O aluno quis aquele horário livre, então nem revisão nem bloco extra entram ali.
+- **Candidatas:** só as matérias que estão em `topicos`. Um estado no mapa de uma matéria que saiu do plano é ignorado.
+- **C5:** vale qualquer ESTUDO PENDENTE da matéria com data ≥ hoje, inclusive um fixado ou um extra mantido. A comparação é pela data: um estudo no mesmo dia do slot, mesmo numa `ordem` maior, já conta como "chega antes".
+- **Pulado hoje e reta final juntos:** as duas restrições do passo 4 se somam (data ≥ amanhã e data > `dataAlvo`).
+- **"Usada neste preenchimento"** é uma lista só para os passos 1 e 2 de `preencherReservaDeHoje`: a matéria que ganhou revisão extra não ganha também estudo antecipado no mesmo dia. Cada matéria recebe no máximo um bloco extra por preenchimento.
+- **Estudo antecipado** olha só `demanda > 0`. Não confere se a matéria já tem estudo marcado hoje (caso P1) nem se os blocos alocados já cobrem a demanda.
+
+## 10. Pipeline e replanejamento (`core/pipeline.js`, `core/replanejador.js`)
+
+O cronograma é sempre derivado, nunca acumulado. Criar e replanejar rodam as mesmas etapas, de hoje em diante, sobre o que ainda falta: regenerar é a operação normal, não a excepcional.
+
+### 10.1 O que muda e o que fica
+
+- **Passado** (data < hoje) nunca muda. ESTUDO e REVISAO PENDENTE no passado viram PERDIDO: o replanejador devolve os ids, e quem grava é a fachada. RESERVA do passado fica como está.
+- **Mantidos:** blocos com data ≥ hoje e status CONCLUIDO ou PULADO, e blocos PENDENTE com `fixado: true` (C3). Eles não mudam e ocupam o seu slot: entram na capacidade como `ocupados` (§3). Sem isso, um bloco concluído hoje às 10h teria o seu horário redistribuído no replanejamento seguinte.
+- **Regenerados:** todo o resto com data ≥ hoje (PENDENTE não fixado) é descartado e gerado de novo (R12).
+- PULADO é a escolha explícita de pular: para a demanda, vale como perdido e volta como demanda. Bloco perdido nunca é empurrado para o dia seguinte.
+
+### 10.2 `montarFuturo({ plano, topicos, mantidos = [], historico = [], hoje })` (em `core/pipeline.js`)
+
+É o miolo comum à criação e ao replanejamento. `topicos` vem no formato de cadastro (`{ id, nome, peso, dominio, blocosDesejados?, ordem?, demandaRestante? }`).
+1. `planoEfetivo = { ...plano, inicio: max(hoje, plano.inicio), ocupados }`, com `ocupados` = `{ data, ordem }` dos mantidos. O mesmo objeto vai para `calcularCapacidade`, `avaliarViabilidade` e `avaliarRetaFinal`, para os três contarem os mesmos slots.
+2. Calcula a capacidade e a viabilidade (que respeita `demandaRestante`, §2).
+3. `cobertura = estadoCobertura({ plano, viabilidade, hoje })`; `retaFinal = condicaoDeCobertura(...) ? avaliarRetaFinal({ plano: planoEfetivo, topicos }) : null`; a reta final está ativa quando `cobertura === 'ATIVA'`.
+4. `entrada = montarEntradaAlocacao(topicos)` e `alocar` com `capacidadeTotal` (reta final ativa) ou `capacidadeEstudo`.
+5. `sequenciar` com `modoCobertura` igual à reta final ativa. Cada bloco novo ganha `status: 'PENDENTE'`, `extra: false` e `fixado: false`.
+6. `estados = estadosPeloHistorico(historico)`, uma vez.
+7. `encaixarRevisoes` com mantidos + novos, `fim: plano.fim`, `modoCobertura` e `dataAlvo: dataAlvo(plano)`.
+8. Fora da reta final, `preencherReservaDeHoje`.
+9. Cada bloco novo recebe `motivo = motivoDoBloco(bloco, tópico, estados.get(topicoId) ?? null)`. Os mantidos ficam como estão.
+10. Devolve `{ blocos, alocacao, viabilidade, retaFinal, cobertura, avisos }`, com os blocos em ordem de data e `ordem` e os avisos da alocação antes dos das revisões. Os blocos novos não têm `id`: quem grava (a fachada) dá os ids.
+
+### 10.3 `gerarCronograma({ plano, topicos, hoje, reduzirDemanda = false })` (em `core/pipeline.js`)
+
+- Chama `validarPlano(plano)`; `fim` antes de `hoje` lança `RangeError`.
+- Começa em `max(hoje, inicio)`: um plano criado com início no passado não gera blocos no passado.
+- `reduzirDemanda: true` é a escapatória 2 escolhida: cada tópico recebe `demandaRestante` igual ao `depois` de `viabilidade.escapatorias.reduzirDemanda`, e a viabilidade é recalculada com ela. As outras saídas a fachada aplica antes de chamar: "mais tempo" muda o plano, "tirar matérias" muda a lista e a reta final grava `respostaCobertura`.
+- **Bloqueio só na criação (R16):** se a viabilidade é `bloqueante`, devolve `{ bloqueado: true, blocos: [], topicos (como vieram), viabilidade, retaFinal, cobertura, avisos: [] }`. Exceção: `cobertura` ATIVA e `retaFinal` não bloqueante (a reta final resolve o bloqueio).
+- Senão, chama `montarFuturo` sem mantidos nem histórico e devolve `{ bloqueado: false, blocos, topicos, viabilidade, retaFinal, cobertura, avisos }`, com cada tópico devolvido com `blocosAlocados = alocacao.blocos[id]` (C2) e sem `demandaRestante`.
+
+### 10.4 `replanejar({ plano, topicos, blocos, hoje })` (em `core/replanejador.js`)
+
+- **Quando (R11):** a função é pura e quem chama decide quando rodar. Os gatilhos estão no docs/front.md §4.
+- `perdidos`: ids dos ESTUDO e REVISAO PENDENTE com data < hoje.
+- **Depois do fim** (`hoje > fim`): devolve `{ perdidos, blocosFuturos: [], viabilidade: null, retaFinal: null, cobertura: 'NAO_SE_APLICA', avisos: [] }`.
+- **C2:** `demandaRestante = max(0, blocosAlocados − ESTUDOs CONCLUIDO da matéria (qualquer data, extras inclusive) − ESTUDOs PENDENTE fixados mantidos)`. Matéria sem `blocosAlocados` (adicionada depois da criação) usa `demanda(t)` no lugar. O replanejamento não sobrescreve `blocosAlocados`.
+- Chama `montarFuturo({ plano, topicos com demandaRestante, mantidos, historico: blocos, hoje })`.
+- **Nunca bloqueia:** gera o que cabe, com o aviso `TOPICO_SEM_BLOCO` (§5) e as escapatórias calculadas, para o aluno não ficar sem plano.
+- Devolve `{ perdidos, blocosFuturos, viabilidade, retaFinal, cobertura, avisos }`. `blocosFuturos` traz todos os blocos com data ≥ hoje em ordem de data e `ordem`: os mantidos, iguais e com `id`, e os novos, sem `id`. A fachada apaga os PENDENTE não fixados com data ≥ hoje e grava os novos.
+- **Aluno sumido (R10):** sai das regras acima. Os blocos perdidos voltam como demanda, há no máximo uma revisão por matéria e a viabilidade é recalculada com números honestos. Se faltar pouco para a prova, a reta final é oferecida (PERGUNTAR), nunca ligada sozinha.
+- **Terminou antes do prazo:** demanda 0 em todas as matérias. Todos os slots viram RESERVA, e o plano passa a ter só revisões e blocos extras.
+
+### 10.5 Decisões de implementação
+
+- **`calcularDemandaRestante({ topicos, blocos, hoje })`** é exportada por `core/replanejador.js`: devolve os tópicos com `demandaRestante` (C2), sem alterar os originais. `replanejar` a usa, e os testes conferem a demanda por matéria com ela, porque a saída de `replanejar` não traz a alocação. Uma `demandaRestante` que já venha no tópico é descartada e recalculada.
+- **Ordem em `gerarCronograma`:** a função chama `montarFuturo` e só depois confere o bloqueio, descartando os blocos se for o caso. O resultado é o mesmo de conferir antes, e a viabilidade, a cobertura e a reta final são calculadas num lugar só. No bloqueio com `reduzirDemanda: true`, a `viabilidade` devolvida é a recalculada com a demanda reduzida.
+- **`reduzirDemanda: true` num plano que já cabe** não muda nada: sem escapatórias, não há `depois` para aplicar.
+- **Reconhecer o mantido:** em `montarFuturo`, um bloco é mantido se ocupa o slot (data, `ordem`) de um mantido. Nenhum bloco novo pode ter esse slot, porque a capacidade já o tirou (§3).
+- **Mantido sem slot** (o dia ficou com menos blocos, virou folga ou saiu do período): o bloco continua em `blocosFuturos` como está. Só o `ocupado` dele é ignorado na capacidade (§3), e ele não colide com bloco novo porque a sua `ordem` é maior que as do dia.
+- **Mantido de matéria removida:** fica como está. A matéria não entra na alocação nem recebe revisão.
+- **RESERVA PENDENTE fixada** é mantida como qualquer bloco fixado (§9.1).
+- **`ocupados`** não é validado em `calcularCapacidade`: quem o monta é o `montarFuturo`, a partir de blocos que já existem.
+- **`hoje` igual a `fim`** ainda monta o futuro (o último dia faz parte do plano); "depois do fim" é só `hoje > fim`.
 
 ## 11. Modelo de dados — campos novos ou alterados
 

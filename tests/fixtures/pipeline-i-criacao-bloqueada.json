@@ -1,0 +1,106 @@
+{
+  "descricao": "I. Criação bloqueada (R16): o plano e as matérias de viabilidade-bloqueante.json, hoje 09/11. 3 matérias para 2 blocos de estudo.",
+  "casos": [
+    {
+      "nome": "sem escolha: bloqueado, com a reta final oferecida",
+      "entrada": {
+        "plano": { "inicio": "2026-11-09", "fim": "2026-11-11", "disponibilidade": { "1": 30, "2": 30, "3": 30 } },
+        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4 }],
+        "hoje": "2026-11-09"
+      },
+      "esperado": {
+        "bloqueado": true,
+        "blocos": [],
+        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4 }],
+        "viabilidade": {
+          "viavel": false,
+          "bloqueante": true,
+          "capacidadeEstudo": 2,
+          "demandaTotal": 11,
+          "deficit": 9,
+          "cobertura": { "percentual": 18 },
+          "escapatorias": {
+            "maisTempo": { "minutosPorDia": 120, "diasAMais": 27, "novoFim": "2026-12-08" },
+            "reduzirDemanda": {
+              "topicos": [{ "id": "X", "antes": 5, "depois": 1 }, { "id": "Y", "antes": 4, "depois": 1 }, { "id": "Z", "antes": 2, "depois": 1 }],
+              "suficiente": false
+            },
+            "removerTopicos": { "removidos": ["Z", "Y", "X"], "demandaRestante": 0 }
+          }
+        },
+        "retaFinal": { "capacidadeEstudo": 3, "demandaTotal": 11, "cobertura": { "percentual": 27 }, "bloqueante": false },
+        "cobertura": "PERGUNTAR",
+        "avisos": []
+      }
+    },
+    {
+      "nome": "reduzirDemanda não resolve o bloqueio (§4)",
+      "entrada": {
+        "plano": { "inicio": "2026-11-09", "fim": "2026-11-11", "disponibilidade": { "1": 30, "2": 30, "3": 30 } },
+        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4 }],
+        "hoje": "2026-11-09",
+        "reduzirDemanda": true
+      },
+      "esperado": {
+        "bloqueado": true,
+        "blocos": [],
+        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4 }],
+        "viabilidade": {
+          "viavel": false,
+          "bloqueante": true,
+          "capacidadeEstudo": 2,
+          "demandaTotal": 3,
+          "deficit": 1,
+          "cobertura": { "percentual": 66 },
+          "escapatorias": {
+            "maisTempo": { "minutosPorDia": 30, "diasAMais": 5, "novoFim": "2026-11-16" },
+            "reduzirDemanda": {
+              "topicos": [{ "id": "X", "antes": 1, "depois": 1 }, { "id": "Y", "antes": 1, "depois": 1 }, { "id": "Z", "antes": 1, "depois": 1 }],
+              "suficiente": false
+            },
+            "removerTopicos": { "removidos": ["Z"], "demandaRestante": 2 }
+          }
+        },
+        "retaFinal": { "capacidadeEstudo": 3, "demandaTotal": 3, "cobertura": { "percentual": 100 }, "bloqueante": false },
+        "cobertura": "PERGUNTAR",
+        "avisos": []
+      }
+    },
+    {
+      "nome": "reta final aceita: gera um bloco por matéria",
+      "entrada": {
+        "plano": { "inicio": "2026-11-09", "fim": "2026-11-11", "disponibilidade": { "1": 30, "2": 30, "3": 30 }, "respostaCobertura": { "resposta": "ACEITO", "dataAlvo": "2026-11-11" } },
+        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4 }],
+        "hoje": "2026-11-09"
+      },
+      "esperado": {
+        "bloqueado": false,
+        "blocos": [
+          { "data": "2026-11-09", "ordem": 1, "topicoId": "X", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
+          { "data": "2026-11-10", "ordem": 1, "topicoId": "Y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio baixo" },
+          { "data": "2026-11-11", "ordem": 1, "topicoId": "Z", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio alto" }
+        ],
+        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1, "blocosAlocados": 1 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2, "blocosAlocados": 1 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4, "blocosAlocados": 1 }],
+        "viabilidade": {
+          "viavel": false,
+          "bloqueante": true,
+          "capacidadeEstudo": 2,
+          "demandaTotal": 11,
+          "deficit": 9,
+          "cobertura": { "percentual": 18 },
+          "escapatorias": {
+            "maisTempo": { "minutosPorDia": 120, "diasAMais": 27, "novoFim": "2026-12-08" },
+            "reduzirDemanda": {
+              "topicos": [{ "id": "X", "antes": 5, "depois": 1 }, { "id": "Y", "antes": 4, "depois": 1 }, { "id": "Z", "antes": 2, "depois": 1 }],
+              "suficiente": false
+            },
+            "removerTopicos": { "removidos": ["Z", "Y", "X"], "demandaRestante": 0 }
+          }
+        },
+        "retaFinal": { "capacidadeEstudo": 3, "demandaTotal": 11, "cobertura": { "percentual": 27 }, "bloqueante": false },
+        "cobertura": "ATIVA",
+        "avisos": []
+      }
+    }
+  ]
+}

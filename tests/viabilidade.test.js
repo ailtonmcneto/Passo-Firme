@@ -112,3 +112,36 @@ describe('avaliarViabilidade', () => {
     assert.deepEqual(entrada, copia);
   });
 });
+
+describe('avaliarViabilidade com demandaRestante (§2)', () => {
+  // seg 09/11 a qua 11/11, 60 min por dia: 6 blocos, 4 de estudo.
+  const plano = { inicio: '2026-11-09', fim: '2026-11-11', disponibilidade: { 1: 60, 2: 60, 3: 60 } };
+
+  test('a demanda restante substitui a do cadastro, e o plano passa a caber', () => {
+    const cadastro = [
+      { id: 'a', nome: 'A', peso: 5, dominio: 1 },
+      { id: 'b', nome: 'B', peso: 4, dominio: 2 },
+    ];
+    assert.equal(avaliarViabilidade({ plano, topicos: cadastro }).demandaTotal, 9);
+
+    const r = avaliarViabilidade({
+      plano,
+      topicos: [{ ...cadastro[0], demandaRestante: 3 }, { ...cadastro[1], demandaRestante: 0 }],
+    });
+    assert.equal(r.demandaTotal, 3);
+    assert.equal(r.viavel, true);
+  });
+
+  test('matéria com demanda restante 0 não conta para o bloqueio', () => {
+    const topicos = ['a', 'b', 'c', 'd', 'e'].map((id) => ({ id, nome: id, peso: 3, dominio: 2, demandaRestante: 0 }));
+    topicos[0].demandaRestante = 5;
+    const r = avaliarViabilidade({ plano, topicos });
+    assert.equal(r.bloqueante, false);
+    assert.equal(r.deficit, 1);
+  });
+
+  test('demandaRestante inválida lança RangeError', () => {
+    const topicos = [{ id: 'a', nome: 'A', peso: 3, dominio: 2, demandaRestante: -1 }];
+    assert.throws(() => avaliarViabilidade({ plano, topicos }), RangeError);
+  });
+});

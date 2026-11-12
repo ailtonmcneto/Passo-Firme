@@ -1,0 +1,67 @@
+{
+  "descricao": "O plano de capacidade-duas-semanas.json com slots ocupados por blocos mantidos (§3). O dia que perde um slot ganha `ordens`, as posições reais dos slots que sobraram.",
+  "casos": [
+    {
+      "nome": "um slot ocupado na quarta 11/11",
+      "entrada": {
+        "inicio": "2026-11-09",
+        "fim": "2026-11-22",
+        "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 },
+        "diasFolga": ["2026-11-18"],
+        "ocupados": [{ "data": "2026-11-11", "ordem": 2 }]
+      },
+      "esperado": {
+        "dias": [
+          { "data": "2026-11-09", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-10", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-11", "blocos": [30, 30, 50], "naJanela": true, "ordens": [1, 3, 4] },
+          { "data": "2026-11-12", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-13", "blocos": [25], "naJanela": true },
+          { "data": "2026-11-14", "blocos": [], "naJanela": true },
+          { "data": "2026-11-15", "blocos": [], "naJanela": true },
+          { "data": "2026-11-16", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-17", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-18", "blocos": [], "naJanela": true },
+          { "data": "2026-11-19", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-20", "blocos": [25], "naJanela": true },
+          { "data": "2026-11-21", "blocos": [], "naJanela": true },
+          { "data": "2026-11-22", "blocos": [], "naJanela": true }
+        ],
+        "capacidadeTotal": 17,
+        "capacidadeEstudo": 13,
+        "capacidadeReserva": 4
+      }
+    },
+    {
+      "nome": "ocupado num slot que não existe (sábado sem horário)",
+      "entrada": {
+        "inicio": "2026-11-09",
+        "fim": "2026-11-22",
+        "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 },
+        "diasFolga": ["2026-11-18"],
+        "ocupados": [{ "data": "2026-11-14", "ordem": 1 }]
+      },
+      "esperado": {
+        "dias": [
+          { "data": "2026-11-09", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-10", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-11", "blocos": [30, 30, 30, 50], "naJanela": true },
+          { "data": "2026-11-12", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-13", "blocos": [25], "naJanela": true },
+          { "data": "2026-11-14", "blocos": [], "naJanela": true },
+          { "data": "2026-11-15", "blocos": [], "naJanela": true },
+          { "data": "2026-11-16", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-17", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-18", "blocos": [], "naJanela": true },
+          { "data": "2026-11-19", "blocos": [30, 30], "naJanela": true },
+          { "data": "2026-11-20", "blocos": [25], "naJanela": true },
+          { "data": "2026-11-21", "blocos": [], "naJanela": true },
+          { "data": "2026-11-22", "blocos": [], "naJanela": true }
+        ],
+        "capacidadeTotal": 18,
+        "capacidadeEstudo": 14,
+        "capacidadeReserva": 4
+      }
+    }
+  ]
+}

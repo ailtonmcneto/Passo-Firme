@@ -1,0 +1,138 @@
+{
+  "descricao": "encaixarRevisoes (§9). `estados` é o Map de estadosPeloHistorico escrito como objeto { id: estado }; o teste converte. Hoje 13/11, fim 22/11. As matérias valem para todos os casos.",
+  "topicos": [{ "id": "x", "prioridade": 20, "demanda": 3, "manual": false, "ordem": 0 }, { "id": "y", "prioridade": 10, "demanda": 2, "manual": false, "ordem": 1 }, { "id": "z", "prioridade": 5, "demanda": 0, "manual": false, "ordem": 2 }],
+  "casos": [
+    {
+      "nome": "U1",
+      "descricao": "o estudo de 16/11 vem depois do slot de hoje: a revisão entra hoje",
+      "entrada": {
+        "blocos": [
+          { "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-16", "ordem": 1, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-16", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+        ],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-12" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22"
+      },
+      "esperado": {
+        "blocos": [
+          { "data": "2026-11-13", "ordem": 1, "topicoId": "x", "tipo": "REVISAO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-16", "ordem": 1, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-16", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+        ],
+        "avisos": []
+      }
+    },
+    {
+      "nome": "U2",
+      "descricao": "C5: o estudo de hoje vem antes do slot de 16/11, então não agenda nem avisa",
+      "entrada": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-12" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22"
+      },
+      "esperado": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "avisos": []
+      }
+    },
+    {
+      "nome": "U3",
+      "descricao": "as duas devidas hoje: y (6/3) tem menor retenção que x (4/3) e escolhe primeiro",
+      "entrada": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-09", "proximaRevisao": "2026-11-12" }, "y": { "efCentesimos": 250, "intervalo": 3, "repeticoes": 2, "ultimaRevisao": "2026-11-07", "proximaRevisao": "2026-11-10" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22"
+      },
+      "esperado": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "REVISAO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": "x", "tipo": "REVISAO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "avisos": []
+      }
+    },
+    {
+      "nome": "U4",
+      "descricao": "sem slot livre e sem estudo futuro de x: aviso",
+      "entrada": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-12" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22"
+      },
+      "esperado": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "avisos": [{ "id": "x", "tipo": "REVISAO_SEM_ESPACO", "devida": "2026-11-13" }]
+      }
+    },
+    {
+      "nome": "U4b",
+      "descricao": "o mesmo na reta final: as revisões estão suspensas e não há aviso",
+      "entrada": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-12" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22",
+        "modoCobertura": true,
+        "dataAlvo": "2026-11-22"
+      },
+      "esperado": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": "y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "avisos": []
+      }
+    },
+    {
+      "nome": "U5",
+      "descricao": "x foi pulada hoje: a revisão só pode cair de amanhã em diante",
+      "entrada": {
+        "blocos": [
+          { "data": "2026-11-13", "ordem": 1, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PULADO", "extra": false, "fixado": false },
+          { "data": "2026-11-13", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+        ],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-12" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22"
+      },
+      "esperado": {
+        "blocos": [
+          { "data": "2026-11-13", "ordem": 1, "topicoId": "x", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PULADO", "extra": false, "fixado": false },
+          { "data": "2026-11-13", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false },
+          { "data": "2026-11-16", "ordem": 1, "topicoId": "x", "tipo": "REVISAO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }
+        ],
+        "avisos": []
+      }
+    },
+    {
+      "nome": "U6",
+      "descricao": "próxima revisão depois do fim: não é candidata",
+      "entrada": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 19, "repeticoes": 2, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-30" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22"
+      },
+      "esperado": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "avisos": []
+      }
+    },
+    {
+      "nome": "U7",
+      "descricao": "reta final com alvo hoje: a revisão vai para depois da prova",
+      "entrada": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "estados": { "x": { "efCentesimos": 250, "intervalo": 1, "repeticoes": 1, "ultimaRevisao": "2026-11-11", "proximaRevisao": "2026-11-12" } },
+        "hoje": "2026-11-13",
+        "fim": "2026-11-22",
+        "modoCobertura": true,
+        "dataAlvo": "2026-11-13"
+      },
+      "esperado": {
+        "blocos": [{ "data": "2026-11-13", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }, { "data": "2026-11-16", "ordem": 1, "topicoId": "x", "tipo": "REVISAO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false }],
+        "avisos": []
+      }
+    }
+  ]
+}

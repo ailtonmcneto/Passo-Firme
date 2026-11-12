@@ -54,20 +54,16 @@ export function maioresRestos(topicos, n) {
   return distribuirPorRestos(itens, n, (t) => t.prioridade);
 }
 
-// Converte os tópicos do cadastro no formato do alocador. `demandaRestante` é a convenção do
-// replanejamento (§10): o replanejador calcula quanto ainda falta e o alocador só respeita.
+// Converte os tópicos do cadastro no formato do alocador. A `demandaRestante` do
+// replanejamento (§10.4) já é respeitada dentro de demanda(t), a única definição da regra (§2).
 export function montarEntradaAlocacao(topicos) {
-  return topicos.map((t, indice) => {
-    const temRestante = t.demandaRestante !== undefined && t.demandaRestante !== null;
-    if (temRestante) exigirInteiro(t.demandaRestante, 0, 'demandaRestante');
-    return {
-      id: t.id,
-      prioridade: prioridade(t),
-      demanda: temRestante ? t.demandaRestante : demanda(t),
-      manual: ehManual(t),
-      ordem: t.ordem ?? indice,
-    };
-  });
+  return topicos.map((t, indice) => ({
+    id: t.id,
+    prioridade: prioridade(t),
+    demanda: demanda(t),
+    manual: ehManual(t),
+    ordem: t.ordem ?? indice,
+  }));
 }
 
 // Passo 6 do caso inviável. A proporção pura daria a um tópico mais do que ele pediu; então,

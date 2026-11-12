@@ -154,3 +154,55 @@ describe('calcularCapacidade', () => {
     assert.deepEqual(entrada, copia);
   });
 });
+
+// §3: slots já usados por blocos mantidos no replanejamento (§10.1).
+describe('calcularCapacidade com ocupados', () => {
+  const { casos } = carregarFixture('capacidade-ocupados.json');
+  const semOcupados = carregarFixture('capacidade-duas-semanas.json');
+
+  for (const { nome, entrada, esperado } of casos) {
+    test(nome, () => {
+      assert.deepEqual(calcularCapacidade(entrada), esperado);
+    });
+  }
+
+  test('o slot ocupado sai do dia, e o dia ganha as ordens dos que sobraram', () => {
+    const r = calcularCapacidade({ ...semOcupados.entrada, ocupados: [{ data: '2026-11-11', ordem: 2 }] });
+    // Quarta tinha [30, 30, 30, 50] nas posições 1 a 4; sem a 2, ficam as posições 1, 3 e 4.
+    const quarta = r.dias.find((d) => d.data === '2026-11-11');
+    assert.deepEqual(quarta, { data: '2026-11-11', blocos: [30, 30, 50], naJanela: true, ordens: [1, 3, 4] });
+
+    assert.equal(r.capacidadeTotal, 17);
+    assert.equal(r.capacidadeEstudo, 13);
+    assert.equal(r.capacidadeReserva, 4);
+    // Os outros dias saem como sempre, sem o campo.
+    assert.ok(r.dias.filter((d) => d.data !== '2026-11-11').every((d) => !('ordens' in d)));
+  });
+
+  test('ocupado num slot que não existe é ignorado: a saída é a de sem ocupados', () => {
+    // Sábado tem 10 min, abaixo do mínimo: não há slot 1 para ocupar.
+    const r = calcularCapacidade({ ...semOcupados.entrada, ocupados: [{ data: '2026-11-14', ordem: 1 }] });
+    assert.deepEqual(r, semOcupados.esperado);
+  });
+
+  test('ordem maior que os blocos do dia e data fora do período também são ignoradas', () => {
+    const ocupados = [{ data: '2026-11-09', ordem: 3 }, { data: '2026-12-25', ordem: 1 }];
+    assert.deepEqual(calcularCapacidade({ ...semOcupados.entrada, ocupados }), semOcupados.esperado);
+  });
+
+  test('dia com todos os slots ocupados fica sem blocos e com ordens vazias', () => {
+    const ocupados = [{ data: '2026-11-09', ordem: 1 }, { data: '2026-11-09', ordem: 2 }];
+    const r = calcularCapacidade({ ...semOcupados.entrada, ocupados });
+    assert.deepEqual(r.dias[0], { data: '2026-11-09', blocos: [], naJanela: true, ordens: [] });
+    assert.equal(r.capacidadeTotal, 16);
+    assert.equal(r.capacidadeEstudo, 12);
+  });
+
+  test('slot ocupado depois da avaliação sai da reserva, não da janela', () => {
+    const { entrada, esperado } = carregarFixture('capacidade-com-avaliacao.json');
+    const r = calcularCapacidade({ ...entrada, ocupados: [{ data: '2026-11-16', ordem: 1 }] });
+    assert.equal(r.capacidadeTotal, esperado.capacidadeTotal);
+    assert.equal(r.capacidadeEstudo, esperado.capacidadeEstudo);
+    assert.equal(r.capacidadeReserva, esperado.capacidadeReserva - 1);
+  });
+});
