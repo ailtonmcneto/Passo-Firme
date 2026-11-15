@@ -4,44 +4,15 @@ if (demonstracao) iniciarDemonstracao(demonstracao);
 
 function iniciarDemonstracao(painel) {
     const buscar = seletor => painel.querySelector(seletor);
-    const escrever = (nome, texto) => {
-        buscar(`#demonstracao-${nome}`).textContent = texto;
-    };
     const abas = [...painel.querySelectorAll('[role="tab"]')];
     const secoes = [...painel.querySelectorAll('[role="tabpanel"]')];
-    const linhas = [...painel.querySelectorAll("[data-materia]")];
+    const estudos = [...painel.querySelectorAll(".demonstracao-estudo")];
+    const materias = [...painel.querySelectorAll(".demonstracao-materia")];
+    const formulario = buscar("#demonstracao-formulario");
+    const resultado = buscar("#demonstracao-resultado");
     const anuncio = buscar("#demonstracao-status");
-
-    // Os valores são cenários conferidos, sem repetir o algoritmo na tela.
-    const cenas = {
-        normal: {
-            dias: "Segunda a sexta", horario: "18:00–19:00", tempo: "1 hora por dia",
-            total: 10, estudo: 8, demanda: 6,
-            blocos: { javascript: 5, banco: 3, reserva: 2 },
-            aviso: "Mais espaço para o que pesa mais e você domina menos.",
-            situacao: "Cabe no seu tempo.",
-            explicacao: "Experimente estudar em três dias da semana."
-        },
-        reduzido: {
-            dias: "Segunda, quarta e sexta", horario: "18:00–19:00", tempo: "1 hora por dia",
-            total: 6, estudo: 4, demanda: 6,
-            blocos: { javascript: 2, banco: 2, reserva: 2 },
-            aviso: "Prévia parcial: faltam 2 blocos. Veja uma opção em Ajustes.",
-            situacao: "Faltam 2 blocos de estudo.",
-            explicacao: "Uma opção: mais 30 minutos em cada dia disponível.",
-            anuncio: "Exemplo com três dias. Rotina e distribuição atualizadas."
-        },
-        ajustado: {
-            dias: "Segunda, quarta e sexta", horario: "18:00–19:30", tempo: "1h30 por dia",
-            total: 9, estudo: 7, demanda: 6,
-            blocos: { javascript: 5, banco: 2, reserva: 2 },
-            aviso: "O tempo extra acomoda as matérias e mantém a reserva.",
-            situacao: "Agora cabe no seu tempo.",
-            explicacao: "Segunda, quarta e sexta, com 1h30 por dia.",
-            anuncio: "Exemplo com mais 30 minutos por dia. Rotina e distribuição atualizadas."
-        }
-    };
-    let cenaAtual = "normal";
+    let materiaAtual = 0;
+    let editandoResposta = false;
 
     function selecionarAba(nome, moverFoco = false) {
         const selecionada = abas.find(aba => aba.dataset.aba === nome);
@@ -57,26 +28,81 @@ function iniciarDemonstracao(painel) {
         if (moverFoco) selecionada.focus();
     }
 
-    function mostrarCena(nome) {
-        cenaAtual = nome;
-        const cena = cenas[nome];
-        ["dias", "horario", "tempo", "situacao", "explicacao"].forEach(campo => {
-            escrever(campo, cena[campo]);
+    function marcarEstudo(botao, concluido) {
+        botao.setAttribute("aria-pressed", String(concluido));
+        const icone = document.createElement("span");
+        icone.setAttribute("aria-hidden", "true");
+        icone.textContent = concluido ? "✓" : "○";
+        botao.querySelector(".demonstracao-estudo-estado").replaceChildren(
+            icone, concluido ? " Passo dado" : " Pendente"
+        );
+    }
+
+    function mostrarMateria(indice, moverFoco = false) {
+        materiaAtual = indice;
+        formulario.hidden = false;
+        resultado.hidden = true;
+        materias.forEach((materia, posicao) => {
+            materia.hidden = posicao !== indice;
+            // Campos ocultos não devem impedir a validação nativa da etapa visível.
+            materia.disabled = posicao !== indice;
         });
-        escrever("resumo-plano", `${cena.total} blocos na semana · 30 min cada`);
-        escrever("aviso-plano", cena.aviso);
-        escrever("numeros", `${cena.total} no período · ${cena.estudo} para estudo · ${cena.demanda} pedidos`);
-        buscar("#exemplo-plano").dataset.estado = nome;
-        buscar("#demonstracao-diagnostico").dataset.estado = nome;
-        linhas.forEach(linha => {
-            const quantidade = cena.blocos[linha.dataset.materia];
-            linha.querySelector(".demonstracao-quantidade").textContent = `${quantidade} blocos`;
-            const marcadores = Array.from({ length: quantidade }, () => document.createElement("span"));
-            linha.querySelector(".demonstracao-marcadores").replaceChildren(...marcadores);
+        const titulo = materias[indice].querySelector("legend");
+        buscar("#demonstracao-etapa").textContent = `Matéria ${indice + 1} de ${materias.length} · ${titulo.textContent}`;
+        buscar("#demonstracao-progresso").value = indice + 1;
+        buscar('[data-acao="materia-anterior"]').hidden = indice === 0;
+        buscar("#demonstracao-continuar").textContent = editandoResposta
+            ? "Atualizar minhas respostas"
+            : indice === materias.length - 1 ? "Ver minhas respostas" : "Próxima matéria";
+        if (moverFoco) titulo.focus();
+    }
+
+    function lerResposta(campo) {
+        return {
+            valor: campo.value === "nao-sei" ? 3 : Number(campo.value),
+            texto: campo.selectedOptions[0].textContent
+        };
+    }
+
+    function mostrarRespostas() {
+        const itens = materias.map(materia => {
+            const nome = materia.querySelector("legend").textContent;
+            const dominio = lerResposta(materia.querySelector('[name^="dominio-"]'));
+            const peso = lerResposta(materia.querySelector('[name^="peso-"]'));
+            const item = document.createElement("li");
+            const titulo = document.createElement("strong");
+            const textoDominio = document.createElement("p");
+            const textoPeso = document.createElement("p");
+            const editar = document.createElement("button");
+            titulo.textContent = nome;
+            textoDominio.textContent = `Domínio: ${dominio.texto}`;
+            textoPeso.textContent = `Peso no objetivo: ${peso.texto}`;
+            editar.type = "button";
+            editar.className = "demonstracao-link";
+            editar.dataset.acao = "editar-materia";
+            editar.dataset.materia = materia.dataset.materia;
+            editar.textContent = `Editar ${nome}`;
+            item.dataset.materia = materia.dataset.materia;
+            item.append(titulo, textoDominio, textoPeso, editar);
+            return item;
         });
-        buscar('#exemplo-ajustes [data-acao="reduzir"]').hidden = nome !== "normal";
-        buscar('#exemplo-ajustes [data-acao="ajustar"]').hidden = nome !== "reduzido";
-        buscar('#exemplo-ajustes [data-acao="ver-plano"]').hidden = nome !== "ajustado";
+        buscar("#demonstracao-respostas").replaceChildren(...itens);
+        formulario.hidden = true;
+        resultado.hidden = false;
+        editandoResposta = false;
+        buscar("#demonstracao-resultado-titulo").focus();
+        anuncio.textContent = "Respostas das três matérias prontas para conferir. Você pode editar cada uma.";
+    }
+
+    function reiniciar() {
+        estudos.forEach(botao => marcarEstudo(botao, false));
+        formulario.reset();
+        buscar("#demonstracao-respostas").replaceChildren();
+        editandoResposta = false;
+        mostrarMateria(0);
+        selecionarAba("percurso");
+        anuncio.textContent = "Exemplo reiniciado. Estudos pendentes e respostas limpas.";
+        buscar("#demonstracao-reiniciar").focus();
     }
 
     painel.addEventListener("click", evento => {
@@ -84,24 +110,43 @@ function iniciarDemonstracao(painel) {
         if (!botao || !painel.contains(botao) || botao.disabled) return;
         if (botao.dataset.aba) {
             selecionarAba(botao.dataset.aba);
+        } else if (botao.classList.contains("demonstracao-estudo")) {
+            const concluido = botao.getAttribute("aria-pressed") !== "true";
+            marcarEstudo(botao, concluido);
+            anuncio.textContent = `${botao.dataset.descricao}: ${concluido ? "passo dado" : "pendente novamente"}.`;
         } else if (botao.id === "demonstracao-reiniciar") {
-            mostrarCena("normal");
-            selecionarAba("plano");
-            anuncio.textContent = "Exemplo reiniciado. Rotina e distribuição originais restauradas.";
-            botao.focus();
-        } else if (botao.dataset.acao === "ver-plano") {
-            selecionarAba("plano", true);
-        } else if (botao.dataset.acao === "ver-ajustes") {
-            selecionarAba("ajustes", true);
-        } else {
-            const reduzir = botao.dataset.acao === "reduzir" && cenaAtual === "normal";
-            const ajustar = botao.dataset.acao === "ajustar" && cenaAtual === "reduzido";
-            if (!reduzir && !ajustar) return;
-            mostrarCena(reduzir ? "reduzido" : "ajustado");
-            selecionarAba("ajustes");
-            buscar("#demonstracao-situacao").focus();
-            anuncio.textContent = cenas[cenaAtual].anuncio;
+            reiniciar();
+        } else if (botao.dataset.acao === "ver-materias") {
+            selecionarAba("materias");
+            if (resultado.hidden) mostrarMateria(materiaAtual, true);
+            else buscar("#demonstracao-resultado-titulo").focus();
+        } else if (botao.dataset.acao === "ver-percurso") {
+            selecionarAba("percurso", true);
+        } else if (botao.dataset.acao === "materia-anterior") {
+            mostrarMateria(materiaAtual - 1, true);
+        } else if (botao.dataset.acao === "editar-materia") {
+            editandoResposta = true;
+            mostrarMateria(materias.findIndex(materia => materia.dataset.materia === botao.dataset.materia), true);
         }
+    });
+
+    formulario.addEventListener("submit", evento => {
+        evento.preventDefault();
+        if (!formulario.reportValidity()) return;
+        if (!editandoResposta && materiaAtual < materias.length - 1) {
+            mostrarMateria(materiaAtual + 1, true);
+            return;
+        }
+        // Ao editar, também conferimos as outras etapas antes de montar o resumo.
+        const incompleta = materias.findIndex(materia =>
+            [...materia.querySelectorAll("select")].some(campo => campo.value === "")
+        );
+        if (incompleta !== -1) {
+            mostrarMateria(incompleta, true);
+            formulario.reportValidity();
+            return;
+        }
+        mostrarRespostas();
     });
 
     buscar('[role="tablist"]').addEventListener("keydown", evento => {
@@ -118,10 +163,10 @@ function iniciarDemonstracao(painel) {
         selecionarAba(abas[destinos[evento.key]].dataset.aba, true);
     });
 
-    mostrarCena("normal");
-    selecionarAba("plano");
-    painel.querySelectorAll("button[disabled]").forEach(botao => {
-        botao.disabled = false;
+    painel.querySelectorAll("button[disabled], select[disabled]").forEach(controle => {
+        controle.disabled = false;
     });
-    escrever("instrucao", "Exemplo fictício. Nada é salvo.");
+    mostrarMateria(0);
+    selecionarAba("percurso");
+    buscar("#demonstracao-instrucao").textContent = "Exemplo fictício. Explore à vontade; nada é salvo após recarregar a página.";
 }
