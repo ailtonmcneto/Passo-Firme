@@ -172,6 +172,25 @@ Todas as funções são assíncronas, para que na fase 2 a implementação troqu
 | `responderSugestao(topicoId, aceitar, hoje)` | true ou false | `{ viabilidade, mudancas }` |
 | `responderCobertura(planoId, aceitar, hoje)` | true ou false | `{ viabilidade, mudancas }` |
 
+### 5.1 Geração e persistência local na plataforma
+
+O cadastro do §11 usa as funções assíncronas abaixo. `avaliarRascunho` é implementada com o contrato acima; o fluxo diário completo continua previsto para outra entrega.
+
+| Função | Recebe | Devolve |
+|---|---|---|
+| `resumirDisponibilidade(plano, celulas)` | período e células, inclusive lista vazia | `{ blocosPorSemana, minutosPorSemana, blocosNoPeriodo }`, derivados da capacidade |
+| `montarPrevia(rascunho, hoje, escolha?)` | `{ plano, topicos, celulas }`; escolha `null` ou `{ tipo: 'PARCIAL' \| 'REDUZIR_DEMANDA' \| 'COBERTURA' }` | `{ bloqueado, plano, topicos, celulas, blocos, viabilidade, cobertura, avisos }`, sem gravar dados |
+| `obterSessao()` | — | `{ rascunho, cronograma, marcacoes, revisao }`, ou estado vazio na primeira visita |
+| `salvarRascunho(rascunho)` | cadastro, mesmo incompleto | sessão atualizada; preserva o cronograma anterior |
+| `gerarPlanoLocal(rascunho, hoje, escolha?)` | mesmos parâmetros de `montarPrevia` | resultado calculado; se não bloqueado, salva atomicamente rascunho e cronograma e limpa marcações |
+| `marcarEstudo(id, concluido)` | bloco do cronograma salvo e booleano | sessão com marcações atualizadas |
+
+A persistência usa IndexedDB em `js/db.js`, acessado somente pela fachada. Uma store `sessao` guarda o rascunho, cronograma e marcações juntos para que uma falha não deixe partes de planos diferentes. As gravações são serializadas na fachada e verificam uma revisão na transação para impedir que outra aba sobrescreva alterações silenciosamente. Falhas de gravação são mostradas como erro, nunca como sucesso. É salvamento no mesmo navegador/origem, sem conta, servidor ou sincronização entre dispositivos. O armazenamento normalizado em stores de domínio do §6 fica para o fluxo diário completo.
+
+`avaliarRascunho` acrescenta também `blocosPorSemana`, `minutosPorSemana` e `blocosNoPeriodo` à viabilidade. `capacidadeTotal` continua sendo a janela de estudo; `blocosNoPeriodo` inclui os horários depois da prova, quando houver. `montarPrevia` usa `gerarCronograma` e devolve blocos no formato do §5, com IDs determinísticos e horários derivados das células ordenadas de cada dia. Uma entrada inviável sem escolha explícita não gera blocos; a opção PARCIAL só é aceita quando não há bloqueio. Reduzir demanda e reta final só podem ser escolhidas quando suas saídas resolvem o caso. Mais tempo e retirada de matérias são aplicados ao rascunho antes de avaliar novamente.
+
+O cadastro exige início a partir de hoje, período inclusivo de até 366 dias, ao menos uma matéria e um horário que ocorra no período. As células usam 00:00 a 23:30 em passos de 30 minutos, com dia de 0 a 6 e sem duplicatas. Nomes de matérias são aparados e comparados sem diferenças de maiúsculas ou acentos. IDs de matérias são strings únicas, não vazias, diferentes de `RESERVA`, `__proto__`, `constructor` e `prototype`. Domínio/peso são inteiros de 1 a 5; “não sei” vira 3. A fachada valida as entradas e lança `RangeError` em português. O limite de período evita grades e buscas excessivas no navegador; nenhuma regra do algoritmo é alterada.
+
 - **Bloco, como a tela recebe:** `{ id, data, hora, ordem, topicoId, topicoNome, tipo, extra, status, fixado, motivo, duracaoMin }`, com `tipo` ESTUDO, REVISAO ou RESERVA, e `status` PENDENTE, CONCLUIDO, PULADO ou PERDIDO. `hora` é preenchida pela fachada a partir das células (§3.3).
 - **Mudanças:** `[{ antes: bloco | null, depois: bloco | null, causa }]`, com `causa` PERDIDO_VOLTOU, PULADO_VOLTOU, REVISAO_AGENDADA, AJUSTE_DOMINIO, HORARIOS_ALTERADOS ou RETA_FINAL. Quem calcula é a fachada, comparando os blocos futuros antes e depois do replanejamento.
 - **Viabilidade:** o objeto devolvido por `avaliarViabilidade` (algoritmo §4), acrescido pela fachada de `capacidadeTotal` e `capacidadeReserva` (de `calcularCapacidade`) e de `retaFinal` (resultado de `avaliarRetaFinal`, algoritmo §6.1, ou null quando a condição da reta final não vale), que a tela usa nos números do §3.4. A tradução para "pinte mais K horários" é feita na tela.
@@ -230,12 +249,13 @@ Trocar de aba preserva as marcações, a etapa atual e as respostas, inclusive a
 
 As abas permitem navegação pelas setas, Home e End, com apenas a selecionada na sequência de Tab, foco visível e painéis inativos com `hidden`. A grade usa cabeçalhos de dia e faixa de horário. No celular, mantém os sete dias na horizontal dentro de uma área com rolagem localizada, acessível pelo teclado e identificada com instrução de rolagem; a página inteira não deve transbordar. Os campos têm rótulos associados e as mudanças usam uma região de status com anúncio `polite`. O painel respeita movimento reduzido. Sem JavaScript, a grade inicial continua legível, os controles ficam desabilitados e um aviso explica que as interações precisam dele.
 
-## 11. Prévia interativa da plataforma
+## 11. Plataforma com cadastro e geração real
 
-Nesta entrega, `pages/plataforma.html` é somente o front interativo, conforme o escopo solicitado. A integração real descrita nos §§2–6 continua prevista para outra entrega. A página usa a mesma semana ilustrativa, as mesmas matérias e as mesmas interações do §10, com estado apenas em memória e sem importar a fachada, o algoritmo ou um banco. Não gera um cronograma nem salva dados após recarregar a página.
+A plataforma começa vazia no cadastro: matérias → proficiência → período → horários → conferência de viabilidade. O aluno informa os nomes, responde domínio e peso de uma matéria por vez, escolhe o período e pinta seus horários de 30 minutos. A dificuldade é representada pelo domínio declarado, sem uma nota adicional. Não há cronograma antes de terminar o cadastro e solicitar a geração.
 
-- **Seu percurso** abre inicialmente, com a grade de domingo a sábado, estudos de 30 minutos e marcação reversível entre Pendente e Passo dado.
-- **Suas matérias** apresenta Matemática, Português e História, uma por etapa, com as alternativas de domínio e peso do §3.1. Inclui validação, retorno à matéria anterior, resumo editável e retomada da etapa ao trocar abas.
-- **Reiniciar exemplo** limpa as marcações, as respostas e o resumo e retorna ao percurso. O rodapé informa de forma curta que é uma prévia e que os dados duram apenas durante a visita.
-- A página reaproveita `css/demonstracao.css` e a inicialização exportada de `js/ui/demonstracao.js`. `css/plataforma.css` cuida da composição da página e `js/plataforma.js` inicia o painel, sem duplicar as regras das interações.
-- A estética segue a landing: logo, Poppins, fundo azul, painel branco e detalhes verdes. O cabeçalho leva de volta à página inicial. Mantém as duas abas, sem painéis de métricas ou novas etapas de cadastro. No celular, só a grade rola horizontalmente; foco, teclado, movimento reduzido e o aviso sem JavaScript seguem o §10.
+- A tela chama somente `js/api.js` para capacidade, viabilidade e geração. A fachada executa os módulos existentes do algoritmo. A demonstração da landing continua fictícia e independente.
+- O visual mantém Poppins, azul, verde, painel branco, abas **Suas matérias** e **Seu percurso**, e grade semanal de domingo a sábado. A aba do percurso só fica disponível depois da geração. A semana mostra datas reais, somente linhas com horários selecionados e navegação entre semanas limitada ao período. Blocos exibem o motivo devolvido pelo algoritmo; reservas aparecem como tempo livre e extras são identificados.
+- As respostas e horários podem ser revistos pelo cadastro. Um aviso informa quando há alterações por aplicar; a nova grade só substitui a anterior após a geração confirmada. A matéria pode ser removida com atualização do rascunho, preservando as respostas das restantes.
+- Quando não cabe, a conferência mostra os números e as saídas calculadas: ajustar horários, estender período quando possível, reduzir passagens, retirar matérias, reta final ou aceitar cobertura parcial quando permitido. A geração bloqueada mantém o cadastro e explica como continuar.
+- Respostas, cronograma e marcações são salvos localmente conforme §5.1 e restaurados ao reabrir. Tocar em um estudo alterna Pendente/Passo dado como marcação de acompanhamento; não registra o histórico SM-2 nem executa o fluxo diário dos §§3.5–3.8 nesta entrega. Gerar novamente limpa essas marcações, com aviso antes de confirmar. O cálculo inicial e a distribuição são reais, através do pipeline.
+- Há retorno entre etapas, validação junto dos campos, foco visível, abas por teclado, região de status, rolagem localizada das grades e respeito ao movimento reduzido. Sem JavaScript, o aviso informa que o cadastro precisa dele. O rodapé informa que o salvamento é neste navegador.
