@@ -214,3 +214,18 @@ Todas as funções são assíncronas, para que na fase 2 a implementação troqu
 - Detalhes do modo foco: pausa, encerrar antes, som ou notificação no fim.
 - Se entra alguma visão extra, como o calendário do mês.
 - Onboarding: se o cadastro mostra um exemplo preenchido ou começa vazio.
+
+## 10. Demonstração na landing
+
+A seção `about-us` de `index.html` apresenta uma demonstração da organização dos estudos, identificada como exemplo ilustrativo com dados fictícios. A grade é predefinida para mostrar a interface, sem alegar que foi gerada pelo algoritmo. No navegador, o painel só altera estados e respostas em memória: não calcula planejamento, não importa `js/core/`, `js/db.js` ou `js/api.js`, não replaneja, não cadastra nem persiste dados. O contrato da fachada permanece inalterado.
+
+São duas abas horizontais, acessíveis por botões separados:
+
+- **Seu percurso**, aberta inicialmente: mostra uma grade semanal com domingo, segunda, terça, quarta, quinta, sexta e sábado em colunas. As linhas agrupam as faixas 08:00–10:00, 10:00–12:00, 12:00–14:00 e 14:00–16:00. Cada cartão mostra matéria, assunto e seu horário específico de 30 minutos, além do estado **Pendente** ou **Passo dado**. Um botão permite marcar como estudado e voltar a pendente. A marcação muda apenas o exemplo; não agenda revisões nem simula a conclusão de um bloco real. Os estados têm texto e marca visual, sem depender só da cor e sem tratar pendências como punição.
+- **Suas matérias**: apresenta um formulário em três etapas, uma matéria por vez: Matemática, Português e História, as mesmas matérias da grade. O botão **Responder sobre minhas matérias** abre essa aba na etapa em andamento (ou no resumo, se já concluído). Para cada matéria, usa as perguntas e alternativas de domínio e peso do §3.1, incluindo **não sei**, correspondente a 3. Todos os campos são obrigatórios, com validação nativa do navegador antes de avançar. A etapa indica a posição no formulário; é possível voltar à matéria anterior sem perder respostas. As etapas inativas ficam ocultas e desabilitadas para não bloquear a validação da matéria visível. Ao terminar, um resumo confirma as respostas textuais por matéria e permite editar cada uma. O exemplo apresenta a autoavaliação do aluno; não atribui nota, não faz avaliação objetiva da proficiência e não recalcula a grade.
+
+As faixas de duas horas são apenas agrupamentos visuais: os blocos continuam com 30 minutos, como previsto no MVP. A grade não representa datas reais, não destaca o dia atual e não simula sequenciamento ou replanejamento. Essas escolhas mantêm a demonstração pequena sem mudar as regras da plataforma.
+
+Trocar de aba preserva as marcações, a etapa atual e as respostas, inclusive antes de enviar o formulário. **Reiniciar** devolve todos os cartões a pendente, limpa respostas e resumo, retorna o questionário à primeira matéria e abre Seu percurso. Nada permanece após recarregar a página.
+
+As abas permitem navegação pelas setas, Home e End, com apenas a selecionada na sequência de Tab, foco visível e painéis inativos com `hidden`. A grade usa cabeçalhos de dia e faixa de horário. No celular, mantém os sete dias na horizontal dentro de uma área com rolagem localizada, acessível pelo teclado e identificada com instrução de rolagem; a página inteira não deve transbordar. Os campos têm rótulos associados e as mudanças usam uma região de status com anúncio `polite`. O painel respeita movimento reduzido. Sem JavaScript, a grade inicial continua legível, os controles ficam desabilitados e um aviso explica que as interações precisam dele.
