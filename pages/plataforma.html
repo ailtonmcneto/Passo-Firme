@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore sua semana de estudos e responda sobre seu conhecimento em cada matéria no Passo Firme.">
+    <title>Sua plataforma de estudos | Passo Firme</title>
+    <link rel="stylesheet" href="../css/demonstracao.css">
+    <link rel="stylesheet" href="../css/plataforma.css">
+    <script type="module" src="../js/plataforma.js"></script>
+</head>
+<body class="plataforma-pagina">
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <header class="plataforma-topo">
+        <nav class="plataforma-menu" aria-label="Principal">
+            <a class="plataforma-marca" href="../index.html" aria-label="Passo Firme — página inicial">
+                <img src="../img/passosfirmes.png" alt="Passo Firme" width="200">
+            </a>
+            <a class="plataforma-voltar" href="../index.html"><span aria-hidden="true">←</span> Voltar ao início</a>
+        </nav>
+    </header>
+    <main class="plataforma-conteudo" id="conteudo" tabindex="-1">
+        <div class="plataforma-apresentacao">
+            <p class="plataforma-etiqueta">Seu espaço de estudos</p>
+            <h1 id="plataforma-titulo">Um estudo de cada vez.</h1>
+            <p>Acompanhe sua semana e conheça seu ponto de partida.</p>
+        </div>
+        <div class="demonstracao plataforma-painel" id="plataforma" aria-labelledby="plataforma-titulo">
+            <div class="demonstracao-janela">
+                <div class="demonstracao-navegacao">
+                    <div class="demonstracao-abas" role="tablist" aria-label="Sua plataforma de estudos" aria-orientation="horizontal">
+                        <button type="button" role="tab" id="aba-percurso" data-aba="percurso" aria-controls="exemplo-percurso" aria-selected="true" tabindex="0" disabled>Seu percurso</button>
+                        <button type="button" role="tab" id="aba-materias" data-aba="materias" aria-controls="exemplo-materias" aria-selected="false" tabindex="-1" disabled>Suas matérias</button>
+                    </div>
+                    <button class="demonstracao-reiniciar" id="demonstracao-reiniciar" type="button" disabled><span aria-hidden="true">↺</span> Reiniciar exemplo</button>
+                </div>
+
+                <section class="demonstracao-painel" role="tabpanel" id="exemplo-percurso" aria-labelledby="aba-percurso" tabindex="0">
+                    <div class="demonstracao-cabecalho">
+                        <span class="demonstracao-etiqueta">Semana de exemplo</span>
+                        <h2>Sua semana de estudos.</h2>
+                        <p id="demonstracao-instrucao-estudos">Toque em um estudo para concluir. Toque novamente para deixá-lo pendente.</p>
+                    </div>
+                    <div class="demonstracao-legenda" aria-label="Estados dos estudos">
+                        <span class="demonstracao-legenda-item"><span aria-hidden="true">○</span> Pendente</span>
+                        <span class="demonstracao-legenda-item"><span aria-hidden="true">✓</span> Passo dado</span>
+                        <span class="demonstracao-legenda-item">Cada estudo dura 30 min</span>
+                    </div>
+                    <p class="demonstracao-nota demonstracao-dica-rolagem" id="demonstracao-dica-grade">Deslize a grade para ver todos os dias. Com o teclado, use as setas quando a grade estiver em foco.</p>
+                    <div class="demonstracao-grade-rolagem" role="region" aria-label="Grade semanal de estudos" aria-describedby="demonstracao-dica-grade" tabindex="0">
+                        <table class="demonstracao-grade">
+                            <caption>Semana ilustrativa · cada estudo dura 30 minutos.</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Horário</th>
+                                    <th scope="col">Domingo</th>
+                                    <th scope="col">Segunda</th>
+                                    <th scope="col">Terça</th>
+                                    <th scope="col">Quarta</th>
+                                    <th scope="col">Quinta</th>
+                                    <th scope="col">Sexta</th>
+                                    <th scope="col">Sábado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">08:00–10:00</th>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="matematica" data-descricao="Matemática, Equações, segunda, 08:00–08:30" aria-label="Matemática, Equações, segunda, 08:00–08:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">08:00–08:30</span>
+                                        <strong class="demonstracao-estudo-materia">Matemática</strong>
+                                        <span class="demonstracao-estudo-assunto">Equações</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="portugues" data-descricao="Português, Interpretação, terça, 08:30–09:00" aria-label="Português, Interpretação, terça, 08:30–09:00" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">08:30–09:00</span>
+                                        <strong class="demonstracao-estudo-materia">Português</strong>
+                                        <span class="demonstracao-estudo-assunto">Interpretação</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="matematica" data-descricao="Matemática, Frações, quinta, 09:00–09:30" aria-label="Matemática, Frações, quinta, 09:00–09:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">09:00–09:30</span>
+                                        <strong class="demonstracao-estudo-materia">Matemática</strong>
+                                        <span class="demonstracao-estudo-assunto">Frações</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="historia" data-descricao="História, Brasil Colônia, sexta, 08:00–08:30" aria-label="História, Brasil Colônia, sexta, 08:00–08:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">08:00–08:30</span>
+                                        <strong class="demonstracao-estudo-materia">História</strong>
+                                        <span class="demonstracao-estudo-assunto">Brasil Colônia</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">10:00–12:00</th>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="historia" data-descricao="História, Fontes históricas, domingo, 10:00–10:30" aria-label="História, Fontes históricas, domingo, 10:00–10:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">10:00–10:30</span>
+                                        <strong class="demonstracao-estudo-materia">História</strong>
+                                        <span class="demonstracao-estudo-assunto">Fontes históricas</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="portugues" data-descricao="Português, Concordância, quarta, 10:00–10:30" aria-label="Português, Concordância, quarta, 10:00–10:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">10:00–10:30</span>
+                                        <strong class="demonstracao-estudo-materia">Português</strong>
+                                        <span class="demonstracao-estudo-assunto">Concordância</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="matematica" data-descricao="Matemática, Geometria, sábado, 11:00–11:30" aria-label="Matemática, Geometria, sábado, 11:00–11:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">11:00–11:30</span>
+                                        <strong class="demonstracao-estudo-materia">Matemática</strong>
+                                        <span class="demonstracao-estudo-assunto">Geometria</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">12:00–14:00</th>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="historia" data-descricao="História, Independência, terça, 12:00–12:30" aria-label="História, Independência, terça, 12:00–12:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">12:00–12:30</span>
+                                        <strong class="demonstracao-estudo-materia">História</strong>
+                                        <span class="demonstracao-estudo-assunto">Independência</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="portugues" data-descricao="Português, Pontuação, quinta, 13:00–13:30" aria-label="Português, Pontuação, quinta, 13:00–13:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">13:00–13:30</span>
+                                        <strong class="demonstracao-estudo-materia">Português</strong>
+                                        <span class="demonstracao-estudo-assunto">Pontuação</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">14:00–16:00</th>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="portugues" data-descricao="Português, Redação, segunda, 14:00–14:30" aria-label="Português, Redação, segunda, 14:00–14:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">14:00–14:30</span>
+                                        <strong class="demonstracao-estudo-materia">Português</strong>
+                                        <span class="demonstracao-estudo-assunto">Redação</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="matematica" data-descricao="Matemática, Porcentagem, quarta, 14:30–15:00" aria-label="Matemática, Porcentagem, quarta, 14:30–15:00" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">14:30–15:00</span>
+                                        <strong class="demonstracao-estudo-materia">Matemática</strong>
+                                        <span class="demonstracao-estudo-assunto">Porcentagem</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td><span class="demonstracao-livre">Livre</span></td>
+                                <td>
+                                    <button class="demonstracao-estudo" type="button" data-materia="historia" data-descricao="História, República, sábado, 15:00–15:30" aria-label="História, República, sábado, 15:00–15:30" aria-describedby="demonstracao-instrucao-estudos" aria-pressed="false" disabled>
+                                        <span class="demonstracao-estudo-hora">15:00–15:30</span>
+                                        <strong class="demonstracao-estudo-materia">História</strong>
+                                        <span class="demonstracao-estudo-assunto">República</span>
+                                        <span class="demonstracao-estudo-estado"><span aria-hidden="true">○</span> Pendente</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="demonstracao-acoes">
+                        <p class="demonstracao-nota">Ficou pendente? Você pode retomar esse estudo depois.</p>
+                        <button class="demonstracao-botao" type="button" data-acao="ver-materias" disabled>Responder sobre minhas matérias <span aria-hidden="true">→</span></button>
+                    </div>
+                </section>
+
+                <section class="demonstracao-painel" role="tabpanel" id="exemplo-materias" aria-labelledby="aba-materias" tabindex="0" hidden>
+                    <div class="demonstracao-cabecalho">
+                        <span class="demonstracao-etiqueta">Seu ponto de partida</span>
+                        <h2>Como está seu conhecimento?</h2>
+                        <p>Uma matéria de cada vez. Conte como você se sente e quanto ela pesa no seu objetivo.</p>
+                    </div>
+                    <form id="demonstracao-formulario">
+                        <div class="demonstracao-progresso">
+                            <p id="demonstracao-etapa">Matéria 1 de 3 · Matemática</p>
+                            <progress id="demonstracao-progresso" max="3" value="1" aria-labelledby="demonstracao-etapa"></progress>
+                        </div>
+                        <div class="demonstracao-perguntas">
+                            <fieldset class="demonstracao-materia" data-materia="matematica">
+                                <legend tabindex="-1">Matemática</legend>
+                                <div class="demonstracao-campo">
+                                    <label for="dominio-matematica">Se caísse uma questão disso amanhã, você…</label>
+                                    <select id="dominio-matematica" name="dominio-matematica" required disabled>
+                                        <option value="">Escolha uma resposta</option>
+                                        <option value="1">Não saberia nem começar</option>
+                                        <option value="2">Lembro de ter visto</option>
+                                        <option value="3">Entendo, mas erro</option>
+                                        <option value="4">Resolvo consultando</option>
+                                        <option value="5">Resolvo tranquilo</option>
+                                        <option value="nao-sei">Não sei</option>
+                                    </select>
+                                </div>
+                                <div class="demonstracao-campo">
+                                    <label for="peso-matematica">Quanto essa matéria pesa no seu objetivo (nota, prova)?</label>
+                                    <select id="peso-matematica" name="peso-matematica" required disabled>
+                                        <option value="">Escolha uma resposta</option>
+                                        <option value="1">Quase nada</option>
+                                        <option value="2">Pouco</option>
+                                        <option value="3">O normal</option>
+                                        <option value="4">Bastante</option>
+                                        <option value="5">É a maior parte</option>
+                                        <option value="nao-sei">Não sei</option>
+                                    </select>
+                                </div>
+                            </fieldset>
+                            <fieldset class="demonstracao-materia" data-materia="portugues" hidden disabled>
+                                <legend tabindex="-1">Português</legend>
+                                <div class="demonstracao-campo">
+                                    <label for="dominio-portugues">Se caísse uma questão disso amanhã, você…</label>
+                                    <select id="dominio-portugues" name="dominio-portugues" required disabled>
+                                        <option value="">Escolha uma resposta</option>
+                                        <option value="1">Não saberia nem começar</option>
+                                        <option value="2">Lembro de ter visto</option>
+                                        <option value="3">Entendo, mas erro</option>
+                                        <option value="4">Resolvo consultando</option>
+                                        <option value="5">Resolvo tranquilo</option>
+                                        <option value="nao-sei">Não sei</option>
+                                    </select>
+                                </div>
+                                <div class="demonstracao-campo">
+                                    <label for="peso-portugues">Quanto essa matéria pesa no seu objetivo (nota, prova)?</label>
+                                    <select id="peso-portugues" name="peso-portugues" required disabled>
+                                        <option value="">Escolha uma resposta</option>
+                                        <option value="1">Quase nada</option>
+                                        <option value="2">Pouco</option>
+                                        <option value="3">O normal</option>
+                                        <option value="4">Bastante</option>
+                                        <option value="5">É a maior parte</option>
+                                        <option value="nao-sei">Não sei</option>
+                                    </select>
+                                </div>
+                            </fieldset>
+                            <fieldset class="demonstracao-materia" data-materia="historia" hidden disabled>
+                                <legend tabindex="-1">História</legend>
+                                <div class="demonstracao-campo">
+                                    <label for="dominio-historia">Se caísse uma questão disso amanhã, você…</label>
+                                    <select id="dominio-historia" name="dominio-historia" required disabled>
+                                        <option value="">Escolha uma resposta</option>
+                                        <option value="1">Não saberia nem começar</option>
+                                        <option value="2">Lembro de ter visto</option>
+                                        <option value="3">Entendo, mas erro</option>
+                                        <option value="4">Resolvo consultando</option>
+                                        <option value="5">Resolvo tranquilo</option>
+                                        <option value="nao-sei">Não sei</option>
+                                    </select>
+                                </div>
+                                <div class="demonstracao-campo">
+                                    <label for="peso-historia">Quanto essa matéria pesa no seu objetivo (nota, prova)?</label>
+                                    <select id="peso-historia" name="peso-historia" required disabled>
+                                        <option value="">Escolha uma resposta</option>
+                                        <option value="1">Quase nada</option>
+                                        <option value="2">Pouco</option>
+                                        <option value="3">O normal</option>
+                                        <option value="4">Bastante</option>
+                                        <option value="5">É a maior parte</option>
+                                        <option value="nao-sei">Não sei</option>
+                                    </select>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <p class="demonstracao-nota">Pode escolher “Não sei”. Este é o seu ponto de partida.</p>
+                        <div class="demonstracao-formulario-acoes">
+                            <button class="demonstracao-link" type="button" data-acao="materia-anterior" hidden disabled><span aria-hidden="true">←</span> Matéria anterior</button>
+                            <button class="demonstracao-botao" type="submit" disabled><span id="demonstracao-continuar">Próxima matéria</span> <span aria-hidden="true">→</span></button>
+                            <button class="demonstracao-link" type="button" data-acao="ver-percurso" disabled>Voltar à semana</button>
+                        </div>
+                    </form>
+                    <section class="demonstracao-resultado" id="demonstracao-resultado" aria-labelledby="demonstracao-resultado-titulo" hidden>
+                        <h3 id="demonstracao-resultado-titulo" tabindex="-1">Seu ponto de partida está aqui.</h3>
+                        <p>Estas são suas respostas de autoavaliação. Você pode mudá-las quando quiser.</p>
+                        <ul class="demonstracao-respostas" id="demonstracao-respostas"></ul>
+                        <button class="demonstracao-botao" type="button" data-acao="ver-percurso" disabled>Voltar ao percurso <span aria-hidden="true">→</span></button>
+                    </section>
+                </section>
+
+                <p class="demonstracao-rodape" id="demonstracao-instrucao">Prévia interativa. Ative o JavaScript para marcar os estudos e responder às perguntas.</p>
+            </div>
+            <p class="demonstracao-status" id="demonstracao-status" role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+    </main>
+    <footer class="plataforma-rodape">Passo Firme · Um passo de cada vez.</footer>
+</body>
+</html>

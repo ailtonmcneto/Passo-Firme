@@ -229,3 +229,13 @@ As faixas de duas horas são apenas agrupamentos visuais: os blocos continuam co
 Trocar de aba preserva as marcações, a etapa atual e as respostas, inclusive antes de enviar o formulário. **Reiniciar** devolve todos os cartões a pendente, limpa respostas e resumo, retorna o questionário à primeira matéria e abre Seu percurso. Nada permanece após recarregar a página.
 
 As abas permitem navegação pelas setas, Home e End, com apenas a selecionada na sequência de Tab, foco visível e painéis inativos com `hidden`. A grade usa cabeçalhos de dia e faixa de horário. No celular, mantém os sete dias na horizontal dentro de uma área com rolagem localizada, acessível pelo teclado e identificada com instrução de rolagem; a página inteira não deve transbordar. Os campos têm rótulos associados e as mudanças usam uma região de status com anúncio `polite`. O painel respeita movimento reduzido. Sem JavaScript, a grade inicial continua legível, os controles ficam desabilitados e um aviso explica que as interações precisam dele.
+
+## 11. Prévia interativa da plataforma
+
+Nesta entrega, `pages/plataforma.html` é somente o front interativo, conforme o escopo solicitado. A integração real descrita nos §§2–6 continua prevista para outra entrega. A página usa a mesma semana ilustrativa, as mesmas matérias e as mesmas interações do §10, com estado apenas em memória e sem importar a fachada, o algoritmo ou um banco. Não gera um cronograma nem salva dados após recarregar a página.
+
+- **Seu percurso** abre inicialmente, com a grade de domingo a sábado, estudos de 30 minutos e marcação reversível entre Pendente e Passo dado.
+- **Suas matérias** apresenta Matemática, Português e História, uma por etapa, com as alternativas de domínio e peso do §3.1. Inclui validação, retorno à matéria anterior, resumo editável e retomada da etapa ao trocar abas.
+- **Reiniciar exemplo** limpa as marcações, as respostas e o resumo e retorna ao percurso. O rodapé informa de forma curta que é uma prévia e que os dados duram apenas durante a visita.
+- A página reaproveita `css/demonstracao.css` e a inicialização exportada de `js/ui/demonstracao.js`. `css/plataforma.css` cuida da composição da página e `js/plataforma.js` inicia o painel, sem duplicar as regras das interações.
+- A estética segue a landing: logo, Poppins, fundo azul, painel branco e detalhes verdes. O cabeçalho leva de volta à página inicial. Mantém as duas abas, sem painéis de métricas ou novas etapas de cadastro. No celular, só a grade rola horizontalmente; foco, teclado, movimento reduzido e o aviso sem JavaScript seguem o §10.

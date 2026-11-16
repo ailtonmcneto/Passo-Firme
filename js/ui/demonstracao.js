@@ -2,7 +2,9 @@ const demonstracao = document.querySelector("#demonstracao");
 
 if (demonstracao) iniciarDemonstracao(demonstracao);
 
-function iniciarDemonstracao(painel) {
+export function iniciarDemonstracao(painel, {
+    mensagemRodape = "Exemplo fictício. Explore à vontade; nada é salvo após recarregar a página."
+} = {}) {
     const buscar = seletor => painel.querySelector(seletor);
     const abas = [...painel.querySelectorAll('[role="tab"]')];
     const secoes = [...painel.querySelectorAll('[role="tabpanel"]')];
@@ -168,5 +170,5 @@ function iniciarDemonstracao(painel) {
     });
     mostrarMateria(0);
     selecionarAba("percurso");
-    buscar("#demonstracao-instrucao").textContent = "Exemplo fictício. Explore à vontade; nada é salvo após recarregar a página.";
+    buscar("#demonstracao-instrucao").textContent = mensagemRodape;
 }

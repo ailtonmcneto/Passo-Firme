@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.plataforma-pagina,
+.plataforma-pagina *,
+.plataforma-pagina *::before,
+.plataforma-pagina *::after { box-sizing: border-box; }
+
+.plataforma-pagina {
+    margin: 0;
+    min-width: 280px;
+    min-height: 100vh;
+    background: #14354f;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.plataforma-pagina :focus-visible {
+    outline: 3px solid #008c84;
+    outline-offset: 4px;
+}
+
+.pular-conteudo {
+    position: absolute;
+    z-index: 10;
+    top: 12px;
+    left: 16px;
+    padding: 12px 18px;
+    border-radius: 6px;
+    background: #fff;
+    color: #14354f;
+    transform: translateY(-160%);
+}
+
+.pular-conteudo:focus { transform: translateY(0); }
+
+.plataforma-topo {
+    border-bottom: 1px solid #dfe9ed;
+    background: #fff;
+}
+
+.plataforma-menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1184px;
+    min-height: 80px;
+    margin: 0 auto;
+    padding: 12px 32px;
+}
+
+.plataforma-marca {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    border-radius: 6px;
+}
+
+.plataforma-marca img { display: block; width: 174px; max-width: 100%; height: auto; }
+
+.plataforma-voltar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: #496174;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.plataforma-voltar:hover { background: #edf7f3; color: #006b64; }
+
+.plataforma-conteudo {
+    max-width: 1184px;
+    margin: 0 auto;
+    padding: 48px 32px 0;
+}
+
+.plataforma-apresentacao { margin-bottom: 32px; }
+
+.plataforma-etiqueta {
+    margin: 0 0 10px;
+    color: #9bdcd4;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.plataforma-apresentacao h1 {
+    margin: 0;
+    font-size: clamp(28px, 3.6vw, 40px);
+    font-weight: 600;
+    letter-spacing: -1.2px;
+    line-height: 1.3;
+}
+
+.plataforma-apresentacao h1 + p {
+    max-width: 620px;
+    margin: 12px 0 0;
+    color: #c6d7e2;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.plataforma-painel.demonstracao { max-width: none; margin: 0; }
+
+.plataforma-painel .demonstracao-janela {
+    border-color: #d9e5e9;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px #061f3633;
+}
+
+.plataforma-painel .demonstracao-navegacao { padding: 16px 28px; }
+.plataforma-painel .demonstracao-abas button { padding: 11px 18px; font-size: 14px; }
+.plataforma-painel .demonstracao-painel { padding: 30px 28px; }
+
+.plataforma-painel .demonstracao-cabecalho h2 {
+    margin: 0;
+    font-size: clamp(22px, 2.4vw, 27px);
+    font-weight: 600;
+    letter-spacing: -0.7px;
+    line-height: 1.4;
+}
+
+.plataforma-painel .demonstracao-cabecalho p { font-size: 14px; }
+.plataforma-painel .demonstracao-etiqueta { font-size: 13px; }
+.plataforma-painel .demonstracao-grade { min-width: 1000px; }
+.plataforma-painel .demonstracao-grade th { font-size: 13px; }
+.plataforma-painel .demonstracao-grade th:first-child { width: 90px; }
+.plataforma-painel .demonstracao-grade th[scope="row"] { font-size: 12px; }
+.plataforma-painel .demonstracao-grade caption { font-size: 12px; }
+.plataforma-painel .demonstracao-estudo { min-height: 124px; padding: 12px 10px; }
+.plataforma-painel .demonstracao-estudo-materia { font-size: 13px; }
+.plataforma-painel .demonstracao-estudo-assunto { font-size: 12px; }
+.plataforma-painel .demonstracao-estudo-hora { font-size: 11px; }
+.plataforma-painel .demonstracao-estudo-estado { font-size: 11px; }
+.plataforma-painel .demonstracao-livre { font-size: 12px; }
+
+.plataforma-painel .demonstracao-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-top: 22px;
+}
+
+.plataforma-painel .demonstracao-acoes .demonstracao-nota,
+.plataforma-painel .demonstracao-acoes .demonstracao-botao { margin: 0; }
+
+.plataforma-painel #exemplo-materias { padding-top: 36px; padding-bottom: 36px; }
+.plataforma-painel #exemplo-materias > * { max-width: 720px; margin-right: auto; margin-left: auto; }
+.plataforma-painel .demonstracao-materia { padding: 26px; }
+.plataforma-painel .demonstracao-materia legend { font-size: 20px; }
+.plataforma-painel .demonstracao-campo label { font-size: 15px; }
+.plataforma-painel .demonstracao-progresso { margin-bottom: 30px; }
+.plataforma-painel .demonstracao-progresso p { font-size: 13px; }
+
+.plataforma-painel .demonstracao-resultado h3 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    line-height: 1.4;
+}
+
+.plataforma-painel .demonstracao-resultado > p { font-size: 14px; }
+.plataforma-painel .demonstracao-respostas li { padding: 20px 24px; }
+.plataforma-painel .demonstracao-rodape { padding: 14px 28px; font-size: 12px; }
+
+.plataforma-rodape {
+    margin: 0;
+    padding: 28px 24px 32px;
+    color: #c6d7e2;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+@media (max-width: 760px) {
+    .plataforma-menu { min-height: 72px; padding: 10px 20px; }
+    .plataforma-marca img { width: 152px; }
+    .plataforma-conteudo { padding: 32px 20px 0; }
+    .plataforma-apresentacao { margin-bottom: 24px; }
+    .plataforma-painel .demonstracao-navegacao { padding: 12px 16px; }
+    .plataforma-painel .demonstracao-painel { padding: 24px 20px; }
+    .plataforma-painel .demonstracao-rodape { padding: 14px 20px; }
+}
+
+@media (max-width: 480px) {
+    .plataforma-menu { gap: 12px; padding-right: 16px; padding-left: 16px; }
+    .plataforma-marca img { width: 130px; }
+    .plataforma-voltar { padding: 8px 4px; font-size: 12px; }
+    .plataforma-conteudo { padding: 28px 12px 0; }
+    .plataforma-apresentacao { padding: 0 4px; }
+    .plataforma-apresentacao h1 { letter-spacing: -0.8px; }
+    .plataforma-apresentacao h1 + p { font-size: 13px; }
+    .plataforma-painel .demonstracao-navegacao { padding: 12px 12px 4px; }
+    .plataforma-painel .demonstracao-abas button { padding: 10px 8px; font-size: 13px; }
+    .plataforma-painel .demonstracao-painel { padding: 24px 16px; }
+    .plataforma-painel .demonstracao-cabecalho p { font-size: 13px; }
+    .plataforma-painel #exemplo-materias { padding: 26px 16px; }
+    .plataforma-painel .demonstracao-materia { padding: 22px 14px; }
+    .plataforma-painel .demonstracao-campo label { font-size: 14px; }
+    .plataforma-painel .demonstracao-rodape { padding: 12px 16px; }
+    .plataforma-painel .demonstracao-respostas li { padding: 18px 16px; }
+}
