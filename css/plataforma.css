@@ -209,3 +209,82 @@
     .plataforma-painel .demonstracao-rodape { padding: 12px 16px; }
     .plataforma-painel .demonstracao-respostas li { padding: 18px 16px; }
 }
+
+.estado-salvamento { color: #496174; font-size: 11px; text-align: right; }
+.plataforma-erro { margin: 20px 28px 0; padding: 14px 18px; border: 1px solid #d8c59e; border-radius: 8px; background: #fff9ee; color: #694b19; font-size: 14px; line-height: 1.6; }
+.cadastro-passos { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 0 0 32px; padding: 0; list-style: none; color: #496174; font-size: 12px; }
+.cadastro-passos [aria-current] { color: #006b64; font-weight: 600; text-decoration: underline; text-underline-offset: 8px; }
+.cadastro-etapa { min-width: 0; margin: 0; padding: 0; border: 0; }
+.titulo-etapa { display: block; width: 100%; padding: 0; margin-bottom: 8px; font-size: clamp(22px, 2.4vw, 27px); font-weight: 600; line-height: 1.4; letter-spacing: -0.6px; }
+.texto-etapa { margin: 0 0 28px; color: #496174; font-size: 14px; line-height: 1.7; }
+.plataforma-pagina .demonstracao-campo input,
+.filtro-horarios select { width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid #9dafbb; border-radius: 6px; background: #fff; color: #14354f; font: inherit; font-size: 16px; }
+.adicionar-materia { display: flex; align-items: end; gap: 12px; }
+.adicionar-materia .demonstracao-campo { flex: 1; min-width: 0; }
+.lista-materias { padding: 0; margin: 24px 0; list-style: none; display: grid; gap: 10px; }
+.materia-cadastrada { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 12px 16px; border: 1px solid var(--materia-borda); border-radius: 8px; background: var(--materia-fundo); }
+.materia-cadastrada strong { flex: 1; min-width: 100px; overflow-wrap: anywhere; font-size: 15px; font-weight: 500; }
+#titulo-perfil { overflow-wrap: anywhere; }
+#progresso-materias { display: block; width: 100%; height: 6px; margin: -12px 0 32px; border: 0; accent-color: #006b64; }
+#progresso-materias::-webkit-progress-bar { background: #e4eeeb; border-radius: 20px; }
+#progresso-materias::-webkit-progress-value { background: #006b64; border-radius: 20px; }
+#progresso-materias::-moz-progress-bar { background: #006b64; border-radius: 20px; }
+.cadastro-etapa .demonstracao-nota + .demonstracao-campo { margin-top: 24px; }
+.mais-opcoes { margin: 26px 0 0; color: #496174; font-size: 13px; }
+.mais-opcoes summary { cursor: pointer; padding: 10px 0; }
+.mais-opcoes .demonstracao-campo { margin-top: 12px; }
+.campos-periodo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.campos-periodo .demonstracao-campo { margin: 0; }
+.opcao-prova { display: flex; align-items: center; gap: 10px; margin: 24px 0; min-height: 44px; font-size: 14px; cursor: pointer; }
+.opcao-prova input, .alternativa input { width: 18px; height: 18px; accent-color: #006b64; flex-shrink: 0; }
+.plataforma-painel #exemplo-materias.etapa-ampla > * { max-width: none; }
+.filtro-horarios { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; font-size: 13px; }
+.filtro-horarios select { width: auto; max-width: 100%; font-size: 14px; }
+.grade-disponibilidade { max-height: 470px; overflow: auto; }
+.plataforma-painel .grade-disponibilidade .demonstracao-grade { min-width: 750px; border-spacing: 4px; }
+.grade-disponibilidade thead th { position: sticky; top: -4px; z-index: 2; background: #fff; }
+.grade-disponibilidade .demonstracao-grade th { text-align: center; }
+.celula-horario { display: block; width: 100%; min-height: 40px; border: 1px solid #d9e5e9; border-radius: 6px; background: #f8fafb; color: #496174; }
+.celula-horario:hover { border-color: #006b64; }
+.celula-horario[aria-pressed="true"] { background: #e0f2e9; border-color: #00776c; color: #005b55; font-weight: 700; }
+.contador-horarios { padding: 14px 16px; border-radius: 8px; background: #edf7f3; font-size: 13px; line-height: 1.6; }
+.numeros-plano { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
+.numeros-plano > div { padding: 18px 14px; background: #f2f7f5; border: 1px solid #dce8e3; border-radius: 8px; }
+.numeros-plano dt { color: #496174; font-size: 12px; line-height: 1.5; }
+.numeros-plano dd { margin: 10px 0 0; font-size: 28px; font-weight: 600; }
+.situacao-plano { font-size: 15px; line-height: 1.7; }
+.alternativas-plano { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.alternativas-plano .demonstracao-link { align-self: start; }
+.alternativa { display: flex; align-items: start; gap: 12px; padding: 16px; border: 1px solid #c9dbd6; border-radius: 8px; font-size: 14px; line-height: 1.7; cursor: pointer; }
+.alternativa:has(input:checked) { border-color: #006b64; background: #edf7f3; }
+.aviso-rascunho { padding: 14px 18px; border: 1px solid #d8c59e; border-radius: 8px; background: #fff9ee; color: #694b19; font-size: 13px; line-height: 1.6; }
+.navegacao-semana { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 20px 0; }
+.navegacao-semana h3 { margin: 0; font-size: 15px; font-weight: 500; text-align: center; }
+.navegacao-semana button { min-width: 44px; justify-content: center; border: 1px solid #d9e5e9; }
+.navegacao-semana button:disabled { opacity: 0.4; }
+.plataforma-painel [data-cor="0"] { --materia-cor: #006b64; --materia-fundo: #edf7f3; --materia-borda: #b5d8cd; }
+.plataforma-painel [data-cor="1"] { --materia-cor: #365e91; --materia-fundo: #eef3fb; --materia-borda: #becfe6; }
+.plataforma-painel [data-cor="2"] { --materia-cor: #765722; --materia-fundo: #fcf6e9; --materia-borda: #e3d1ac; }
+.legenda-materia { color: var(--materia-cor); display: inline-flex; align-items: center; gap: 6px; overflow-wrap: anywhere; }
+.legenda-materia::before { content: ''; width: 8px; height: 8px; flex-shrink: 0; background: var(--materia-cor); border-radius: 50%; }
+.data-coluna { display: block; color: #496174; font-size: 11px; font-weight: 400; margin-top: 5px; }
+.dia-atual { background: #edf7f3; border-radius: 6px; }
+.dia-passado { opacity: 0.7; }
+.motivo-estudo { color: #496174; font-size: 11px; line-height: 1.5; }
+.plataforma-painel .demonstracao-estudo { overflow-wrap: anywhere; }
+.bloco-reserva { min-height: 96px; padding: 14px 10px; border: 1px dashed #9dafbb; border-radius: 8px; color: #496174; font-size: 12px; }
+.bloco-reserva small { display: block; margin-top: 8px; line-height: 1.5; }
+.demonstracao-abas button:disabled { opacity: 0.5; }
+.sem-javascript { padding: 20px; line-height: 1.7; }
+@media (max-width: 600px) {
+    .estado-salvamento { display: block; width: 100%; padding: 8px 0; }
+    .campos-periodo { grid-template-columns: 1fr; gap: 20px; }
+    .adicionar-materia { flex-wrap: wrap; }
+    .adicionar-materia .demonstracao-campo { flex-basis: 100%; }
+    .cadastro-passos { gap: 12px; font-size: 11px; }
+    .numeros-plano { gap: 6px; }
+    .numeros-plano > div { padding: 12px 8px; }
+    .numeros-plano dt { font-size: 11px; }
+    .filtro-horarios { align-items: stretch; flex-direction: column; gap: 8px; }
+    .plataforma-erro { margin: 16px 16px 0; }
+}
