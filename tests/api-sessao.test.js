@@ -153,3 +153,14 @@ test('outra aba gravou depois: a gravação desta é recusada e nada se perde', 
     assert.equal(gravada().cronograma.blocos[0].status, 'CONCLUIDO');
     assert.equal(gravada().cronograma.blocos[1].status, 'PENDENTE');
 });
+
+test('mexer no que obterHoje devolve não altera a sessão', async () => {
+    const api = await abrirApp();
+    await api.gerarPlanoLocal(rascunho, hoje);
+    const dia = await api.obterHoje('2026-12-02');
+    dia.blocos[0].status = 'CONCLUIDO';
+    dia.mudancas.push('lixo');
+    const sessao = await api.obterSessao();
+    assert.equal(sessao.cronograma.blocos.find((b) => b.id === dia.blocos[0].id).status, 'PENDENTE');
+    assert.equal(sessao.cronograma.mudancas.includes('lixo'), false);
+});

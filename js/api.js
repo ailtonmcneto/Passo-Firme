@@ -237,8 +237,10 @@ export async function obterHoje(hoje) {
         return cronograma === sessao.cronograma ? null : { ...sessao, cronograma };
     });
     if (!cronograma) return null;
-    const { mudancas, cobertura, retaFinal, viabilidade } = structuredClone(cronograma);
-    return { data: hoje, blocos: fluxo.blocosDoDia(cronograma, hoje), mudancas, cobertura, retaFinal, viabilidade };
+    // Cópia: os blocos devolvidos não podem ser os mesmos objetos da sessão em memória, senão
+    // a tela, ao mexer neles, mudaria a sessão sem gravar.
+    const { mudancas, cobertura, retaFinal, viabilidade } = cronograma;
+    return structuredClone({ data: hoje, blocos: fluxo.blocosDoDia(cronograma, hoje), mudancas, cobertura, retaFinal, viabilidade });
 }
 
 // Recebe o id de um bloco de hoje, a resposta de "Como foi?" e hoje; devolve { proximaRevisao }.
