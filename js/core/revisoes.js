@@ -115,10 +115,13 @@ export function preencherReservaDeHoje({ blocos, topicos, estados, hoje }) {
   if (livresDeHoje.length === 0) return resultado;
 
   const puladasHoje = materiasPuladasHoje(blocos, hoje);
-  // Quem já tem estudo ou revisão para fazer hoje não precisa de revisão extra.
-  const comPendenteHoje = new Set(
+  // Quem já tem estudo ou revisão para fazer hoje não precisa de revisão extra. Quem já
+  // concluiu um bloco hoje também não: revisar no mesmo dia não espaça (o SM-2 conta uma
+  // repetição por dia, §7), então a revisão extra seria tempo gasto sem efeito.
+  const jaTemBlocoHoje = new Set(
     blocos
-      .filter((b) => b.data === hoje && b.status === 'PENDENTE' && (b.tipo === 'ESTUDO' || b.tipo === 'REVISAO'))
+      .filter((b) => b.data === hoje && (b.tipo === 'ESTUDO' || b.tipo === 'REVISAO'))
+      .filter((b) => b.status === 'PENDENTE' || b.status === 'CONCLUIDO')
       .map((b) => b.topicoId),
   );
 
@@ -126,7 +129,7 @@ export function preencherReservaDeHoje({ blocos, topicos, estados, hoje }) {
     .map((t, indice) => ({ ...t, ordem: t.ordem ?? indice }))
     .filter((t) => !puladasHoje.has(t.id));
   const paraRevisar = materias
-    .filter((t) => estados.has(t.id) && !comPendenteHoje.has(t.id))
+    .filter((t) => estados.has(t.id) && !jaTemBlocoHoje.has(t.id))
     .map((t) => comRetencao(t, estados.get(t.id), hoje))
     .sort((a, b) => compararPorRetencao(a, b) || compararCanonico(a, b));
   const paraEstudar = materias.filter((t) => t.demanda > 0).sort(compararCanonico);
