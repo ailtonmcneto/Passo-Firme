@@ -6,6 +6,7 @@ import {
 } from '../js/fluxo.js';
 import { montarPrevia } from '../js/api.js';
 import { carregarFixture } from './carregar-fixture.js';
+import { somarDias } from '../js/util/datas.js';
 
 // Notação da especificação, um dia por trecho: "11-30 1:19:00:mat 2:19:30:por; 12-02 3:19:00:R".
 // Cada bloco é id:hora:matéria, com R = RESERVA e * = extra. As fixtures guardam os blocos
@@ -307,4 +308,79 @@ test('nenhuma função altera o cronograma recebido', () => {
     pular(entrada, 5, '2026-12-04');
     atualizarCadastro(entrada, g6.entrada.cadastro, '2026-11-30');
     assert.deepEqual(entrada, g3.esperado);
+});
+
+// Gerador congruencial linear (constantes do Numerical Recipes) com semente fixa, como nos
+// outros testes de propriedades: os casos parecem aleatórios, mas são sempre os mesmos.
+function criarGerador(semente) {
+    let estado = semente >>> 0;
+    return (n) => {
+        estado = (Math.imul(estado, 1664525) + 1013904223) >>> 0;
+        return (estado >>> 16) % n;
+    };
+}
+
+const RESPOSTAS = ['EXPLIQUEI_SEM_CONSULTAR', 'ENTENDI_MAS_TRAVARIA', 'NAO_ENTROU'];
+
+// Confere as propriedades entre um passo e o seguinte. `antes` é null no primeiro passo.
+function conferirPasso(antes, depois, descricao) {
+    const ids = depois.blocos.map((b) => b.id);
+    assert.equal(new Set(ids).size, ids.length, `${descricao}: id repetido`);
+    assert.ok(ids.every((id) => Number.isInteger(id) && id < depois.proximoId), `${descricao}: id fora de proximoId`);
+    assert.ok(depois.blocos.every((b) => typeof b.hora === 'string' && b.hora !== ''), `${descricao}: bloco sem hora`);
+    const slots = depois.blocos.map((b) => `${b.data}/${b.ordem}`);
+    assert.equal(new Set(slots).size, slots.length, `${descricao}: (data, ordem) repetido`);
+    if (!antes) return;
+
+    // O que já era passado no passo anterior não muda, exceto o pendente que vira PERDIDO.
+    const novos = new Map(depois.blocos.map((b) => [b.id, b]));
+    for (const bloco of antes.blocos.filter((b) => b.data < antes.atualizadoEm)) {
+        const agora = novos.get(bloco.id);
+        if (bloco.status === 'PENDENTE' && agora?.status === 'PERDIDO') {
+            assert.deepEqual(agora, { ...bloco, status: 'PERDIDO' }, `${descricao}: perdido ${bloco.id} mudou além do status`);
+        } else {
+            assert.deepEqual(agora, bloco, `${descricao}: bloco passado ${bloco.id} mudou`);
+        }
+    }
+}
+
+describe('propriedades (200 casos com semente fixa)', () => {
+    test('ids únicos, todo bloco com hora, slots únicos e passado estável', () => {
+        const sortear = criarGerador(20261130);
+        for (let caso = 0; caso < 200; caso++) {
+            let hoje = '2026-11-30';
+            let cronograma = g1.esperado;
+            conferirPasso(null, cronograma, `caso ${caso} início`);
+
+            const passos = 10 + sortear(30);
+            for (let passo = 0; passo < passos; passo++) {
+                const descricao = `caso ${caso} passo ${passo} (${hoje})`;
+                const acao = sortear(4);
+                let proximo = cronograma;
+
+                if (acao === 0) {
+                    // Passam de 1 a 3 dias e o aluno abre o app (pode passar do fim do plano).
+                    hoje = somarDias(hoje, 1 + sortear(3));
+                    if (precisaReplanejar(cronograma, hoje)) proximo = replanejarCronograma(cronograma, hoje);
+                } else if (acao === 1) {
+                    // Reabre o app no mesmo dia: só replaneja se precisaReplanejar mandar.
+                    if (precisaReplanejar(cronograma, hoje)) proximo = replanejarCronograma(cronograma, hoje);
+                    assert.equal(precisaReplanejar(proximo, hoje), false, `${descricao}: ainda pede replanejamento`);
+                } else {
+                    // Conclui um estudo de hoje ou pula um de hoje em diante, se houver.
+                    const concluindo = acao === 2;
+                    const candidatos = cronograma.blocos.filter((b) => b.status === 'PENDENTE' && b.tipo !== 'RESERVA'
+                        && (concluindo ? b.data === hoje : b.data >= hoje));
+                    if (candidatos.length > 0) {
+                        const alvo = candidatos[sortear(candidatos.length)];
+                        proximo = concluindo
+                            ? concluir(cronograma, alvo.id, RESPOSTAS[sortear(3)], hoje).cronograma
+                            : pular(cronograma, alvo.id, hoje);
+                    }
+                }
+                conferirPasso(cronograma, proximo, descricao);
+                cronograma = proximo;
+            }
+        }
+    });
 });
