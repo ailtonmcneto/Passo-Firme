@@ -6,11 +6,13 @@ Vale para qualquer agente (Claude Code, Codex ou outro). Este arquivo só traz r
 
 - As especificações são a fonte de verdade: `docs/algoritmo.md` para o algoritmo e `docs/front.md` para as telas e o contrato com a fachada. Se o código e o documento divergirem, pare e pergunte em vez de escolher sozinho.
 - Se a especificação não cobrir um caso, decida o mínimo, registre a decisão no documento correspondente e liste-a na descrição do PR.
-- Código, nomes e comentários em português, como no resto do repo. Comentários explicam o porquê, não o quê.
+- Código, nomes e comentários em português, como no resto do repo. Comentários em linguagem simples, para quem está aprendendo JS. No topo de cada função: o que ela recebe, o que devolve e um exemplo curto. Dentro: o que cada trecho faz e por quê. Não explique sintaxe linha a linha.
 - ES Modules, sem frameworks e sem dependências de runtime (Chart.js via CDN é a única exceção prevista).
 - Uma branch por tarefa, a partir da main. Rode `npm run test:tz` antes de cada commit. Commits pequenos, com mensagens em português; no algoritmo, um commit por módulo.
 - Não faça merge. Faça o push da branch e entregue a descrição do PR (o `gh` pode não estar instalado).
 - No PR, explique as decisões não óbvias. A equipe está aprendendo JS e precisa entender o código para apresentá-lo.
+- Quando o prompt indicar uma função para o Ailton escrever: crie a função vazia com o comentário de topo e escreva os testes dela antes (eles devem falhar). Pare e peça para ele escrever. Espere ele dizer que terminou, rode os testes e comente o código dele sem reescrever; se algo estiver errado, explique o erro e deixe ele corrigir. A função dele vai num commit próprio, feito por ele.
+- A descrição do PR termina com a seção '## Explicação do Ailton', vazia, para ele escrever com as próprias palavras.
 
 ## Ao mexer em `js/core/` ou `js/util/` (algoritmo)
 
