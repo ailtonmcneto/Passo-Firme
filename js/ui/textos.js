@@ -1,7 +1,7 @@
 // Textos da tela "Seu passo de hoje" (docs/front.md §3.5 e §3.8).
 // Ficam aqui, em funções puras (sem DOM), para dar para testar no Node. Podem usar
 // js/util/datas.js, mas nunca js/core/: a tela não calcula, só escreve o que a fachada devolve.
-import { diaDaSemana } from '../util/datas.js';
+import { diaDaSemana, ehDataValida } from '../util/datas.js';
 
 // Abreviações na ordem do diaDaSemana: 0 = domingo … 6 = sábado.
 const DIAS_CURTOS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
@@ -97,4 +97,36 @@ export function textoPassoDado(topicoNome, proximaRevisao) {
 // Ex.: textoProximoEstudo({ data: '2026-12-02', hora: '19:00' }) → 'Seu próximo estudo é qua 02/12 às 19:00.'
 export function textoProximoEstudo(bloco) {
     return `Seu próximo estudo é ${dataCurta(bloco.data)} às ${bloco.hora}.`;
+}
+
+// ----- Modo de demonstração -----
+// Para apresentar o produto sem esperar os dias passarem, a página aceita ?hoje=YYYY-MM-DD na
+// URL. Só avançar a data é um caso tratado: voltar no tempo com o mesmo plano não é.
+
+// Recebe a parte "?..." da URL (location.search) e a data real de hoje; devolve a data que a
+// plataforma deve usar como hoje e se ela é simulada.
+// Ex.: lerHojeDaUrl('?hoje=2026-12-04', '2026-11-25') → { hoje: '2026-12-04', simulado: true }
+//      lerHojeDaUrl('', '2026-11-25') → { hoje: '2026-11-25', simulado: false }
+// Uma data inválida (2026-02-30, texto solto) é ignorada, e vale a data real.
+export function lerHojeDaUrl(search, hojeReal) {
+    // URLSearchParams entende "?a=1&b=2" e já tira o "?" do começo.
+    const valor = new URLSearchParams(search).get('hoje');
+    if (valor !== null && ehDataValida(valor)) return { hoje: valor, simulado: true };
+    return { hoje: hojeReal, simulado: false };
+}
+
+// Recebe o href de um link (como está escrito no HTML) e a data simulada; devolve o href com
+// ?hoje=data, para o modo de demonstração continuar ligado na página seguinte.
+// Ex.: comHoje('../index.html', '2026-12-04') → '../index.html?hoje=2026-12-04'
+//      comHoje('#sobre', '2026-12-04') → '#sobre' (âncora na mesma página: não recarrega)
+// Links para fora do site (http, mailto) e âncoras ficam como estão.
+export function comHoje(href, hoje) {
+    if (href.startsWith('#') || /^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith('//')) return href;
+    // Separa a âncora (#...) e a busca (?...) do caminho, para pôr o hoje no lugar certo.
+    const [semAncora, ...resto] = href.split('#');
+    const ancora = resto.length ? '#' + resto.join('#') : '';
+    const [caminho, busca = ''] = semAncora.split('?');
+    const parametros = new URLSearchParams(busca);
+    parametros.set('hoje', hoje);
+    return `${caminho}?${parametros}${ancora}`;
 }

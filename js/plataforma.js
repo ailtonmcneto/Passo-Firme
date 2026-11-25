@@ -3,9 +3,12 @@ import {
     concluirBloco, pularBloco, responderCobertura,
 } from './api.js';
 import { hojeLocal, somarDias, diaDaSemana, diferencaEmDias } from './util/datas.js';
-import { rotuloDoTipo, textoMudancas, textoPassoDado, textoProximoEstudo } from './ui/textos.js';
+import { rotuloDoTipo, textoMudancas, textoPassoDado, textoProximoEstudo, lerHojeDaUrl, dataCurta } from './ui/textos.js';
+import { manterHojeNosLinks } from './ui/modo-demonstracao.js';
 
-const hoje = hojeLocal(new Date());
+// A data de hoje é lida uma vez e passada a todas as chamadas da fachada (front.md §5).
+// No modo de demonstração (?hoje=YYYY-MM-DD na URL), ela é a data da URL; senão, a do relógio.
+const { hoje, simulado } = lerHojeDaUrl(location.search, hojeLocal(new Date()));
 const buscar = seletor => document.querySelector(seletor);
 const dias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const nomesEtapas = ['materias', 'perfil', 'periodo', 'horarios', 'conferir'];
@@ -745,6 +748,17 @@ buscar('[role="tablist"]').addEventListener('keydown', evento => {
     if (nome === 'hoje') executar(carregarHoje);
 });
 
+// Modo de demonstração: avisa no topo qual é o "hoje" simulado, com um link para sair (a mesma
+// página sem ?hoje), e faz os links para as outras páginas levarem o ?hoje junto.
+// Ex.: plataforma.html?hoje=2026-12-02 → "Modo demonstração: hoje é qua 02/12."
+function mostrarModoDemonstracao() {
+    if (!simulado) return;
+    buscar('#texto-demonstracao').textContent = 'Modo demonstração: hoje é ' + dataCurta(hoje) + '.';
+    buscar('#faixa-demonstracao').hidden = false;
+    manterHojeNosLinks(location.search);
+}
+
+mostrarModoDemonstracao();
 executar(async () => {
     // Antes de desenhar, a fachada replaneja o plano se ele é de outro dia (§4).
     dia = await obterHoje(hoje);

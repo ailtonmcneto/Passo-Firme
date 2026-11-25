@@ -165,7 +165,7 @@ Nunca usar "atrasado", "falhou" ou contagem de dias perdidos.
 
 ## 5. Contrato com a fachada (`js/api.js`)
 
-Todas as funções são assíncronas, para que na fase 2 a implementação troque o acesso local por chamadas à API Java sem mudar as telas. Datas sempre como 'YYYY-MM-DD'. A data de hoje é calculada uma vez na tela com `hojeLocal(new Date())` e passada adiante.
+Todas as funções são assíncronas, para que na fase 2 a implementação troque o acesso local por chamadas à API Java sem mudar as telas. Datas sempre como 'YYYY-MM-DD'. A data de hoje é calculada uma vez na tela com `hojeLocal(new Date())` e passada adiante. No modo de demonstração (§12), ela vem da URL.
 
 | Função | Recebe | Devolve |
 |---|---|---|
@@ -299,3 +299,12 @@ A plataforma começa vazia no cadastro: matérias → proficiência → período
   - Com o plano em andamento, a conferência não mostra os números de plano novo nem as saídas (elas valem só na criação). O botão vira "Aplicar alterações", e a cobertura depois do replanejamento aparece no aviso de cobertura parcial do percurso.
   - O id de uma matéria nova nunca repete o de uma matéria que já esteve no plano, para ela não herdar o histórico de blocos da antiga.
 - Há retorno entre etapas, validação junto dos campos, foco visível, abas por teclado, região de status, rolagem localizada das grades e respeito ao movimento reduzido. Sem JavaScript, o aviso informa que o cadastro precisa dele. O rodapé informa que o salvamento é neste navegador.
+
+## 12. Modo de demonstração
+
+Para apresentar o uso diário sem esperar os dias passarem, a plataforma aceita `?hoje=YYYY-MM-DD` na URL.
+
+- `lerHojeDaUrl(location.search, hojeLocal(new Date()))` (em `js/ui/textos.js`) devolve `{ hoje, simulado }`. Com uma data válida (`ehDataValida`), `hoje` é a da URL e `simulado` é true; com data inválida ou sem o parâmetro, vale a data real. Todas as chamadas à fachada usam esse `hoje`.
+- Com `simulado` true, uma faixa discreta abaixo das abas diz "Modo demonstração: hoje é qua 02/12." (`dataCurta`), com o link "Sair do modo demonstração" para a mesma página sem `?hoje`. A faixa aparece em todas as abas, inclusive no cadastro.
+- Os links para as outras páginas do site (plataforma e página inicial) levam o mesmo `?hoje` (`comHoje`, aplicado por `js/ui/modo-demonstracao.js`), para o modo não desligar no meio da apresentação. Âncoras e links para fora ficam como estão.
+- Só avançar a data é um caso tratado. Voltar no tempo com o mesmo plano não é: o plano gravado já replanejou e marcou como perdidos os blocos dos dias que passaram.

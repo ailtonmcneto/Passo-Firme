@@ -366,5 +366,10 @@
         </main>
 <script src="js/script.js" defer></script>
 <script src="js/ui/demonstracao.js" type="module"></script>
+<!-- Modo de demonstração: com ?hoje= na URL, o link para a plataforma leva a mesma data. -->
+<script type="module">
+    import { manterHojeNosLinks } from './js/ui/modo-demonstracao.js';
+    manterHojeNosLinks(location.search);
+</script>
 </body>
 </html>
