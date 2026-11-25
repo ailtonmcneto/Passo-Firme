@@ -1,5 +1,9 @@
-import { obterSessao, salvarRascunho, resumirDisponibilidade, avaliarRascunho, gerarPlanoLocal, obterHoje, atualizarCadastro } from './api.js';
+import {
+    obterSessao, salvarRascunho, resumirDisponibilidade, avaliarRascunho, gerarPlanoLocal, obterHoje, atualizarCadastro,
+    concluirBloco, pularBloco, responderCobertura,
+} from './api.js';
 import { hojeLocal, somarDias, diaDaSemana, diferencaEmDias } from './util/datas.js';
+import { rotuloDoTipo, textoMudancas, textoPassoDado, textoProximoEstudo } from './ui/textos.js';
 
 const hoje = hojeLocal(new Date());
 const buscar = seletor => document.querySelector(seletor);
@@ -13,6 +17,13 @@ let inicioSemana;
 let viabilidade;
 let ocupado = false;
 let proximoId = 1;
+// O dia como a fachada devolveu em obterHoje: { data, blocos, mudancas, cobertura, retaFinal, viabilidade }.
+let dia = null;
+// As mudanças que o aluno fechou na faixa "O que mudou", em texto. Fechar só esconde até
+// recarregar a página; se vierem mudanças diferentes (outro replanejamento), a faixa volta.
+let mudancasFechadas = null;
+// O botão "Feito" que abriu o "Como foi?", para o foco voltar a ele ao cancelar.
+let origemDoDialogo = null;
 
 function elemento(tag, classe, texto) {
     const no = document.createElement(tag);
@@ -81,16 +92,29 @@ function atualizarAviso() {
     buscar('#aviso-rascunho').hidden = !cronograma || JSON.stringify(rascunho) === JSON.stringify(cronograma.cadastro);
 }
 
+// Recebe o nome da aba ('materias', 'hoje' ou 'percurso'); mostra o painel dela e esconde os outros.
+// Ex.: selecionarAba('hoje', true) → painel de hoje visível e foco na aba.
+// Hoje e percurso só abrem com plano gerado.
 function selecionarAba(nome, foco = false) {
-    if (nome === 'percurso' && !cronograma) return;
+    if ((nome === 'percurso' || nome === 'hoje') && !cronograma) return;
     for (const aba of document.querySelectorAll('[role="tab"]')) {
         const ativa = aba.id === 'aba-' + nome;
         aba.setAttribute('aria-selected', String(ativa));
         aba.tabIndex = ativa ? 0 : -1;
     }
     buscar('#exemplo-materias').hidden = nome !== 'materias';
+    buscar('#exemplo-hoje').hidden = nome !== 'hoje';
     buscar('#exemplo-percurso').hidden = nome !== 'percurso';
     if (foco) buscar('#aba-' + nome).focus();
+}
+
+// Recebe o nome da aba; seleciona e, se for a de hoje, busca o dia de novo na fachada.
+// Ex.: await abrirAba('hoje') → chama obterHoje e redesenha a lista.
+// Buscar de novo ao abrir garante que a lista mostra o que está gravado agora (por exemplo,
+// depois de aplicar alterações no cadastro).
+async function abrirAba(nome, foco = false) {
+    selecionarAba(nome, foco);
+    if (nome === 'hoje') await carregarHoje();
 }
 
 function mostrarEtapa(nome, foco = true) {
@@ -339,13 +363,14 @@ async function avancar() {
 // abre o percurso nessa semana.
 // Ex.: mostrarPlanoSalvo('2026-11-30', 'Seu cronograma foi calculado e salvo.').
 async function mostrarPlanoSalvo(referencia, aviso) {
-    const sessao = await obterSessao();
-    cronograma = sessao.cronograma;
-    atualizarTravaInicio();
     inicioSemana = somarDias(referencia, -diaDaSemana(referencia));
+    // carregarHoje lê o dia e o plano gravados e redesenha as duas abas.
+    await carregarHoje();
+    atualizarTravaInicio();
+    buscar('#aba-hoje').disabled = false;
     buscar('#aba-percurso').disabled = false;
     buscar('#estado-salvamento').textContent = 'Plano salvo neste navegador';
-    renderizarCronograma(); selecionarAba('percurso');
+    selecionarAba('percurso');
     buscar('#exemplo-percurso h2').focus();
     buscar('#anuncio').textContent = aviso;
 }
@@ -372,7 +397,7 @@ const ESTADOS = {
 
 // Recebe um bloco de estudo ou revisão e a cor da matéria; devolve o cartão dele no percurso.
 // Ex.: bloco CONCLUIDO de Matemática → cartão com "✓ Passo dado" e o motivo em "Por que agora?".
-// É um cartão sem ação: tocar nele não muda nada nesta entrega (o "Feito" vem com a tela de hoje).
+// É um cartão sem ação: "Feito" e "Pular" ficam na aba "Seu passo de hoje".
 function cartaoDoBloco(bloco, cor) {
     const cartao = elemento('div', 'demonstracao-estudo estado-' + bloco.status.toLowerCase());
     cartao.id = 'bloco-' + bloco.id; cartao.dataset.cor = cor;
@@ -440,6 +465,209 @@ function renderizarCronograma() {
     atualizarAviso();
 }
 
+// ----- Seu passo de hoje (docs/front.md §3.5) -----
+// A tela só mostra o que a fachada devolve: os textos vêm de js/ui/textos.js e as ações chamam
+// js/api.js. Concluir e pular não replanejam (§4), então o resto do dia fica como o aluno viu.
+
+// Lê na fachada o dia (obterHoje replaneja antes, se for preciso) e o plano gravado; redesenha
+// as abas de hoje e do percurso, para as duas mostrarem o mesmo estado.
+// Ex.: await carregarHoje() depois de concluir o bloco 1 → ele aparece como "✓ Passo dado".
+async function carregarHoje() {
+    dia = await obterHoje(hoje);
+    cronograma = (await obterSessao()).cronograma;
+    if (!dia || !cronograma) return;
+    renderizarHoje();
+    renderizarCronograma();
+}
+
+// Recebe um texto; escreve na região de status da aba de hoje, que o leitor de tela anuncia.
+// Ex.: anunciarHoje('Passo dado.').
+function anunciarHoje(texto) {
+    buscar('#status-hoje').textContent = texto;
+}
+
+// Desenha a aba de hoje inteira, na ordem pedida: O que mudou, reta final, cobertura parcial
+// e a lista dos blocos.
+function renderizarHoje() {
+    // Título com o dia de hoje, ex.: "Quarta-feira, 25/11".
+    const titulo = formatarData(hoje, { weekday: 'long', day: '2-digit', month: '2-digit' });
+    buscar('#titulo-hoje').textContent = titulo.charAt(0).toUpperCase() + titulo.slice(1);
+    renderizarMudancas();
+    renderizarRetaFinal();
+    // A mesma linha de cobertura parcial do percurso. Com a reta final ativa ela não aparece
+    // (como no percurso): a viabilidade guardada é a do plano normal, e o número confundiria.
+    const parcial = Boolean(dia.viabilidade) && !dia.viabilidade.viavel && dia.cobertura !== 'ATIVA';
+    buscar('#aviso-cobertura-hoje').hidden = !parcial;
+    if (parcial) buscar('#aviso-cobertura-hoje').textContent = 'Plano com cobertura parcial: ' + dia.viabilidade.cobertura.percentual + '%.';
+    renderizarBlocosDeHoje();
+}
+
+// Faixa "O que mudou" (§3.8): uma frase por causa, ou nada. Some se o aluno fechou estas
+// mesmas mudanças.
+function renderizarMudancas() {
+    const frases = textoMudancas(dia.mudancas);
+    const fechada = JSON.stringify(dia.mudancas) === mudancasFechadas;
+    buscar('#faixa-mudancas').hidden = frases.length === 0 || fechada;
+    buscar('#lista-mudancas').replaceChildren(...frases.map(frase => elemento('li', null, frase)));
+}
+
+// Reta final conforme `cobertura` (§3.5): cartão com a pergunta, botão discreto, linha de aviso
+// ou nada. Os números vêm prontos da fachada: C da reta final e C0 do plano normal.
+function renderizarRetaFinal() {
+    const area = buscar('#reta-final-hoje');
+    const { dataAvaliacao, fim } = cronograma.plano;
+    // A data-alvo é a da prova, se houver; senão, o fim do plano.
+    const alvo = formatarData(dataAvaliacao || fim);
+    if (dia.cobertura === 'PERGUNTAR') {
+        const cartao = elemento('div', 'cartao-reta-final');
+        cartao.append(elemento('p', null, (dataAvaliacao ? 'A prova' : 'O fim do plano') + ' é em ' + alvo +
+            ' e não cabe tudo. Em vez de guardar horários para revisão, todos viram estudo e as matérias se revezam. Cobertura: ' +
+            dia.retaFinal.cobertura.percentual + '% em vez de ' + dia.viabilidade.cobertura.percentual + '%.'));
+        const ativar = botaoAcao('Ativar reta final', 'ativar-reta-final');
+        ativar.className = 'demonstracao-botao';
+        const acoes = elemento('div', 'acoes-reta-final');
+        acoes.append(ativar, botaoAcao('Agora não', 'recusar-reta-final'));
+        cartao.append(acoes);
+        area.replaceChildren(cartao);
+    } else if (dia.cobertura === 'RECUSADA') {
+        // O aluno disse "Agora não": a pergunta não volta, mas ele pode mudar de ideia.
+        area.replaceChildren(botaoAcao('Ativar reta final', 'ativar-reta-final'));
+    } else if (dia.cobertura === 'ATIVA') {
+        area.replaceChildren(elemento('p', 'linha-reta-final', 'Plano em reta final até ' + alvo + '.'));
+    } else {
+        area.replaceChildren();
+    }
+}
+
+// Lista dos blocos de hoje e a frase de resumo (dia sem estudo, ou passos de hoje dados).
+function renderizarBlocosDeHoje() {
+    // Ordem de horário. No mesmo horário (um bloco mantido e um novo), a ordem do dia desempata.
+    const blocos = [...dia.blocos].sort((a, b) => a.hora.localeCompare(b.hora) || a.ordem - b.ordem);
+    const estudos = blocos.filter(bloco => bloco.tipo !== 'RESERVA');
+    // O próximo passo é o primeiro estudo ou revisão ainda pendente.
+    const proximo = estudos.find(bloco => bloco.status === 'PENDENTE');
+    const cores = new Map(cronograma.topicos.map((topico, indice) => [topico.id, indice % 3]));
+
+    const resumo = [];
+    if (!estudos.length) {
+        resumo.push('Hoje não tem estudo marcado.');
+        // O próximo estudo sai dos blocos do percurso, que a sessão já trouxe.
+        const seguinte = cronograma.blocos
+            .filter(bloco => bloco.data > hoje && bloco.tipo !== 'RESERVA' && bloco.status === 'PENDENTE')
+            .sort((a, b) => a.data.localeCompare(b.data) || a.hora.localeCompare(b.hora))[0];
+        if (seguinte) resumo.push(textoProximoEstudo(seguinte));
+    } else if (!proximo) {
+        resumo.push('Os passos de hoje estão dados.');
+    }
+    buscar('#resumo-hoje').replaceChildren(...resumo.map(texto => elemento('p', 'resumo-hoje', texto)));
+
+    buscar('#lista-hoje').hidden = blocos.length === 0;
+    buscar('#lista-hoje').replaceChildren(...blocos.map(bloco => bloco.tipo === 'RESERVA'
+        ? itemDeFolga(bloco)
+        : itemDeEstudo(bloco, cores.get(bloco.topicoId), bloco === proximo)));
+}
+
+// Recebe um bloco de estudo ou revisão de hoje, a cor da matéria e se ele é o próximo passo;
+// devolve o item da lista, com "Feito" e "Pular" se ainda estiver pendente.
+// Ex.: bloco 1 de Matemática, pendente e próximo → item em destaque com a etiqueta "Próximo passo".
+function itemDeEstudo(bloco, cor, ehProximo) {
+    const item = elemento('li', 'item-hoje estado-' + bloco.status.toLowerCase());
+    if (ehProximo) item.classList.add('item-proximo');
+    item.dataset.cor = cor;
+    const cabeca = elemento('div', 'item-hoje-cabeca');
+    cabeca.append(elemento('span', 'demonstracao-estudo-hora', bloco.hora + ' · ' + bloco.duracaoMin + ' min'));
+    // O destaque não depende só da cor: a etiqueta diz em texto qual é o próximo.
+    if (ehProximo) cabeca.append(elemento('span', 'etiqueta-bloco', 'Próximo passo'));
+    const motivo = elemento('p', 'motivo-estudo');
+    motivo.append(elemento('strong', null, 'Por que agora? '), bloco.motivo);
+    item.append(cabeca,
+        elemento('strong', 'demonstracao-estudo-materia', bloco.topicoNome),
+        elemento('span', 'demonstracao-estudo-assunto', rotuloDoTipo(bloco)),
+        motivo,
+        elemento('span', 'demonstracao-estudo-estado', ESTADOS[bloco.status]));
+    if (bloco.status === 'PENDENTE') {
+        const descricao = bloco.topicoNome + ', ' + bloco.hora;
+        const feito = elemento('button', 'demonstracao-botao', 'Feito');
+        feito.type = 'button'; feito.dataset.acao = 'feito'; feito.dataset.id = bloco.id;
+        feito.setAttribute('aria-label', 'Feito: ' + descricao);
+        const pular = botaoAcao('Pular', 'pular');
+        pular.dataset.id = bloco.id;
+        pular.setAttribute('aria-label', 'Pular: ' + descricao);
+        const acoes = elemento('div', 'acoes-hoje');
+        acoes.append(feito, pular);
+        item.append(acoes);
+    }
+    return item;
+}
+
+// Recebe uma reserva livre; devolve o item como folga, sem botões (§3.5: nunca como tarefa).
+// Ex.: reserva das 20:00 → "20:00 · 30 min", "Horário livre".
+function itemDeFolga(bloco) {
+    const item = elemento('li', 'item-hoje item-folga');
+    item.append(elemento('span', 'demonstracao-estudo-hora', bloco.hora + ' · ' + bloco.duracaoMin + ' min'),
+        elemento('strong', null, rotuloDoTipo(bloco)),
+        elemento('span', 'motivo-estudo', 'Nada marcado neste horário. É uma folga.'));
+    return item;
+}
+
+// Recebe o id do bloco em que o aluno tocou "Feito" e o próprio botão; abre o "Como foi?".
+// Ex.: abrirComoFoi(1, botao) → dialog com "Matemática · Estudo · 19:00" e foco no primeiro botão.
+// Esc fecha o dialog sozinho (comportamento do <dialog>) e equivale a Cancelar.
+function abrirComoFoi(blocoId, botaoFeito) {
+    const bloco = dia.blocos.find(item => item.id === blocoId);
+    const dialogo = buscar('#dialogo-como-foi');
+    dialogo.dataset.blocoId = blocoId;
+    origemDoDialogo = botaoFeito;
+    buscar('#bloco-como-foi').textContent = bloco.topicoNome + ' · ' + rotuloDoTipo(bloco) + ' · ' + bloco.hora;
+    dialogo.showModal();
+    dialogo.querySelector('[data-resposta]').focus();
+}
+
+// Recebe a resposta escolhida no "Como foi?"; conclui o bloco, fecha o dialog e redesenha.
+// Ex.: responderComoFoi('EXPLIQUEI_SEM_CONSULTAR') → status "Passo dado. Próxima revisão de Matemática a partir de qua 02/12."
+async function responderComoFoi(resposta) {
+    const dialogo = buscar('#dialogo-como-foi');
+    const blocoId = Number(dialogo.dataset.blocoId);
+    const bloco = dia.blocos.find(item => item.id === blocoId);
+    anunciarHoje('');
+    let resultado;
+    // `finally` fecha o dialog mesmo se a fachada recusar, para a mensagem de erro aparecer na
+    // página e não ficar escondida atrás dele.
+    try { resultado = await concluirBloco(blocoId, resposta, hoje); }
+    finally { dialogo.close(); }
+    await carregarHoje();
+    anunciarHoje(textoPassoDado(bloco.topicoNome, resultado.proximaRevisao));
+    focarDepoisDaAcao();
+}
+
+// Recebe o id de um bloco de hoje; marca como pulado, sem pedir confirmação nem justificativa.
+// Ex.: await pular(2) → bloco 2 com "↷ Pulado" e o aviso de que ele volta para o plano.
+async function pular(blocoId) {
+    anunciarHoje('');
+    await pularBloco(blocoId, hoje);
+    await carregarHoje();
+    anunciarHoje('Tudo bem. Esse estudo volta para o plano nos próximos dias.');
+    focarDepoisDaAcao();
+}
+
+// Recebe a resposta ao cartão da reta final (true = ativar); a fachada replaneja e a tela
+// redesenha com o dia novo.
+// Ex.: await responderRetaFinal(true) → linha "Plano em reta final até 13/12." e faixa "Reta final ativada."
+async function responderRetaFinal(aceitar) {
+    anunciarHoje('');
+    await responderCobertura(aceitar, hoje);
+    await carregarHoje();
+    anunciarHoje(aceitar ? 'O plano foi refeito de hoje em diante.' : 'O plano continua como está.');
+    buscar('#titulo-hoje').focus();
+}
+
+// Depois de concluir ou pular, o botão tocado some da lista. O foco vai para o "Feito" do
+// próximo passo, ou para o título se não houver mais nada pendente, para não se perder.
+function focarDepoisDaAcao() {
+    const proximoFeito = buscar('#lista-hoje .item-proximo [data-acao="feito"]');
+    (proximoFeito ?? buscar('#titulo-hoje')).focus();
+}
+
 buscar('#cadastro').addEventListener('submit', evento => { evento.preventDefault(); executar(avancar); });
 buscar('#nova-materia').addEventListener('input', evento => evento.target.setCustomValidity(''));
 buscar('#nova-materia').addEventListener('keydown', evento => {
@@ -457,8 +685,11 @@ buscar('#plataforma').addEventListener('click', evento => {
     if (!botao || botao.disabled || botao.type === 'submit') return;
     executar(async () => {
         if (botao.getAttribute('role') === 'tab') {
-            selecionarAba(botao.id === 'aba-percurso' ? 'percurso' : 'materias'); return;
+            // O nome da aba vem do id: 'aba-hoje' → 'hoje'.
+            await abrirAba(botao.id.replace('aba-', '')); return;
         }
+        // Os três botões do "Como foi?" trazem a resposta em data-resposta.
+        if (botao.dataset.resposta) { await responderComoFoi(botao.dataset.resposta); return; }
         if (botao.dataset.slot) {
             const [dia, hora] = botao.dataset.slot.split('/');
             const indice = rascunho.celulas.findIndex(celula => celula.diaSemana === Number(dia) && celula.hora === hora);
@@ -476,6 +707,16 @@ buscar('#plataforma').addEventListener('click', evento => {
         if (acao === 'editar') mostrarEtapa('materias');
         if (acao === 'responder') { materiaAtual = rascunho.topicos.findIndex(topico => topico.id === botao.dataset.id); mostrarEtapa('perfil'); }
         if (acao === 'remover') { rascunho.topicos = rascunho.topicos.filter(topico => topico.id !== botao.dataset.id); await salvar(); renderizarMaterias(); buscar('#nova-materia').focus(); }
+        if (acao === 'feito') abrirComoFoi(Number(botao.dataset.id), botao);
+        if (acao === 'cancelar-feito') buscar('#dialogo-como-foi').close();
+        if (acao === 'pular') await pular(Number(botao.dataset.id));
+        if (acao === 'fechar-mudancas') {
+            mudancasFechadas = JSON.stringify(dia.mudancas); renderizarMudancas();
+            // O botão Fechar sumiu com a faixa; o foco vai para o título da aba.
+            buscar('#titulo-hoje').focus();
+        }
+        if (acao === 'ativar-reta-final') await responderRetaFinal(true);
+        if (acao === 'recusar-reta-final') await responderRetaFinal(false);
         if (acao === 'ajustar-horarios') mostrarEtapa('horarios');
         if (acao === 'estender') { rascunho.plano.fim = viabilidade.escapatorias.maisTempo.novoFim; buscar('#fim').value = rascunho.plano.fim; await salvar(); await conferir(); }
         if (acao === 'retirar-sugeridas') {
@@ -484,19 +725,29 @@ buscar('#plataforma').addEventListener('click', evento => {
         }
     });
 });
+// Ao fechar o "Como foi?" (Cancelar ou Esc), o foco volta ao "Feito" que o abriu. Só quando o
+// foco ficou solto na página: depois de responder ou de um erro, quem decide o foco é a ação.
+buscar('#dialogo-como-foi').addEventListener('close', () => {
+    const solto = !document.activeElement || document.activeElement === document.body;
+    if (solto && origemDoDialogo?.isConnected) origemDoDialogo.focus();
+    origemDoDialogo = null;
+});
 buscar('[role="tablist"]').addEventListener('keydown', evento => {
     const abas = [...document.querySelectorAll('[role="tab"]:not(:disabled)')];
     const indice = abas.indexOf(evento.target);
     if (indice < 0) return;
     const destinos = { ArrowRight: (indice + 1) % abas.length, ArrowLeft: (indice - 1 + abas.length) % abas.length, Home: 0, End: abas.length - 1 };
     if (!(evento.key in destinos)) return;
-    evento.preventDefault(); const aba = abas[destinos[evento.key]];
-    selecionarAba(aba.id === 'aba-percurso' ? 'percurso' : 'materias', true);
+    evento.preventDefault();
+    const nome = abas[destinos[evento.key]].id.replace('aba-', '');
+    // O foco muda na hora; a busca do dia na fachada vem em seguida.
+    selecionarAba(nome, true);
+    if (nome === 'hoje') executar(carregarHoje);
 });
 
 executar(async () => {
     // Antes de desenhar, a fachada replaneja o plano se ele é de outro dia (§4).
-    await obterHoje(hoje);
+    dia = await obterHoje(hoje);
     const sessao = await obterSessao();
     rascunho = sessao.rascunho ?? { plano: { inicio: hoje, fim: somarDias(hoje, 13), dataAvaliacao: null, nomeAvaliacao: '' }, topicos: [], celulas: [] };
     cronograma = sessao.cronograma;
@@ -508,6 +759,7 @@ executar(async () => {
     buscar('#data-prova').value = rascunho.plano.dataAvaliacao ?? '';
     atualizarTravaInicio();
     buscar('#aba-materias').disabled = false;
+    buscar('#aba-hoje').disabled = !cronograma;
     buscar('#aba-percurso').disabled = !cronograma;
     buscar('#continuar').disabled = false;
     buscar('[data-acao="voltar"]').disabled = false;
@@ -515,7 +767,8 @@ executar(async () => {
     if (cronograma) {
         const referencia = hoje < cronograma.plano.inicio ? cronograma.plano.inicio : hoje > cronograma.plano.fim ? cronograma.plano.fim : hoje;
         inicioSemana = somarDias(referencia, -diaDaSemana(referencia));
-        renderizarCronograma(); selecionarAba('percurso');
+        // Com plano, a plataforma abre em "Seu passo de hoje" (§2); sem plano, no cadastro.
+        renderizarCronograma(); renderizarHoje(); selecionarAba('hoje');
     }
     buscar('#estado-salvamento').textContent = 'Salvo neste navegador';
 }).then(() => {
