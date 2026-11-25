@@ -1,0 +1,548 @@
+[
+  {
+    "descricao": "Geração viável com horários não contínuos e domingo",
+    "rascunho": {
+      "plano": {
+        "inicio": "2026-11-23",
+        "fim": "2026-11-29"
+      },
+      "topicos": [
+        {
+          "id": "mat",
+          "nome": "Matemática",
+          "dominio": 2,
+          "peso": 5
+        },
+        {
+          "id": "his",
+          "nome": "História",
+          "dominio": 5,
+          "peso": 2
+        }
+      ],
+      "celulas": [
+        {
+          "diaSemana": 1,
+          "hora": "08:00"
+        },
+        {
+          "diaSemana": 1,
+          "hora": "09:30"
+        },
+        {
+          "diaSemana": 2,
+          "hora": "07:00"
+        },
+        {
+          "diaSemana": 3,
+          "hora": "18:00"
+        },
+        {
+          "diaSemana": 4,
+          "hora": "12:00"
+        },
+        {
+          "diaSemana": 5,
+          "hora": "10:00"
+        },
+        {
+          "diaSemana": 0,
+          "hora": "22:30"
+        }
+      ]
+    },
+    "hoje": "2026-11-16",
+    "escolha": null,
+    "esperado": {
+      "bloqueado": false,
+      "blocos": [
+        {
+          "data": "2026-11-23",
+          "ordem": 1,
+          "topicoId": "mat",
+          "tipo": "ESTUDO",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "peso alto, domínio baixo",
+          "id": "2026-11-23/1",
+          "hora": "08:00",
+          "topicoNome": "Matemática"
+        },
+        {
+          "data": "2026-11-23",
+          "ordem": 2,
+          "topicoId": null,
+          "tipo": "RESERVA",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "horário livre",
+          "id": "2026-11-23/2",
+          "hora": "09:30",
+          "topicoNome": "Horário livre"
+        },
+        {
+          "data": "2026-11-24",
+          "ordem": 1,
+          "topicoId": "mat",
+          "tipo": "ESTUDO",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "peso alto, domínio baixo",
+          "id": "2026-11-24/1",
+          "hora": "07:00",
+          "topicoNome": "Matemática"
+        },
+        {
+          "data": "2026-11-25",
+          "ordem": 1,
+          "topicoId": "his",
+          "tipo": "ESTUDO",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "peso baixo, domínio alto",
+          "id": "2026-11-25/1",
+          "hora": "18:00",
+          "topicoNome": "História"
+        },
+        {
+          "data": "2026-11-26",
+          "ordem": 1,
+          "topicoId": "mat",
+          "tipo": "ESTUDO",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "peso alto, domínio baixo",
+          "id": "2026-11-26/1",
+          "hora": "12:00",
+          "topicoNome": "Matemática"
+        },
+        {
+          "data": "2026-11-27",
+          "ordem": 1,
+          "topicoId": null,
+          "tipo": "RESERVA",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "horário livre",
+          "id": "2026-11-27/1",
+          "hora": "10:00",
+          "topicoNome": "Horário livre"
+        },
+        {
+          "data": "2026-11-29",
+          "ordem": 1,
+          "topicoId": "mat",
+          "tipo": "ESTUDO",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "peso alto, domínio baixo",
+          "id": "2026-11-29/1",
+          "hora": "22:30",
+          "topicoNome": "Matemática"
+        }
+      ],
+      "topicos": [
+        {
+          "id": "mat",
+          "nome": "Matemática",
+          "dominio": 2,
+          "peso": 5,
+          "ordem": 0,
+          "blocosAlocados": 4
+        },
+        {
+          "id": "his",
+          "nome": "História",
+          "dominio": 5,
+          "peso": 2,
+          "ordem": 1,
+          "blocosAlocados": 1
+        }
+      ],
+      "viabilidade": {
+        "viavel": true,
+        "bloqueante": false,
+        "capacidadeEstudo": 5,
+        "demandaTotal": 5,
+        "deficit": 0,
+        "cobertura": {
+          "percentual": 100
+        },
+        "escapatorias": null,
+        "capacidadeTotal": 7,
+        "capacidadeReserva": 2,
+        "retaFinal": null,
+        "blocosPorSemana": 7,
+        "minutosPorSemana": 210,
+        "blocosNoPeriodo": 7
+      },
+      "retaFinal": null,
+      "cobertura": "NAO_SE_APLICA",
+      "avisos": [],
+      "plano": {
+        "inicio": "2026-11-23",
+        "fim": "2026-11-29",
+        "dataAvaliacao": null,
+        "nomeAvaliacao": "",
+        "disponibilidade": [
+          30,
+          60,
+          30,
+          30,
+          30,
+          30,
+          0
+        ],
+        "diasFolga": [],
+        "duracaoBlocoMin": 30,
+        "respostaCobertura": null
+      },
+      "celulas": [
+        {
+          "diaSemana": 0,
+          "hora": "22:30"
+        },
+        {
+          "diaSemana": 1,
+          "hora": "08:00"
+        },
+        {
+          "diaSemana": 1,
+          "hora": "09:30"
+        },
+        {
+          "diaSemana": 2,
+          "hora": "07:00"
+        },
+        {
+          "diaSemana": 3,
+          "hora": "18:00"
+        },
+        {
+          "diaSemana": 4,
+          "hora": "12:00"
+        },
+        {
+          "diaSemana": 5,
+          "hora": "10:00"
+        }
+      ]
+    }
+  },
+  {
+    "descricao": "Bloqueio sem horários suficientes para todas as matérias",
+    "rascunho": {
+      "plano": {
+        "inicio": "2026-11-23",
+        "fim": "2026-11-29"
+      },
+      "topicos": [
+        {
+          "id": "mat",
+          "nome": "Matemática",
+          "dominio": 2,
+          "peso": 5
+        },
+        {
+          "id": "his",
+          "nome": "História",
+          "dominio": 5,
+          "peso": 2
+        }
+      ],
+      "celulas": [
+        {
+          "diaSemana": 1,
+          "hora": "08:00"
+        }
+      ]
+    },
+    "hoje": "2026-11-16",
+    "escolha": null,
+    "esperado": {
+      "bloqueado": true,
+      "plano": {
+        "inicio": "2026-11-23",
+        "fim": "2026-11-29",
+        "dataAvaliacao": null,
+        "nomeAvaliacao": "",
+        "disponibilidade": [
+          0,
+          30,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "diasFolga": [],
+        "duracaoBlocoMin": 30,
+        "respostaCobertura": null
+      },
+      "topicos": [
+        {
+          "id": "mat",
+          "nome": "Matemática",
+          "dominio": 2,
+          "peso": 5,
+          "ordem": 0
+        },
+        {
+          "id": "his",
+          "nome": "História",
+          "dominio": 5,
+          "peso": 2,
+          "ordem": 1
+        }
+      ],
+      "celulas": [
+        {
+          "diaSemana": 1,
+          "hora": "08:00"
+        }
+      ],
+      "blocos": [],
+      "viabilidade": {
+        "viavel": false,
+        "bloqueante": true,
+        "capacidadeEstudo": 0,
+        "demandaTotal": 5,
+        "deficit": 5,
+        "cobertura": {
+          "percentual": 0
+        },
+        "escapatorias": {
+          "maisTempo": {
+            "minutosPorDia": 180,
+            "diasAMais": 36,
+            "novoFim": "2027-01-04"
+          },
+          "reduzirDemanda": {
+            "topicos": [
+              {
+                "id": "mat",
+                "antes": 4,
+                "depois": 1
+              },
+              {
+                "id": "his",
+                "antes": 1,
+                "depois": 1
+              }
+            ],
+            "suficiente": false
+          },
+          "removerTopicos": {
+            "removidos": [
+              "his",
+              "mat"
+            ],
+            "demandaRestante": 0
+          }
+        },
+        "capacidadeTotal": 1,
+        "capacidadeReserva": 1,
+        "retaFinal": null,
+        "blocosPorSemana": 1,
+        "minutosPorSemana": 30,
+        "blocosNoPeriodo": 1
+      },
+      "cobertura": "NAO_SE_APLICA",
+      "avisos": []
+    }
+  },
+  {
+    "descricao": "Reta final resolve o bloqueio somente após escolha",
+    "rascunho": {
+      "plano": {
+        "inicio": "2026-11-16",
+        "fim": "2026-11-16"
+      },
+      "topicos": [
+        {
+          "id": "mat",
+          "nome": "Matemática",
+          "dominio": 5,
+          "peso": 5
+        },
+        {
+          "id": "his",
+          "nome": "História",
+          "dominio": 5,
+          "peso": 2
+        }
+      ],
+      "celulas": [
+        {
+          "diaSemana": 1,
+          "hora": "08:00"
+        },
+        {
+          "diaSemana": 1,
+          "hora": "09:30"
+        }
+      ]
+    },
+    "hoje": "2026-11-16",
+    "escolha": {
+      "tipo": "COBERTURA"
+    },
+    "esperado": {
+      "bloqueado": false,
+      "blocos": [
+        {
+          "data": "2026-11-16",
+          "ordem": 1,
+          "topicoId": "mat",
+          "tipo": "ESTUDO",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "peso alto, domínio alto",
+          "id": "2026-11-16/1",
+          "hora": "08:00",
+          "topicoNome": "Matemática"
+        },
+        {
+          "data": "2026-11-16",
+          "ordem": 2,
+          "topicoId": "his",
+          "tipo": "ESTUDO",
+          "duracaoMin": 30,
+          "status": "PENDENTE",
+          "extra": false,
+          "fixado": false,
+          "motivo": "peso baixo, domínio alto",
+          "id": "2026-11-16/2",
+          "hora": "09:30",
+          "topicoNome": "História"
+        }
+      ],
+      "topicos": [
+        {
+          "id": "mat",
+          "nome": "Matemática",
+          "dominio": 5,
+          "peso": 5,
+          "ordem": 0,
+          "blocosAlocados": 1
+        },
+        {
+          "id": "his",
+          "nome": "História",
+          "dominio": 5,
+          "peso": 2,
+          "ordem": 1,
+          "blocosAlocados": 1
+        }
+      ],
+      "viabilidade": {
+        "viavel": false,
+        "bloqueante": true,
+        "capacidadeEstudo": 1,
+        "demandaTotal": 2,
+        "deficit": 1,
+        "cobertura": {
+          "percentual": 50
+        },
+        "escapatorias": {
+          "maisTempo": {
+            "minutosPorDia": 30,
+            "diasAMais": 7,
+            "novoFim": "2026-11-23"
+          },
+          "reduzirDemanda": {
+            "topicos": [
+              {
+                "id": "mat",
+                "antes": 1,
+                "depois": 1
+              },
+              {
+                "id": "his",
+                "antes": 1,
+                "depois": 1
+              }
+            ],
+            "suficiente": false
+          },
+          "removerTopicos": {
+            "removidos": [
+              "his"
+            ],
+            "demandaRestante": 1
+          }
+        },
+        "capacidadeTotal": 2,
+        "capacidadeReserva": 1,
+        "retaFinal": {
+          "capacidadeEstudo": 2,
+          "demandaTotal": 2,
+          "cobertura": {
+            "percentual": 100
+          },
+          "bloqueante": false
+        },
+        "blocosPorSemana": 2,
+        "minutosPorSemana": 60,
+        "blocosNoPeriodo": 2
+      },
+      "retaFinal": {
+        "capacidadeEstudo": 2,
+        "demandaTotal": 2,
+        "cobertura": {
+          "percentual": 100
+        },
+        "bloqueante": false
+      },
+      "cobertura": "ATIVA",
+      "avisos": [],
+      "plano": {
+        "inicio": "2026-11-16",
+        "fim": "2026-11-16",
+        "dataAvaliacao": null,
+        "nomeAvaliacao": "",
+        "disponibilidade": [
+          0,
+          60,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "diasFolga": [],
+        "duracaoBlocoMin": 30,
+        "respostaCobertura": {
+          "resposta": "ACEITO",
+          "dataAlvo": "2026-11-16"
+        }
+      },
+      "celulas": [
+        {
+          "diaSemana": 1,
+          "hora": "08:00"
+        },
+        {
+          "diaSemana": 1,
+          "hora": "09:30"
+        }
+      ]
+    }
+  }
+]

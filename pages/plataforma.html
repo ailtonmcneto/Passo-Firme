@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Monte seu cronograma com suas matérias, seu conhecimento e os horários em que pode estudar.">
+    <title>Seu plano de estudos | Passo Firme</title>
+    <link rel="stylesheet" href="../css/demonstracao.css">
+    <link rel="stylesheet" href="../css/plataforma.css">
+    <script type="module" src="../js/plataforma.js"></script>
+</head>
+<body class="plataforma-pagina">
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <header class="plataforma-topo">
+        <nav class="plataforma-menu" aria-label="Principal">
+            <a class="plataforma-marca" href="../index.html" aria-label="Passo Firme — página inicial"><img src="../img/passosfirmes.png" alt="Passo Firme" width="200"></a>
+            <a class="plataforma-voltar" href="../index.html"><span aria-hidden="true">←</span> Voltar ao início</a>
+        </nav>
+    </header>
+    <main class="plataforma-conteudo" id="conteudo" tabindex="-1">
+        <div class="plataforma-apresentacao">
+            <p class="plataforma-etiqueta">Seu espaço de estudos</p>
+            <h1>Um plano que começa com você.</h1>
+            <p>Suas matérias, seu ritmo e o tempo que você tem.</p>
+        </div>
+        <div class="demonstracao plataforma-painel" id="plataforma">
+            <div class="demonstracao-janela">
+                <nav class="demonstracao-navegacao" aria-label="Plano de estudos">
+                    <div class="demonstracao-abas" role="tablist" aria-label="Sua plataforma">
+                        <button id="aba-materias" type="button" role="tab" aria-selected="true" aria-controls="exemplo-materias" tabindex="0" disabled>Suas matérias</button>
+                        <button id="aba-percurso" type="button" role="tab" aria-selected="false" aria-controls="exemplo-percurso" tabindex="-1" disabled>Seu percurso</button>
+                    </div>
+                    <span class="estado-salvamento" id="estado-salvamento" role="status">Carregando seus dados…</span>
+                </nav>
+                <p class="plataforma-erro" id="erro" role="alert" tabindex="-1" hidden></p>
+                <section class="demonstracao-painel" id="exemplo-materias" role="tabpanel" aria-labelledby="aba-materias">
+                    <ol class="cadastro-passos" aria-label="Etapas do cadastro">
+                        <li aria-current="step">1. Matérias</li><li>2. Período</li><li>3. Horários</li><li>4. Conferir</li>
+                    </ol>
+                    <form id="cadastro" novalidate>
+                        <fieldset class="cadastro-etapa" data-etapa="materias" disabled>
+                            <legend class="titulo-etapa" tabindex="-1">Quais matérias você quer estudar?</legend>
+                            <p class="texto-etapa">Comece pelas matérias do seu objetivo.</p>
+                            <div class="adicionar-materia">
+                                <div class="demonstracao-campo"><label for="nova-materia">Nome da matéria</label><input id="nova-materia" maxlength="80" placeholder="Ex.: Matemática" autocomplete="off"></div>
+                                <button class="demonstracao-botao" type="button" data-acao="adicionar">Adicionar</button>
+                            </div>
+                            <ul class="lista-materias" id="lista-materias"></ul>
+                            <p class="demonstracao-nota" id="materias-vazias">Adicione pelo menos uma matéria para começar.</p>
+                        </fieldset>
+                        <fieldset class="cadastro-etapa" data-etapa="perfil" hidden disabled>
+                            <legend class="titulo-etapa" id="titulo-perfil" tabindex="-1">Seu conhecimento</legend>
+                            <p class="texto-etapa" id="progresso-perfil"></p>
+                            <progress id="progresso-materias" aria-labelledby="progresso-perfil" max="1" value="1"></progress>
+                            <div class="demonstracao-campo"><label for="dominio">Se caísse uma questão disso amanhã, você…</label>
+                                <select id="dominio" required><option value="">Escolha uma resposta</option><option value="1">Não saberia nem começar</option><option value="2">Lembro de ter visto</option><option value="3">Entendo, mas erro</option><option value="4">Resolvo consultando</option><option value="5">Resolvo tranquilo</option><option value="nao-sei">Não sei</option></select>
+                            </div>
+                            <p class="demonstracao-nota">Essa resposta ajuda a dar mais espaço ao que você acha difícil.</p>
+                            <div class="demonstracao-campo"><label for="peso">Quanto essa matéria pesa no seu objetivo (nota, prova)?</label>
+                                <select id="peso" required><option value="">Escolha uma resposta</option><option value="1">Quase nada</option><option value="2">Pouco</option><option value="3">O normal</option><option value="4">Bastante</option><option value="5">É a maior parte</option><option value="nao-sei">Não sei</option></select>
+                            </div>
+                            <details class="mais-opcoes"><summary>Mais opções</summary><div class="demonstracao-campo"><label for="blocos-desejados">Quer definir quantos blocos essa matéria terá?</label><input id="blocos-desejados" type="number" min="1" max="17568" step="1" placeholder="Deixe o plano distribuir"></div></details>
+                        </fieldset>
+                        <fieldset class="cadastro-etapa" data-etapa="periodo" hidden disabled>
+                            <legend class="titulo-etapa" tabindex="-1">Até quando você quer estudar?</legend>
+                            <p class="texto-etapa">Escolha o período do seu plano.</p>
+                            <div class="campos-periodo">
+                                <div class="demonstracao-campo"><label for="inicio">Data de início</label><input id="inicio" type="date" required></div>
+                                <div class="demonstracao-campo"><label for="fim">Data de fim</label><input id="fim" type="date" required></div>
+                            </div>
+                            <label class="opcao-prova"><input id="tem-prova" type="checkbox"> Tenho uma prova nesse período</label>
+                            <div class="campos-periodo" id="campos-prova" hidden>
+                                <div class="demonstracao-campo"><label for="nome-prova">Nome da prova</label><input id="nome-prova" maxlength="80"></div>
+                                <div class="demonstracao-campo"><label for="data-prova">Data da prova</label><input id="data-prova" type="date"></div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="cadastro-etapa" data-etapa="horarios" hidden disabled>
+                            <legend class="titulo-etapa" tabindex="-1">Quando você pode estudar?</legend>
+                            <p class="texto-etapa">Marque seus horários livres. Cada célula vale 30 minutos.</p>
+                            <div class="filtro-horarios"><label for="faixa-horarios">Mostrar horários</label><select id="faixa-horarios"><option value="6">Manhã · 06h às 12h</option><option value="12">Tarde · 12h às 18h</option><option value="18">Noite · 18h às 24h</option><option value="0">Madrugada · 00h às 06h</option><option value="todos">Todos os horários</option></select></div>
+                            <p class="demonstracao-nota" id="dica-horarios">Toque para selecionar ou desmarcar. Deslize a grade para ver todos os dias.</p>
+                            <div class="demonstracao-grade-rolagem grade-disponibilidade" tabindex="0" role="region" aria-label="Horários disponíveis" aria-describedby="dica-horarios"><table class="demonstracao-grade" id="grade-disponibilidade"><caption>Disponibilidade semanal em blocos de 30 minutos</caption><thead></thead><tbody></tbody></table></div>
+                            <p class="contador-horarios" id="contador-horarios" role="status"></p>
+                        </fieldset>
+                        <fieldset class="cadastro-etapa" data-etapa="conferir" hidden disabled>
+                            <legend class="titulo-etapa" tabindex="-1">Seu plano cabe no seu tempo?</legend>
+                            <p class="texto-etapa">Confira a distribuição antes de montar sua semana.</p>
+                            <dl class="numeros-plano"><div><dt>Horários no período</dt><dd id="numero-total"></dd></div><div><dt>Blocos para estudo</dt><dd id="numero-estudo"></dd></div><div><dt>Blocos pedidos</dt><dd id="numero-demanda"></dd></div></dl>
+                            <p class="situacao-plano" id="situacao-plano"></p>
+                            <div class="alternativas-plano" id="alternativas-plano"></div>
+                            <p class="demonstracao-nota" id="aviso-substituicao" hidden>Montar novamente substitui o cronograma e limpa as marcações de estudos anteriores.</p>
+                        </fieldset>
+                        <div class="demonstracao-formulario-acoes" id="acoes-cadastro">
+                            <button type="button" class="demonstracao-link" data-acao="voltar" hidden disabled>← Voltar</button>
+                            <button type="submit" class="demonstracao-botao" id="continuar" disabled>Responder sobre minhas matérias →</button>
+                        </div>
+                    </form>
+                </section>
+                <section class="demonstracao-painel" id="exemplo-percurso" role="tabpanel" aria-labelledby="aba-percurso" hidden>
+                    <div class="demonstracao-cabecalho"><span class="demonstracao-etiqueta">Seu percurso</span><h2 tabindex="-1">Um lugar para cada matéria.</h2><p id="periodo-plano"></p></div>
+                    <p class="aviso-rascunho" id="aviso-rascunho" hidden>Você alterou suas respostas. Monte novamente o plano para aplicar as mudanças.</p>
+                    <p class="aviso-rascunho" id="aviso-cobertura" hidden></p>
+                    <div class="navegacao-semana"><button class="demonstracao-link" type="button" id="semana-anterior" aria-label="Semana anterior">←</button><h3 id="titulo-semana" aria-live="polite"></h3><button class="demonstracao-link" type="button" id="semana-proxima" aria-label="Próxima semana">→</button></div>
+                    <div class="demonstracao-legenda" id="legenda-materias"></div>
+                    <p class="demonstracao-nota" id="dica-percurso">Toque para marcar um estudo como feito. Deslize a grade para ver todos os dias.</p>
+                    <div class="demonstracao-grade-rolagem" role="region" aria-label="Seu cronograma semanal" aria-describedby="dica-percurso" tabindex="0"><table class="demonstracao-grade" id="grade-cronograma"><caption>Estudos distribuídos nos horários que você escolheu</caption><thead></thead><tbody></tbody></table></div>
+                    <div class="demonstracao-acoes"><p class="demonstracao-nota">Ficou pendente? Você pode retomar esse estudo depois.</p><button class="demonstracao-botao" type="button" data-acao="editar">Rever matérias e horários →</button></div>
+                </section>
+                <p class="demonstracao-rodape">Seus dados ficam salvos neste navegador.</p>
+            </div>
+            <p class="demonstracao-status" id="anuncio" role="status" aria-live="polite"></p>
+        </div>
+        <noscript><p class="sem-javascript">Ative o JavaScript para responder às perguntas e montar seu cronograma.</p></noscript>
+    </main>
+    <footer class="plataforma-rodape">Passo Firme · Um passo de cada vez.</footer>
+</body>
+</html>
