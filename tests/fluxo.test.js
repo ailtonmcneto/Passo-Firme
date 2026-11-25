@@ -70,27 +70,23 @@ describe('iniciarCronograma', () => {
     });
 });
 
-// FUNÇÃO DO AILTON. Os testes ficam marcados como `todo` até ele escrever a função: assim eles
-// aparecem como falhando no relatório sem quebrar a suíte.
 describe('precisaReplanejar', () => {
-    const todo = 'função do Ailton';
-
-    test('mesmo dia e nada pendente no passado → false', { todo }, () => {
+    test('mesmo dia e nada pendente no passado → false', () => {
         assert.equal(precisaReplanejar(g1.esperado, '2026-11-30'), false);
     });
 
-    test('dia novo → true', { todo }, () => {
+    test('dia novo → true', () => {
         assert.equal(precisaReplanejar(g1.esperado, '2026-12-01'), true);
     });
 
-    test('mesmo dia, mas um ESTUDO PENDENTE de ontem → true', { todo }, () => {
+    test('mesmo dia, mas um ESTUDO PENDENTE de ontem → true', () => {
         // Os blocos 1 e 2 são de 11-30 e continuam pendentes, como se o plano tivesse sido
         // atualizado em 12-01 sem marcar os perdidos.
         const cronograma = { ...g1.esperado, atualizadoEm: '2026-12-01' };
         assert.equal(precisaReplanejar(cronograma, '2026-12-01'), true);
     });
 
-    test('mesmo dia e só uma RESERVA PENDENTE no passado → false (horário livre não é tarefa)', { todo }, () => {
+    test('mesmo dia e só uma RESERVA PENDENTE no passado → false (horário livre não é tarefa)', () => {
         // G5 foi replanejado em 12-04: no passado sobrou só a RESERVA 3 (12-02) como PENDENTE.
         assert.equal(precisaReplanejar(g5.esperado, '2026-12-04'), false);
     });

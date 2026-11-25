@@ -75,7 +75,6 @@ export function iniciarCronograma(previa, hoje) {
     };
 }
 
-// FUNÇÃO DO AILTON.
 // Recebe o cronograma salvo e a data de hoje; devolve true se o plano precisa ser refeito
 // antes de mostrar o dia, e false se pode ser mostrado como está.
 // Precisa replanejar quando:
@@ -85,6 +84,13 @@ export function iniciarCronograma(previa, hoje) {
 // Ex.: atualizadoEm '2026-11-30' e hoje '2026-11-30', nada pendente no passado → false;
 //      o mesmo cronograma com hoje '2026-12-01' → true.
 export function precisaReplanejar(cronograma, hoje) {
+    // Dia novo: as revisões e a distribuição dependem de hoje, então o plano é refeito.
+    if (cronograma.atualizadoEm !== hoje) return true;
+
+    // Mesmo dia, mas sobrou tarefa no passado: ela precisa virar PERDIDO e voltar como demanda.
+    // `some` para no primeiro bloco que cumpre a condição e devolve true ou false.
+    return cronograma.blocos.some((bloco) =>
+        bloco.data < hoje && bloco.status === 'PENDENTE' && bloco.tipo !== 'RESERVA');
 }
 
 // Recebe o cronograma antigo, o resultado de `replanejar` e o novo conjunto de blocos; devolve
