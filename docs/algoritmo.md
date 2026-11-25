@@ -227,7 +227,7 @@ As revisões ocupam os blocos RESERVA que o sequenciador espalhou pelo período 
 ### `preencherReservaDeHoje({ blocos, topicos, estados, hoje })` → `blocos`
 
 Roda depois de `encaixarRevisoes`, fora da reta final. Para cada slot livre com data = hoje, em ordem:
-1. **Revisão extra:** vira `REVISAO` com `extra: true` para a matéria estudada (com estado no mapa) de menor retenção em hoje (desempate por `compararCanonico`) que ainda não foi usada neste preenchimento e não tem bloco PENDENTE (ESTUDO ou REVISAO) hoje.
+1. **Revisão extra:** vira `REVISAO` com `extra: true` para a matéria estudada (com estado no mapa) de menor retenção em hoje (desempate por `compararCanonico`) que ainda não foi usada neste preenchimento e não tem bloco PENDENTE (ESTUDO ou REVISAO) hoje, nem bloco CONCLUIDO hoje.
 2. **Estudo antecipado:** senão, vira `ESTUDO` com `extra: true` para a matéria com `demanda > 0` de maior prioridade (`compararCanonico`) ainda não usada neste preenchimento.
 3. Senão, continua RESERVA, e a tela o mostra como folga.
 - As matérias com bloco PULADO hoje ficam fora dos passos 1 e 2.

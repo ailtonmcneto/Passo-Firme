@@ -274,6 +274,14 @@
 .plataforma-painel .demonstracao-estudo { overflow-wrap: anywhere; }
 .bloco-reserva { min-height: 96px; padding: 14px 10px; border: 1px dashed #9dafbb; border-radius: 8px; color: #496174; font-size: 12px; }
 .bloco-reserva small { display: block; margin-top: 8px; line-height: 1.5; }
+.bloco-reserva + .bloco-reserva, .demonstracao-estudo + .demonstracao-estudo, .bloco-reserva + .demonstracao-estudo, .demonstracao-estudo + .bloco-reserva { margin-top: 8px; }
+/* Status do bloco (docs/front.md §3.6): o texto do estado já diz qual é; aqui só o reforço visual, sem vermelho. */
+.plataforma-painel .estado-concluido { border-color: var(--materia-cor); box-shadow: inset 0 0 0 1px var(--materia-cor); }
+.estado-concluido .demonstracao-estudo-estado { font-weight: 700; }
+.estado-pulado, .estado-perdido { opacity: 0.6; }
+.estado-pulado .demonstracao-estudo-materia, .estado-pulado .demonstracao-estudo-assunto,
+.estado-perdido .demonstracao-estudo-materia, .estado-perdido .demonstracao-estudo-assunto { text-decoration: line-through; }
+.etiqueta-bloco { display: inline-block; padding: 0 6px; border: 1px solid currentColor; border-radius: 999px; font-size: 10px; line-height: 1.6; text-decoration: none; }
 .demonstracao-abas button:disabled { opacity: 0.5; }
 .sem-javascript { padding: 20px; line-height: 1.7; }
 @media (max-width: 600px) {

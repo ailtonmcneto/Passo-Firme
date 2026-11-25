@@ -15,6 +15,10 @@ function abrirBanco() {
         pedido.onsuccess = () => {
             const banco = pedido.result;
             banco.onversionchange = () => { banco.close(); abertura = null; };
+            // Pede ao navegador para não apagar os dados quando faltar espaço. Não espera a
+            // resposta e ignora a recusa: sem a permissão, o salvamento funciona do mesmo jeito.
+            // Os `?.` evitam erro onde essa função não existe: lá a chamada só devolve undefined.
+            globalThis.navigator?.storage?.persist?.()?.catch(() => {});
             resolve(banco);
         };
     }).catch(erro => { abertura = null; throw erro; });

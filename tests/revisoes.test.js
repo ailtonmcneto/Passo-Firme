@@ -129,6 +129,16 @@ describe('preencherReservaDeHoje', () => {
     assert.equal(notacao(rodar('P3')), '11-13 #1:y[P] #2:x*');
   });
 
+  test('P4: matéria com bloco CONCLUIDO hoje não ganha revisão extra, mesmo com a menor retenção', () => {
+    // x esqueceu mais (4/3 contra 2/3 de y), mas já foi estudada hoje. Revisar de novo no mesmo
+    // dia não espaça (o SM-2 conta uma repetição por dia), então a revisão extra vai para y.
+    assert.equal(notacao(rodar('P4')), '11-13 #1:x[C] #2:revy*');
+  });
+
+  test('P5: só a matéria concluída hoje foi estudada; o slot vira estudo antecipado', () => {
+    assert.equal(notacao(rodar('P5')), '11-13 #1:x[C] #2:x*');
+  });
+
   test('sem slot livre hoje, devolve os mesmos blocos', () => {
     const { entrada } = casos.find((c) => c.nome === 'P1');
     const blocos = entrada.blocos.filter((b) => b.tipo !== 'RESERVA' || b.data !== '2026-11-13');
