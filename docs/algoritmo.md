@@ -275,14 +275,14 @@ O cronograma é sempre derivado, nunca acumulado. Criar e replanejar rodam as me
 - Começa em `max(hoje, inicio)`: um plano criado com início no passado não gera blocos no passado.
 - `reduzirDemanda: true` é a escapatória 2 escolhida: cada tópico recebe `demandaRestante` igual ao `depois` de `viabilidade.escapatorias.reduzirDemanda`, e a viabilidade é recalculada com ela. As outras saídas a fachada aplica antes de chamar: "mais tempo" muda o plano, "tirar matérias" muda a lista e a reta final grava `respostaCobertura`.
 - **Bloqueio só na criação (R16):** se a viabilidade é `bloqueante`, devolve `{ bloqueado: true, blocos: [], topicos (como vieram), viabilidade, retaFinal, cobertura, avisos: [] }`. Exceção: `cobertura` ATIVA e `retaFinal` não bloqueante (a reta final resolve o bloqueio).
-- Senão, chama `montarFuturo` sem mantidos nem histórico e devolve `{ bloqueado: false, blocos, topicos, viabilidade, retaFinal, cobertura, avisos }`, com cada tópico devolvido com `blocosAlocados = alocacao.blocos[id]` (C2) e sem `demandaRestante`.
+- Senão, chama `montarFuturo` sem mantidos nem histórico e devolve `{ bloqueado: false, blocos, topicos, viabilidade, retaFinal, cobertura, avisos }`, com cada tópico devolvido com `blocosAlocados = max(alocacao.blocos[id], demanda(t))` (C2) e sem `demandaRestante`. `t` é o tópico da geração (com `reduzirDemanda: true`, já traz a `demandaRestante` da escapatória 2). O piso existe porque, num plano que não cabe, gravar só o que coube faria o replanejamento enxergar menos demanda do que existe e mostrar uma cobertura maior que a real; com plano viável nada muda (C1).
 
 ### 10.4 `replanejar({ plano, topicos, blocos, hoje })` (em `core/replanejador.js`)
 
 - **Quando (R11):** a função é pura e quem chama decide quando rodar. Os gatilhos estão no docs/front.md §4.
 - `perdidos`: ids dos ESTUDO e REVISAO PENDENTE com data < hoje.
 - **Depois do fim** (`hoje > fim`): devolve `{ perdidos, blocosFuturos: [], viabilidade: null, retaFinal: null, cobertura: 'NAO_SE_APLICA', avisos: [] }`.
-- **C2:** `demandaRestante = max(0, blocosAlocados − ESTUDOs CONCLUIDO da matéria (qualquer data, extras inclusive) − ESTUDOs PENDENTE fixados mantidos)`. Matéria sem `blocosAlocados` (adicionada depois da criação) usa `demanda(t)` no lugar. O replanejamento não sobrescreve `blocosAlocados`.
+- **C2:** `demandaRestante = max(0, blocosAlocados − ESTUDOs CONCLUIDO da matéria (qualquer data, extras inclusive) − ESTUDOs PENDENTE fixados mantidos)`. Matéria sem `blocosAlocados` (adicionada depois da criação) usa `demanda(t)` no lugar. O replanejamento não sobrescreve `blocosAlocados`. Como a criação grava pelo menos a demanda (§10.3), a cobertura parcial não sobe sozinha no replanejamento (nem chega a 100%) só porque ele partiu do que coube.
 - Chama `montarFuturo({ plano, topicos com demandaRestante, mantidos, historico: blocos, hoje })`.
 - **Nunca bloqueia:** gera o que cabe, com o aviso `TOPICO_SEM_BLOCO` (§5) e as escapatórias calculadas, para o aluno não ficar sem plano.
 - Devolve `{ perdidos, blocosFuturos, viabilidade, retaFinal, cobertura, avisos }`. `blocosFuturos` traz todos os blocos com data ≥ hoje em ordem de data e `ordem`: os mantidos, iguais e com `id`, e os novos, sem `id`. A fachada apaga os PENDENTE não fixados com data ≥ hoje e grava os novos.

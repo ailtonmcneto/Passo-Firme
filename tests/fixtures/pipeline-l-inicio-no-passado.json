@@ -23,7 +23,7 @@
       { "data": "2026-11-19", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre" },
       { "data": "2026-11-20", "ordem": 1, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 25, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" }
     ],
-    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1, "blocosAlocados": 4 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2, "blocosAlocados": 3 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1, "blocosAlocados": 2 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3, "blocosAlocados": 2 }],
+    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1, "blocosAlocados": 5 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2, "blocosAlocados": 4 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1, "blocosAlocados": 5 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3, "blocosAlocados": 3 }],
     "viabilidade": {
       "viavel": false,
       "bloqueante": false,

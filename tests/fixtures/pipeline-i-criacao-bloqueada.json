@@ -80,7 +80,7 @@
           { "data": "2026-11-10", "ordem": 1, "topicoId": "Y", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio baixo" },
           { "data": "2026-11-11", "ordem": 1, "topicoId": "Z", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio alto" }
         ],
-        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1, "blocosAlocados": 1 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2, "blocosAlocados": 1 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4, "blocosAlocados": 1 }],
+        "topicos": [{ "id": "X", "nome": "X", "peso": 5, "dominio": 1, "blocosAlocados": 5 }, { "id": "Y", "nome": "Y", "peso": 3, "dominio": 2, "blocosAlocados": 4 }, { "id": "Z", "nome": "Z", "peso": 1, "dominio": 4, "blocosAlocados": 2 }],
         "viabilidade": {
           "viavel": false,
           "bloqueante": true,

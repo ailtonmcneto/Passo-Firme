@@ -2,7 +2,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { gerarCronograma, montarFuturo } from '../js/core/pipeline.js';
 import { carregarFixture } from './carregar-fixture.js';
-import { notacao } from './notacao.js';
+import { notacao, alocacaoNosBlocos } from './notacao.js';
 
 // Cada fixture guarda a entrada e a saída completas (é o que o porte em Java vai reproduzir).
 // Os testes conferem a saída inteira e, por cima, os números e a notação do cenário, para
@@ -34,7 +34,10 @@ describe('gerarCronograma: cenários', () => {
     assert.equal(saida.cobertura, 'NAO_SE_APLICA');
     assert.equal(saida.retaFinal, null);
     assert.deepEqual(saida.avisos, []);
-    assert.deepEqual(alocados(saida), { a: 5, b: 4, c: 3, d: 2 });
+    // A alocação deu a5 b4 c3 d2 (é o que está nos blocos), mas o que fica gravado é a
+    // demanda de cada matéria: c e d continuam pedindo 5 e 3, mesmo sem caber agora.
+    assert.deepEqual(alocacaoNosBlocos(saida.blocos, ['a', 'b', 'c', 'd']), { a: 5, b: 4, c: 3, d: 2 });
+    assert.deepEqual(alocados(saida), { a: 5, b: 4, c: 5, d: 3 });
 
     assert.equal(
       notacao(saida.blocos),
@@ -58,7 +61,9 @@ describe('gerarCronograma: cenários', () => {
 
   test('G (criação): com avaliação, a reserva de hoje vira estudo antecipado', () => {
     const { saida } = rodar('pipeline-g-com-avaliacao.json');
-    assert.deepEqual(alocados(saida), { a: 3, b: 2, c: 2, d: 1 });
+    // A alocação deu a3 b2 c2 d1; o gravado é a demanda, porque o plano não cabe.
+    assert.deepEqual(alocacaoNosBlocos(saida.blocos, ['a', 'b', 'c', 'd']), { a: 3, b: 2, c: 2, d: 1 });
+    assert.deepEqual(alocados(saida), { a: 5, b: 4, c: 5, d: 3 });
     // 11-09#2 era RESERVA; como é de hoje e nada foi estudado, vira estudo antecipado de a.
     // Depois da prova (13/11), todos os slots são RESERVA.
     assert.equal(
@@ -104,7 +109,9 @@ describe('gerarCronograma: cenários', () => {
       const saida = gerar(2);
       assert.equal(saida.bloqueado, false);
       assert.equal(saida.cobertura, 'ATIVA');
-      assert.deepEqual(alocados(saida), { X: 1, Y: 1, Z: 1 });
+      // Cada matéria ganhou um bloco, mas o gravado é a demanda de cada uma (5, 4 e 2).
+      assert.deepEqual(alocacaoNosBlocos(saida.blocos, ['X', 'Y', 'Z']), { X: 1, Y: 1, Z: 1 });
+      assert.deepEqual(alocados(saida), { X: 5, Y: 4, Z: 2 });
       assert.equal(notacao(saida.blocos), '11-09 #1:X; 11-10 #1:Y; 11-11 #1:Z');
     });
   });
@@ -131,7 +138,8 @@ describe('gerarCronograma: cenários', () => {
     assert.equal(saida.viabilidade.capacidadeEstudo, 11);
     assert.equal(saida.viabilidade.demandaTotal, 17);
     assert.deepEqual(saida.viabilidade.cobertura, { percentual: 64 });
-    assert.deepEqual(alocados(saida), { a: 4, b: 3, c: 2, d: 2 });
+    assert.deepEqual(alocacaoNosBlocos(saida.blocos, ['a', 'b', 'c', 'd']), { a: 4, b: 3, c: 2, d: 2 });
+    assert.deepEqual(alocados(saida), { a: 5, b: 4, c: 5, d: 3 });
     assert.equal(
       notacao(saida.blocos),
       '11-11 #1:a #2:b #3:a* #4:c; 11-12 #1:d #2:a; 11-13 #1:b; 11-16 #1:R #2:a; 11-17 #1:c #2:d; '

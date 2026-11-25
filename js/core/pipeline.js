@@ -9,6 +9,7 @@ import { avaliarRetaFinal, condicaoDeCobertura, dataAlvo, estadoCobertura } from
 import { estadosPeloHistorico } from './sm2.js';
 import { encaixarRevisoes, preencherReservaDeHoje } from './revisoes.js';
 import { motivoDoBloco } from './retencao.js';
+import { demanda } from './prioridade.js';
 import { validarPlano } from '../util/validacao.js';
 import { diferencaEmDias } from '../util/datas.js';
 
@@ -143,9 +144,14 @@ export function gerarCronograma({ plano, topicos, hoje, reduzirDemanda = false }
     blocos: futuro.blocos,
     // C2: o resultado da alocação fica gravado na matéria. É dele que o replanejamento
     // desconta o que já foi estudado. A demandaRestante era só desta geração e não é gravada.
+    // O número gravado nunca fica abaixo da demanda: num plano que não cabe, a alocação dá
+    // menos do que a matéria pede, e gravar esse número faria o replanejamento enxergar
+    // menos demanda do que existe (e mostrar uma cobertura maior que a real). Com plano
+    // viável nada muda, porque a alocação já dá pelo menos a demanda (C1). Com
+    // reduzirDemanda, `t` já traz a demandaRestante da escapatória 2, e é ela que vale.
     topicos: topicosDaGeracao.map((t) => ({
       ...semDemandaRestante(t),
-      blocosAlocados: futuro.alocacao.blocos[t.id],
+      blocosAlocados: Math.max(futuro.alocacao.blocos[t.id], demanda(t)),
     })),
     viabilidade,
     retaFinal,
