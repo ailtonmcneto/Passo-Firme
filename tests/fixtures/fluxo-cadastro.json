@@ -1,0 +1,41 @@
+{
+  "descricao": "Cadastro de base dos testes de js/fluxo.js. Hoje 2026-11-30 (segunda). rascunhoG6 é o mesmo cadastro com a célula terça 19:00 a mais e História com domínio 2.",
+  "hoje": "2026-11-30",
+  "rascunho": {
+    "plano": { "inicio": "2026-11-30", "fim": "2026-12-13", "dataAvaliacao": null, "nomeAvaliacao": "" },
+    "topicos": [
+      { "id": "mat", "nome": "Matemática", "peso": 5, "dominio": 1 },
+      { "id": "por", "nome": "Português", "peso": 3, "dominio": 3 },
+      { "id": "his", "nome": "História", "peso": 2, "dominio": 4 }
+    ],
+    "celulas": [
+      { "diaSemana": 1, "hora": "19:00" },
+      { "diaSemana": 1, "hora": "19:30" },
+      { "diaSemana": 3, "hora": "19:00" },
+      { "diaSemana": 3, "hora": "19:30" },
+      { "diaSemana": 5, "hora": "08:00" },
+      { "diaSemana": 5, "hora": "08:30" },
+      { "diaSemana": 6, "hora": "10:00" },
+      { "diaSemana": 6, "hora": "10:30" }
+    ]
+  },
+  "rascunhoG6": {
+    "plano": { "inicio": "2026-11-30", "fim": "2026-12-13", "dataAvaliacao": null, "nomeAvaliacao": "" },
+    "topicos": [
+      { "id": "mat", "nome": "Matemática", "peso": 5, "dominio": 1 },
+      { "id": "por", "nome": "Português", "peso": 3, "dominio": 3 },
+      { "id": "his", "nome": "História", "peso": 2, "dominio": 2 }
+    ],
+    "celulas": [
+      { "diaSemana": 1, "hora": "19:00" },
+      { "diaSemana": 1, "hora": "19:30" },
+      { "diaSemana": 3, "hora": "19:00" },
+      { "diaSemana": 3, "hora": "19:30" },
+      { "diaSemana": 5, "hora": "08:00" },
+      { "diaSemana": 5, "hora": "08:30" },
+      { "diaSemana": 6, "hora": "10:00" },
+      { "diaSemana": 6, "hora": "10:30" },
+      { "diaSemana": 2, "hora": "19:00" }
+    ]
+  }
+}

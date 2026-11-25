@@ -1,0 +1,184 @@
+{
+  "descricao": "G6. atualizarCadastro sobre G3 em 2026-11-30 com a célula terça 19:00 a mais e História com domínio 2 (cadastro já validado pela fachada).",
+  "entrada": {
+    "cronograma": {
+      "versao": 2,
+      "plano": {
+        "inicio": "2026-11-30",
+        "fim": "2026-12-13",
+        "dataAvaliacao": null,
+        "nomeAvaliacao": "",
+        "disponibilidade": [0,60,0,60,0,60,60],
+        "diasFolga": [],
+        "duracaoBlocoMin": 30,
+        "respostaCobertura": null
+      },
+      "topicos": [
+        { "id": "mat", "nome": "Matemática", "dominio": 1, "peso": 5, "ordem": 0, "blocosAlocados": 6 },
+        { "id": "por", "nome": "Português", "dominio": 3, "peso": 3, "ordem": 1, "blocosAlocados": 4 },
+        { "id": "his", "nome": "História", "dominio": 4, "peso": 2, "ordem": 2, "blocosAlocados": 2 }
+      ],
+      "celulas": [
+        { "diaSemana": 1, "hora": "19:00" },
+        { "diaSemana": 1, "hora": "19:30" },
+        { "diaSemana": 3, "hora": "19:00" },
+        { "diaSemana": 3, "hora": "19:30" },
+        { "diaSemana": 5, "hora": "08:00" },
+        { "diaSemana": 5, "hora": "08:30" },
+        { "diaSemana": 6, "hora": "10:00" },
+        { "diaSemana": 6, "hora": "10:30" }
+      ],
+      "blocos": [
+        { "data": "2026-11-30", "ordem": 1, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "CONCLUIDO", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 1, "hora": "19:00", "topicoNome": "Matemática", "qualidade": 5, "concluidoEm": "2026-11-30", "sequenciaConclusao": 1 },
+        { "data": "2026-11-30", "ordem": 2, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PULADO", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 2, "hora": "19:30", "topicoNome": "Português" },
+        { "data": "2026-12-02", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 3, "hora": "19:00", "topicoNome": "Horário livre" },
+        { "data": "2026-12-02", "ordem": 2, "topicoId": "his", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio alto", "id": 4, "hora": "19:30", "topicoNome": "História" },
+        { "data": "2026-12-04", "ordem": 1, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 5, "hora": "08:00", "topicoNome": "Matemática" },
+        { "data": "2026-12-04", "ordem": 2, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 6, "hora": "08:30", "topicoNome": "Português" },
+        { "data": "2026-12-05", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 7, "hora": "10:00", "topicoNome": "Horário livre" },
+        { "data": "2026-12-05", "ordem": 2, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 8, "hora": "10:30", "topicoNome": "Matemática" },
+        { "data": "2026-12-07", "ordem": 1, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 9, "hora": "19:00", "topicoNome": "Matemática" },
+        { "data": "2026-12-07", "ordem": 2, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 10, "hora": "19:30", "topicoNome": "Português" },
+        { "data": "2026-12-09", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 11, "hora": "19:00", "topicoNome": "Horário livre" },
+        { "data": "2026-12-09", "ordem": 2, "topicoId": "his", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio alto", "id": 12, "hora": "19:30", "topicoNome": "História" },
+        { "data": "2026-12-11", "ordem": 1, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 13, "hora": "08:00", "topicoNome": "Matemática" },
+        { "data": "2026-12-11", "ordem": 2, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 14, "hora": "08:30", "topicoNome": "Português" },
+        { "data": "2026-12-12", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 15, "hora": "10:00", "topicoNome": "Horário livre" },
+        { "data": "2026-12-12", "ordem": 2, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 16, "hora": "10:30", "topicoNome": "Matemática" }
+      ],
+      "proximoId": 17,
+      "proximaSequencia": 2,
+      "atualizadoEm": "2026-11-30",
+      "viabilidade": {
+        "viavel": true,
+        "bloqueante": false,
+        "capacidadeEstudo": 12,
+        "demandaTotal": 10,
+        "deficit": 0,
+        "cobertura": { "percentual": 100 },
+        "escapatorias": null,
+        "capacidadeTotal": 16,
+        "capacidadeReserva": 4,
+        "retaFinal": null,
+        "blocosPorSemana": 8,
+        "minutosPorSemana": 240,
+        "blocosNoPeriodo": 16
+      },
+      "retaFinal": null,
+      "cobertura": "NAO_SE_APLICA",
+      "avisos": [],
+      "mudancas": []
+    },
+    "cadastro": {
+      "plano": {
+        "inicio": "2026-11-30",
+        "fim": "2026-12-13",
+        "dataAvaliacao": null,
+        "nomeAvaliacao": "",
+        "disponibilidade": [0,60,30,60,0,60,60],
+        "diasFolga": [],
+        "duracaoBlocoMin": 30,
+        "respostaCobertura": null
+      },
+      "topicos": [
+        { "id": "mat", "nome": "Matemática", "dominio": 1, "peso": 5, "ordem": 0 },
+        { "id": "por", "nome": "Português", "dominio": 3, "peso": 3, "ordem": 1 },
+        { "id": "his", "nome": "História", "dominio": 2, "peso": 2, "ordem": 2 }
+      ],
+      "celulas": [
+        { "diaSemana": 1, "hora": "19:00" },
+        { "diaSemana": 1, "hora": "19:30" },
+        { "diaSemana": 2, "hora": "19:00" },
+        { "diaSemana": 3, "hora": "19:00" },
+        { "diaSemana": 3, "hora": "19:30" },
+        { "diaSemana": 5, "hora": "08:00" },
+        { "diaSemana": 5, "hora": "08:30" },
+        { "diaSemana": 6, "hora": "10:00" },
+        { "diaSemana": 6, "hora": "10:30" }
+      ]
+    },
+    "hoje": "2026-11-30"
+  },
+  "esperado": {
+    "versao": 2,
+    "plano": {
+      "inicio": "2026-11-30",
+      "fim": "2026-12-13",
+      "dataAvaliacao": null,
+      "nomeAvaliacao": "",
+      "disponibilidade": [0,60,30,60,0,60,60],
+      "diasFolga": [],
+      "duracaoBlocoMin": 30,
+      "respostaCobertura": null
+    },
+    "topicos": [
+      { "id": "mat", "nome": "Matemática", "dominio": 1, "peso": 5, "ordem": 0, "blocosAlocados": 6 },
+      { "id": "por", "nome": "Português", "dominio": 3, "peso": 3, "ordem": 1, "blocosAlocados": 4 },
+      { "id": "his", "nome": "História", "dominio": 2, "peso": 2, "ordem": 2, "blocosAlocados": 4, "dominioRevisadoApos": 0 }
+    ],
+    "celulas": [
+      { "diaSemana": 1, "hora": "19:00" },
+      { "diaSemana": 1, "hora": "19:30" },
+      { "diaSemana": 2, "hora": "19:00" },
+      { "diaSemana": 3, "hora": "19:00" },
+      { "diaSemana": 3, "hora": "19:30" },
+      { "diaSemana": 5, "hora": "08:00" },
+      { "diaSemana": 5, "hora": "08:30" },
+      { "diaSemana": 6, "hora": "10:00" },
+      { "diaSemana": 6, "hora": "10:30" }
+    ],
+    "blocos": [
+      { "data": "2026-11-30", "ordem": 1, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "CONCLUIDO", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 1, "hora": "19:00", "topicoNome": "Matemática", "qualidade": 5, "concluidoEm": "2026-11-30", "sequenciaConclusao": 1 },
+      { "data": "2026-11-30", "ordem": 2, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PULADO", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 2, "hora": "19:30", "topicoNome": "Português" },
+      { "data": "2026-12-01", "ordem": 1, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 17, "hora": "19:00", "topicoNome": "Matemática" },
+      { "data": "2026-12-02", "ordem": 1, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 18, "hora": "19:00", "topicoNome": "Português" },
+      { "data": "2026-12-02", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 19, "hora": "19:30", "topicoNome": "Horário livre" },
+      { "data": "2026-12-04", "ordem": 1, "topicoId": "his", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio baixo", "id": 20, "hora": "08:00", "topicoNome": "História" },
+      { "data": "2026-12-04", "ordem": 2, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 21, "hora": "08:30", "topicoNome": "Matemática" },
+      { "data": "2026-12-05", "ordem": 1, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 22, "hora": "10:00", "topicoNome": "Português" },
+      { "data": "2026-12-05", "ordem": 2, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 23, "hora": "10:30", "topicoNome": "Horário livre" },
+      { "data": "2026-12-07", "ordem": 1, "topicoId": "his", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio baixo", "id": 24, "hora": "19:00", "topicoNome": "História" },
+      { "data": "2026-12-07", "ordem": 2, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 25, "hora": "19:30", "topicoNome": "Matemática" },
+      { "data": "2026-12-08", "ordem": 1, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 26, "hora": "19:00", "topicoNome": "Português" },
+      { "data": "2026-12-09", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 27, "hora": "19:00", "topicoNome": "Horário livre" },
+      { "data": "2026-12-09", "ordem": 2, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 28, "hora": "19:30", "topicoNome": "Matemática" },
+      { "data": "2026-12-11", "ordem": 1, "topicoId": "his", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso baixo, domínio baixo", "id": 29, "hora": "08:00", "topicoNome": "História" },
+      { "data": "2026-12-11", "ordem": 2, "topicoId": "por", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso médio, domínio médio", "id": 30, "hora": "08:30", "topicoNome": "Português" },
+      { "data": "2026-12-12", "ordem": 1, "topicoId": null, "tipo": "RESERVA", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "horário livre", "id": 31, "hora": "10:00", "topicoNome": "Horário livre" },
+      { "data": "2026-12-12", "ordem": 2, "topicoId": "mat", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo", "id": 32, "hora": "10:30", "topicoNome": "Matemática" }
+    ],
+    "proximoId": 33,
+    "proximaSequencia": 2,
+    "atualizadoEm": "2026-11-30",
+    "viabilidade": {
+      "viavel": false,
+      "bloqueante": false,
+      "capacidadeEstudo": 12,
+      "demandaTotal": 13,
+      "deficit": 1,
+      "cobertura": { "percentual": 92 },
+      "escapatorias": {
+        "maisTempo": { "minutosPorDia": 30, "diasAMais": 1, "novoFim": "2026-12-14" },
+        "reduzirDemanda": {
+          "topicos": [
+            { "id": "mat", "antes": 5, "depois": 5 },
+            { "id": "por", "antes": 4, "depois": 4 },
+            { "id": "his", "antes": 4, "depois": 3 }
+          ],
+          "suficiente": true
+        },
+        "removerTopicos": {
+          "removidos": ["his"],
+          "demandaRestante": 9
+        }
+      },
+      "retaFinal": null
+    },
+    "retaFinal": null,
+    "cobertura": "NAO_SE_APLICA",
+    "avisos": [],
+    "mudancas": [
+      { "antes": null, "depois": null, "causa": "HORARIOS_ALTERADOS" }
+    ]
+  }
+}
