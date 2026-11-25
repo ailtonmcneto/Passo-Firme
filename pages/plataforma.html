@@ -28,6 +28,7 @@
                 <nav class="demonstracao-navegacao" aria-label="Plano de estudos">
                     <div class="demonstracao-abas" role="tablist" aria-label="Sua plataforma">
                         <button id="aba-materias" type="button" role="tab" aria-selected="true" aria-controls="exemplo-materias" tabindex="0" disabled>Suas matérias</button>
+                        <button id="aba-hoje" type="button" role="tab" aria-selected="false" aria-controls="exemplo-hoje" tabindex="-1" disabled>Seu passo de hoje</button>
                         <button id="aba-percurso" type="button" role="tab" aria-selected="false" aria-controls="exemplo-percurso" tabindex="-1" disabled>Seu percurso</button>
                     </div>
                     <span class="estado-salvamento" id="estado-salvamento" role="status">Carregando seus dados…</span>
@@ -96,6 +97,18 @@
                         </div>
                     </form>
                 </section>
+                <section class="demonstracao-painel" id="exemplo-hoje" role="tabpanel" aria-labelledby="aba-hoje" hidden>
+                    <div class="demonstracao-cabecalho"><span class="demonstracao-etiqueta">Seu passo de hoje</span><h2 id="titulo-hoje" tabindex="-1"></h2><p>Um estudo de cada vez, na ordem do dia.</p></div>
+                    <div class="faixa-mudancas" id="faixa-mudancas" role="region" aria-labelledby="titulo-mudancas" hidden>
+                        <div><h3 id="titulo-mudancas">O que mudou</h3><ul id="lista-mudancas"></ul></div>
+                        <button class="demonstracao-link" type="button" data-acao="fechar-mudancas" aria-label="Fechar o aviso O que mudou">Fechar</button>
+                    </div>
+                    <div id="reta-final-hoje"></div>
+                    <p class="aviso-rascunho" id="aviso-cobertura-hoje" hidden></p>
+                    <p class="status-hoje" id="status-hoje" role="status" aria-live="polite"></p>
+                    <div id="resumo-hoje"></div>
+                    <ol class="lista-hoje" id="lista-hoje" aria-label="Blocos de hoje, em ordem de horário"></ol>
+                </section>
                 <section class="demonstracao-painel" id="exemplo-percurso" role="tabpanel" aria-labelledby="aba-percurso" hidden>
                     <div class="demonstracao-cabecalho"><span class="demonstracao-etiqueta">Seu percurso</span><h2 tabindex="-1">Um lugar para cada matéria.</h2><p id="periodo-plano"></p></div>
                     <p class="aviso-rascunho" id="aviso-rascunho" hidden>Você alterou suas respostas. Vá até a conferência do plano para aplicar as mudanças.</p>
@@ -109,6 +122,16 @@
                 <p class="demonstracao-rodape">Seus dados ficam salvos neste navegador.</p>
             </div>
             <p class="demonstracao-status" id="anuncio" role="status" aria-live="polite"></p>
+            <dialog class="dialogo-como-foi" id="dialogo-como-foi" aria-labelledby="titulo-como-foi" aria-describedby="bloco-como-foi">
+                <h2 id="titulo-como-foi">Como foi?</h2>
+                <p id="bloco-como-foi"></p>
+                <div class="respostas-como-foi">
+                    <button class="demonstracao-botao" type="button" data-resposta="EXPLIQUEI_SEM_CONSULTAR" autofocus>Consegui explicar sem consultar</button>
+                    <button class="demonstracao-botao" type="button" data-resposta="ENTENDI_MAS_TRAVARIA">Entendi, mas travaria numa questão</button>
+                    <button class="demonstracao-botao" type="button" data-resposta="NAO_ENTROU">Não entrou</button>
+                </div>
+                <button class="demonstracao-link" type="button" data-acao="cancelar-feito">Cancelar</button>
+            </dialog>
         </div>
         <noscript><p class="sem-javascript">Ative o JavaScript para responder às perguntas e montar seu cronograma.</p></noscript>
     </main>

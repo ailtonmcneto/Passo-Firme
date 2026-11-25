@@ -105,6 +105,16 @@ Depois, uma de três situações:
 - Reserva livre só aparece quando o algoritmo não encontrou nada para pôr nela. Nesse caso, ela aparece como folga, nunca como tarefa.
 - **Reta final:** conforme `cobertura` devolvido por `obterHoje`. PERGUNTAR: um cartão com o mesmo texto da §3.4 e os botões Ativar e Agora não. RECUSADA: só um botão discreto "Ativar reta final". ATIVA: uma linha curta avisando que o plano está em reta final até dd/mm. NAO_SE_APLICA: nada. A pergunta aparece uma vez por prova; recusar não gera nova pergunta.
 
+**Decisões da primeira entrega na plataforma (§11):**
+- É uma aba, **Seu passo de hoje**, antes de **Seu percurso**, com o mesmo visual. Com plano gerado, a plataforma abre nela; sem plano, abre no cadastro e a aba fica desabilitada. Depois de gerar ou aplicar alterações, a plataforma mostra o percurso, como antes. Abrir a aba chama `obterHoje` de novo.
+- Ordem na tela: faixa "O que mudou" (§3.8), reta final, a linha de cobertura parcial do percurso (quando a viabilidade não é viável e a reta final não está ativa, como no percurso) e a lista.
+- Ainda sem o modo foco: **Feito** abre direto o "Como foi?" (um `<dialog>` com as três respostas e Cancelar; Esc cancela). Todo bloco pendente de hoje (não RESERVA) tem **Feito** e **Pular**; o próximo pendente fica em destaque com a etiqueta "Próximo passo". Pular blocos do futuro fica para o percurso, em outra entrega.
+- Depois de responder: "Passo dado. Próxima revisão de X a partir de qua 02/12." (ou só "Passo dado." quando `proximaRevisao` vem null). Depois de pular: "Tudo bem. Esse estudo volta para o plano nos próximos dias." As mensagens ficam numa região de status visível (`aria-live="polite"`); os erros, no aviso de erro da plataforma.
+- No cartão da reta final, o texto diz "A prova é em dd/mm" quando há prova e "O fim do plano é em dd/mm" quando não há.
+- Dia sem estudo: "Hoje não tem estudo marcado." e, se houver, "Seu próximo estudo é qua 02/12 às 19:00.", com o próximo bloco pendente do percurso. Com todos os estudos de hoje feitos ou pulados: "Os passos de hoje estão dados."
+- Nas frases desta tela, a data sai como "qua 02/12" (`dataCurta`, em `js/ui/textos.js`), montada sem `Intl` para o teste dar o mesmo resultado em qualquer máquina. As datas dd/mm do cartão da reta final e o título do dia continuam com `Intl.DateTimeFormat('pt-BR')` (§7).
+- A faixa "O que mudou" tem uma frase por causa, na ordem em que cada causa aparece pela primeira vez (uma por revisão, em REVISAO_AGENDADA), listando no máximo 3 blocos e "e mais K". AJUSTE_DOMINIO ainda não tem frase, porque a fachada local não a produz. Fechar a faixa só a esconde até recarregar; se vierem mudanças diferentes (por exemplo, depois de responder à reta final), ela volta. O contorno nas células alteradas do percurso fica para outra entrega.
+
 ### 3.6 Seu percurso (grade da semana)
 
 - A mesma grade da tela de horários, mostrando só as linhas com alguma célula pintada, com a matéria de cada bloco dentro da célula. Navegação entre semanas.
@@ -174,7 +184,7 @@ Todas as funções são assíncronas, para que na fase 2 a implementação troqu
 
 ### 5.1 Implementação local na plataforma
 
-O cadastro do §11 e o uso diário usam as funções assíncronas abaixo. Elas seguem a §5 sem o `planoId`, porque este navegador guarda um plano só. `obterSemana`, `trocarBlocos`, `definirFixado` e `responderSugestao` ficam para outra entrega; a tela "Seu passo de hoje" (§3.5) também.
+O cadastro do §11 e o uso diário usam as funções assíncronas abaixo. Elas seguem a §5 sem o `planoId`, porque este navegador guarda um plano só. `obterSemana`, `trocarBlocos`, `definirFixado` e `responderSugestao` ficam para outra entrega. A tela "Seu passo de hoje" (§3.5) usa `obterHoje`, `concluirBloco`, `pularBloco` e `responderCobertura`.
 
 | Função | Recebe | Devolve |
 |---|---|---|
@@ -279,7 +289,7 @@ As abas permitem navegação pelas setas, Home e End, com apenas a selecionada n
 A plataforma começa vazia no cadastro: matérias → proficiência → período → horários → conferência de viabilidade. O aluno informa os nomes, responde domínio e peso de uma matéria por vez, escolhe o período e pinta seus horários de 30 minutos. A dificuldade é representada pelo domínio declarado, sem uma nota adicional. Não há cronograma antes de terminar o cadastro e solicitar a geração.
 
 - A tela chama somente `js/api.js` para capacidade, viabilidade e geração. A fachada executa os módulos existentes do algoritmo. A demonstração da landing continua fictícia e independente.
-- O visual mantém Poppins, azul, verde, painel branco, abas **Suas matérias** e **Seu percurso**, e grade semanal de domingo a sábado. A aba do percurso só fica disponível depois da geração. A semana mostra datas reais, somente linhas com horários selecionados e navegação entre semanas limitada ao período. Blocos exibem o motivo devolvido pelo algoritmo; reservas aparecem como tempo livre e extras são identificados.
+- O visual mantém Poppins, azul, verde, painel branco, abas **Suas matérias**, **Seu passo de hoje** e **Seu percurso**, e grade semanal de domingo a sábado. As abas de hoje e do percurso só ficam disponíveis depois da geração. A semana mostra datas reais, somente linhas com horários selecionados e navegação entre semanas limitada ao período. Blocos exibem o motivo devolvido pelo algoritmo; reservas aparecem como tempo livre e extras são identificados.
 - As respostas e horários podem ser revistos pelo cadastro. Um aviso informa quando há alterações por aplicar; a nova grade só substitui a anterior após a geração confirmada. A matéria pode ser removida com atualização do rascunho, preservando as respostas das restantes.
 - Quando não cabe, a conferência mostra os números e as saídas calculadas: ajustar horários, estender período quando possível, reduzir passagens, retirar matérias, reta final ou aceitar cobertura parcial quando permitido. A geração bloqueada mantém o cadastro e explica como continuar.
 - Respostas e cronograma são salvos localmente conforme §5.1 e restaurados ao reabrir. Ao abrir, a plataforma chama `obterHoje`, para o plano já vir replanejado. O percurso mostra o status de cada bloco conforme a tabela do §3.6 (Passo dado, pulado, perdido, extra); tocar num bloco mostra o motivo ("Por que agora?") e não muda o status nesta entrega. Horário fora das células pintadas aparece como "—", para não confundir com a reserva ("Horário livre"). Antes do início do plano, rever o cadastro gera o plano de novo; com o plano em andamento, aplica as alterações com `atualizarCadastro`, e a data de início fica travada. O cálculo inicial e a distribuição são reais, através do pipeline.

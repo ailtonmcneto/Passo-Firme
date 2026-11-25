@@ -283,6 +283,42 @@
 .estado-perdido .demonstracao-estudo-materia, .estado-perdido .demonstracao-estudo-assunto { text-decoration: line-through; }
 .etiqueta-bloco { display: inline-block; padding: 0 6px; border: 1px solid currentColor; border-radius: 999px; font-size: 10px; line-height: 1.6; text-decoration: none; }
 .demonstracao-abas button:disabled { opacity: 0.5; }
+/* Seu passo de hoje (docs/front.md §3.5). Usa as mesmas cores de matéria e o mesmo cartão do percurso. */
+.faixa-mudancas { display: flex; align-items: start; justify-content: space-between; gap: 12px 20px; margin-bottom: 16px; padding: 14px 18px; border: 1px solid #b5d8cd; border-radius: 8px; background: #edf7f3; color: #14354f; font-size: 13px; line-height: 1.6; }
+.faixa-mudancas h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
+.faixa-mudancas ul { margin: 0; padding-left: 18px; }
+.faixa-mudancas .demonstracao-link { flex-shrink: 0; padding: 0 4px; }
+.cartao-reta-final { margin-bottom: 16px; padding: 16px 18px; border: 1px solid #c9dbd6; border-radius: 8px; font-size: 14px; line-height: 1.7; }
+.cartao-reta-final p { margin: 0 0 8px; }
+.acoes-reta-final, .acoes-hoje { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+.linha-reta-final { margin: 0 0 16px; color: #006b64; font-size: 14px; font-weight: 500; }
+#reta-final-hoje > .demonstracao-link { margin-bottom: 8px; }
+#aviso-cobertura-hoje { margin: 0 0 16px; }
+.status-hoje { margin: 0 0 12px; color: #006b64; font-size: 14px; font-weight: 500; line-height: 1.6; }
+.status-hoje:empty { margin: 0; }
+.resumo-hoje { margin: 0 0 12px; font-size: 15px; line-height: 1.7; }
+.lista-hoje { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.item-hoje { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border: 1px solid var(--materia-borda, #d9e5e9); border-radius: 8px; background: var(--materia-fundo, #fff); color: #14354f; overflow-wrap: anywhere; }
+.item-hoje-cabeca { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.item-hoje .demonstracao-estudo-hora { font-size: 12px; }
+.item-hoje .demonstracao-estudo-materia { font-size: 16px; }
+.item-hoje .demonstracao-estudo-assunto { font-size: 13px; }
+.item-hoje .motivo-estudo { margin: 0; font-size: 12px; }
+.item-hoje .demonstracao-estudo-estado { margin-top: 0; font-size: 12px; }
+.item-hoje .etiqueta-bloco { color: var(--materia-cor); font-size: 11px; font-weight: 600; }
+/* O próximo passo ganha borda mais grossa; a etiqueta "Próximo passo" diz o mesmo em texto. */
+.plataforma-painel .item-proximo { border-color: var(--materia-cor); box-shadow: inset 0 0 0 2px var(--materia-cor); }
+.item-hoje .acoes-hoje { margin-top: 4px; }
+.item-hoje .acoes-hoje .demonstracao-botao { padding: 10px 22px; }
+.item-folga { border-style: dashed; border-color: #9dafbb; background: transparent; color: #496174; }
+.item-folga strong { font-size: 14px; font-weight: 500; }
+/* Diálogo "Como foi?". Fica dentro do painel para herdar os estilos dos botões. */
+.dialogo-como-foi { width: min(440px, calc(100% - 32px)); padding: 26px; border: 1px solid #d9e5e9; border-radius: 12px; background: #fff; color: #14354f; box-shadow: 0 20px 60px #061f3633; }
+.dialogo-como-foi::backdrop { background: #14354fb3; }
+.dialogo-como-foi h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; }
+.dialogo-como-foi p { margin: 0 0 20px; color: #496174; font-size: 14px; overflow-wrap: anywhere; }
+.respostas-como-foi { display: grid; gap: 10px; margin-bottom: 8px; }
+.plataforma-painel .respostas-como-foi .demonstracao-botao { justify-content: center; width: 100%; text-align: center; }
 .sem-javascript { padding: 20px; line-height: 1.7; }
 @media (max-width: 600px) {
     .estado-salvamento { display: block; width: 100%; padding: 8px 0; }
