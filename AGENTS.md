@@ -11,7 +11,6 @@ Vale para qualquer agente (Claude Code, Codex ou outro). Este arquivo só traz r
 - Uma branch por tarefa, a partir da main. Rode `npm run test:tz` antes de cada commit. Commits pequenos, com mensagens em português; no algoritmo, um commit por módulo.
 - Não faça merge. Faça o push da branch e entregue a descrição do PR (o `gh` pode não estar instalado).
 - No PR, explique as decisões não óbvias. A equipe está aprendendo JS e precisa entender o código para apresentá-lo.
-- A descrição do PR termina com a seção '## Explicação do Ailton', vazia, para ele escrever com as próprias palavras.
 
 ## Ao mexer em `js/core/` ou `js/util/` (algoritmo)
 
