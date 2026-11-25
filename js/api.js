@@ -116,7 +116,17 @@ export async function montarPrevia(rascunho, hoje, escolha = null) {
         hora: celulas.filter(celula => celula.diaSemana === diaDaSemana(bloco.data))[bloco.ordem - 1].hora,
         topicoNome: porId.get(bloco.topicoId)?.nome ?? 'Horário livre'
     }));
-    return { ...gerado, plano, celulas, blocos, viabilidade: { ...viabilidade, ...gerado.viabilidade } };
+    // A viabilidade do plano gerado usa só os números da geração (depois de reduzir passagens,
+    // se essa foi a escolha) e a reta final calculada por ela. Da avaliação inicial ficam só os
+    // números da grade, que não mudam com a escolha.
+    const { capacidadeTotal, capacidadeReserva, blocosPorSemana, minutosPorSemana, blocosNoPeriodo } = viabilidade;
+    return {
+        ...gerado, plano, celulas, blocos,
+        viabilidade: {
+            ...gerado.viabilidade, capacidadeTotal, capacidadeReserva, retaFinal: gerado.retaFinal,
+            blocosPorSemana, minutosPorSemana, blocosNoPeriodo
+        }
+    };
 }
 
 let sessaoAtual;

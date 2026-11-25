@@ -94,3 +94,19 @@ test('entradas inválidas são recusadas sem gerar plano', async () => {
     await assert.rejects(montarPrevia(base, hoje, { tipo: 'COBERTURA' }), RangeError);
     await assert.rejects(montarPrevia(base, hoje, { tipo: 'DESCONHECIDO' }), RangeError);
 });
+
+test('reduzir passagens: a viabilidade do plano gerado é a da geração, sem a reta final do plano original', async () => {
+    const { rascunho, hoje: segunda } = carregarFixture('fluxo-cadastro.json');
+    const curto = { ...rascunho, plano: { ...rascunho.plano, fim: '2026-12-03' }, celulas: rascunho.celulas.slice(0, 4) };
+    const avaliacao = await avaliarRascunho(curto, segunda);
+    assert.equal(avaliacao.viavel, false);
+    assert.notEqual(avaliacao.retaFinal, null);
+
+    const previa = await montarPrevia(curto, segunda, { tipo: 'REDUZIR_DEMANDA' });
+    assert.equal(previa.viabilidade.viavel, true);
+    assert.equal(previa.viabilidade.demandaTotal, 3);
+    // Antes vinha a reta final da avaliação inicial (cobertura de 40%) num plano que já cabe.
+    assert.equal(previa.viabilidade.retaFinal, null);
+    assert.equal(previa.retaFinal, null);
+    assert.equal(previa.viabilidade.blocosNoPeriodo, avaliacao.blocosNoPeriodo);
+});
