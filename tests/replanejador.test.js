@@ -52,14 +52,15 @@ describe('replanejar: cenários', () => {
 
     // A RESERVA de 10/11 não era tarefa e não entra nos perdidos.
     assert.deepEqual(saida.perdidos, [idDe('2026-11-09', 1), idDe('2026-11-09', 2), idDe('2026-11-10', 2)]);
-    // Nada foi estudado: tudo o que a alocação prometeu continua faltando.
-    assert.deepEqual(restante, { a: 5, b: 4, c: 3, d: 2 });
+    // Nada foi estudado: toda a demanda gravada na criação continua faltando. É a demanda
+    // inteira (c 5, d 3), e não só o que coube na criação (c 3, d 2).
+    assert.deepEqual(restante, { a: 5, b: 4, c: 5, d: 3 });
 
     const { viabilidade } = saida;
     assert.equal(viabilidade.capacidadeEstudo, 11);
-    assert.equal(viabilidade.demandaTotal, 14);
+    assert.equal(viabilidade.demandaTotal, 17);
     assert.equal(viabilidade.viavel, false);
-    assert.deepEqual(viabilidade.cobertura, { percentual: 78 });
+    assert.deepEqual(viabilidade.cobertura, { percentual: 64 });
 
     // Os mesmos números do caso H do alocador.
     assert.deepEqual(alocacao, carregarFixture('alocador-h-replanejamento.json').esperado.blocos);
@@ -224,15 +225,15 @@ describe('replanejar: cenários', () => {
     assert.deepEqual(saida.perdidos, [1, 2, 3, 4]);
     const { viabilidade } = saida;
     assert.equal(viabilidade.capacidadeEstudo, 5);
-    assert.equal(viabilidade.demandaTotal, 8);
-    assert.equal(viabilidade.deficit, 3);
-    assert.deepEqual(viabilidade.cobertura, { percentual: 62 });
+    assert.equal(viabilidade.demandaTotal, 17);
+    assert.equal(viabilidade.deficit, 12);
+    assert.deepEqual(viabilidade.cobertura, { percentual: 29 });
 
     assert.equal(saida.cobertura, 'PERGUNTAR');
     assert.deepEqual(saida.retaFinal, {
       capacidadeEstudo: 7,
-      demandaTotal: 8,
-      cobertura: { percentual: 87 },
+      demandaTotal: 17,
+      cobertura: { percentual: 41 },
       bloqueante: false,
     });
     assert.deepEqual(alocacao, { a: 2, b: 1, c: 1, d: 1 });
@@ -351,6 +352,48 @@ describe('replanejar: regras', () => {
     const copia = structuredClone(entrada);
     replanejar(entrada);
     assert.deepEqual(entrada, copia);
+  });
+});
+
+// Num plano que não cabe, a criação grava em blocosAlocados a demanda inteira, e não só o
+// que coube. Se gravasse só o que coube, o replanejamento enxergaria menos demanda do que
+// existe e mostraria uma cobertura maior que a real (às vezes 100%).
+describe('replanejar: cobertura parcial continua honesta depois da criação', () => {
+  test('cenário A replanejado em 10/11: 12 blocos de estudo para 17 pedidos, 70%', () => {
+    // Os blocos da criação com ids 1, 2, 3…, nenhum concluído.
+    const saida = replanejar({ plano: A.entrada.plano, topicos: A.esperado.topicos, blocos: blocosDeA, hoje: '2026-11-10' });
+    assert.equal(saida.viabilidade.viavel, false);
+    // Antes da correção a demanda vista era 14 (o que coube na criação) e dava 85%.
+    assert.equal(saida.viabilidade.demandaTotal, 17);
+    assert.deepEqual(saida.viabilidade.cobertura, { percentual: 70 });
+  });
+
+  test('reta final recusada: a cobertura cai de 42% para 28%, sem chegar a 100%', () => {
+    // 4 dias com 60 min (2 blocos) em cada um, sem folgas. As matérias pedem 5 + 4 + 5 = 14.
+    const disponibilidade = { 0: 60, 1: 60, 2: 60, 3: 60, 4: 60, 5: 60, 6: 60 };
+    const plano = { inicio: '2026-11-25', fim: '2026-11-28', disponibilidade, diasFolga: [] };
+    const topicos = [
+      { id: 'a', nome: 'a', peso: 5, dominio: 1 },
+      { id: 'b', nome: 'b', peso: 4, dominio: 2 },
+      { id: 'c', nome: 'c', peso: 2, dominio: 1 },
+    ];
+
+    // Na criação, o fim está a 3 dias: a reta final é perguntada.
+    const criacao = gerarCronograma({ plano, topicos, hoje: '2026-11-25' });
+    assert.equal(criacao.cobertura, 'PERGUNTAR');
+    assert.deepEqual(criacao.viabilidade.cobertura, { percentual: 42 });
+
+    // O aluno disse "Agora não" e voltou no dia seguinte sem estudar nada.
+    const blocos = criacao.blocos.map((b, i) => ({ id: i + 1, ...b }));
+    const saida = replanejar({
+      plano: { ...plano, respostaCobertura: { resposta: 'RECUSADO', dataAlvo: '2026-11-28' } },
+      topicos: criacao.topicos,
+      blocos,
+      hoje: '2026-11-26',
+    });
+    assert.equal(saida.cobertura, 'RECUSADA');
+    // Antes da correção dava 66%: a demanda vista era só a dos blocos que couberam.
+    assert.deepEqual(saida.viabilidade.cobertura, { percentual: 28 });
   });
 });
 

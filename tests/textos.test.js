@@ -1,6 +1,8 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { rotuloDoTipo, dataCurta, textoMudancas, textoPassoDado, textoProximoEstudo } from '../js/ui/textos.js';
+import {
+    rotuloDoTipo, dataCurta, textoMudancas, textoPassoDado, textoProximoEstudo, lerHojeDaUrl, comHoje,
+} from '../js/ui/textos.js';
 import { carregarFixture } from './carregar-fixture.js';
 import { somarDias } from '../js/util/datas.js';
 
@@ -75,5 +77,38 @@ describe('confirmações da tela de hoje', () => {
 
     test('próximo estudo', () => {
         assert.equal(textoProximoEstudo({ data: '2026-12-02', hora: '19:00' }), 'Seu próximo estudo é qua 02/12 às 19:00.');
+    });
+});
+
+// Modo de demonstração: ?hoje=YYYY-MM-DD na URL troca a data de hoje da plataforma.
+describe('lerHojeDaUrl', () => {
+    test('data válida na URL: usa ela, simulada', () => {
+        assert.deepEqual(lerHojeDaUrl('?hoje=2026-12-04', '2026-11-25'), { hoje: '2026-12-04', simulado: true });
+    });
+
+    test('sem ?hoje: a data real', () => {
+        assert.deepEqual(lerHojeDaUrl('', '2026-11-25'), { hoje: '2026-11-25', simulado: false });
+    });
+
+    test('data que não existe: ignora e usa a data real', () => {
+        assert.deepEqual(lerHojeDaUrl('?hoje=2026-02-30', '2026-11-25'), { hoje: '2026-11-25', simulado: false });
+        assert.deepEqual(lerHojeDaUrl('?hoje=amanha', '2026-11-25'), { hoje: '2026-11-25', simulado: false });
+    });
+});
+
+describe('comHoje', () => {
+    test('acrescenta ?hoje aos links de página do site', () => {
+        assert.equal(comHoje('../index.html', '2026-12-04'), '../index.html?hoje=2026-12-04');
+        assert.equal(comHoje('pages/plataforma.html', '2026-12-04'), 'pages/plataforma.html?hoje=2026-12-04');
+    });
+
+    test('troca um ?hoje que já existia e mantém os outros parâmetros e a âncora', () => {
+        assert.equal(comHoje('a.html?x=1&hoje=2026-11-30#topo', '2026-12-04'), 'a.html?x=1&hoje=2026-12-04#topo');
+    });
+
+    test('âncoras e links para fora ficam como estão', () => {
+        assert.equal(comHoje('#sobre', '2026-12-04'), '#sobre');
+        assert.equal(comHoje('mailto:a@b.c', '2026-12-04'), 'mailto:a@b.c');
+        assert.equal(comHoje('https://exemplo.com/', '2026-12-04'), 'https://exemplo.com/');
     });
 });

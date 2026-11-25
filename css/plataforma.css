@@ -257,6 +257,9 @@
 .alternativas-plano .demonstracao-link { align-self: start; }
 .alternativa { display: flex; align-items: start; gap: 12px; padding: 16px; border: 1px solid #c9dbd6; border-radius: 8px; font-size: 14px; line-height: 1.7; cursor: pointer; }
 .alternativa:has(input:checked) { border-color: #006b64; background: #edf7f3; }
+/* Modo de demonstração (?hoje= na URL): faixa discreta, com texto (não depende só da cor). */
+.faixa-demonstracao { margin: 16px 28px 0; padding: 8px 14px; border: 1px dashed #b5d8cd; border-radius: 8px; background: #f4faf7; color: #23485a; font-size: 13px; line-height: 1.6; }
+.faixa-demonstracao a { color: #006b64; font-weight: 500; }
 .aviso-rascunho { padding: 14px 18px; border: 1px solid #d8c59e; border-radius: 8px; background: #fff9ee; color: #694b19; font-size: 13px; line-height: 1.6; }
 .navegacao-semana { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 20px 0; }
 .navegacao-semana h3 { margin: 0; font-size: 15px; font-weight: 500; text-align: center; }
@@ -330,5 +333,5 @@
     .numeros-plano > div { padding: 12px 8px; }
     .numeros-plano dt { font-size: 11px; }
     .filtro-horarios { align-items: stretch; flex-direction: column; gap: 8px; }
-    .plataforma-erro { margin: 16px 16px 0; }
+    .plataforma-erro, .faixa-demonstracao { margin: 16px 16px 0; }
 }

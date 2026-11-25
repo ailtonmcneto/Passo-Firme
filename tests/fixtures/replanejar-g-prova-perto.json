@@ -2,7 +2,7 @@
   "descricao": "G. Prova perto: os blocos de pipeline-g-com-avaliacao.json, nada concluído, hoje 11/11 (faltam 2 dias). A reta final é oferecida (PERGUNTAR), não ligada sozinha.",
   "entrada": {
     "plano": { "inicio": "2026-11-09", "fim": "2026-11-22", "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 }, "diasFolga": ["2026-11-18"], "dataAvaliacao": "2026-11-13" },
-    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1, "blocosAlocados": 3 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2, "blocosAlocados": 2 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1, "blocosAlocados": 2 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3, "blocosAlocados": 1 }],
+    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1, "blocosAlocados": 5 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2, "blocosAlocados": 4 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1, "blocosAlocados": 5 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3, "blocosAlocados": 3 }],
     "blocos": [
       { "id": 1, "data": "2026-11-09", "ordem": 1, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
       { "id": 2, "data": "2026-11-09", "ordem": 2, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": true, "fixado": false, "motivo": "estudo antecipado: sobrou tempo hoje e a é a matéria de maior prioridade que ainda falta" },
@@ -25,7 +25,7 @@
     ],
     "hoje": "2026-11-11"
   },
-  "demandaRestante": { "a": 3, "b": 2, "c": 2, "d": 1 },
+  "demandaRestante": { "a": 5, "b": 4, "c": 5, "d": 3 },
   "esperado": {
     "perdidos": [1, 2, 3, 4],
     "blocosFuturos": [
@@ -48,19 +48,19 @@
       "viavel": false,
       "bloqueante": false,
       "capacidadeEstudo": 5,
-      "demandaTotal": 8,
-      "deficit": 3,
-      "cobertura": { "percentual": 62 },
+      "demandaTotal": 17,
+      "deficit": 12,
+      "cobertura": { "percentual": 29 },
       "escapatorias": {
-        "maisTempo": { "minutosPorDia": 35, "diasAMais": null, "novoFim": null },
+        "maisTempo": { "minutosPorDia": 155, "diasAMais": null, "novoFim": null },
         "reduzirDemanda": {
-          "topicos": [{ "id": "a", "antes": 3, "depois": 2 }, { "id": "b", "antes": 2, "depois": 1 }, { "id": "c", "antes": 2, "depois": 1 }, { "id": "d", "antes": 1, "depois": 1 }],
+          "topicos": [{ "id": "a", "antes": 5, "depois": 2 }, { "id": "b", "antes": 4, "depois": 1 }, { "id": "c", "antes": 5, "depois": 1 }, { "id": "d", "antes": 3, "depois": 1 }],
           "suficiente": true
         },
-        "removerTopicos": { "removidos": ["d", "c"], "demandaRestante": 5 }
+        "removerTopicos": { "removidos": ["d", "c", "b"], "demandaRestante": 5 }
       }
     },
-    "retaFinal": { "capacidadeEstudo": 7, "demandaTotal": 8, "cobertura": { "percentual": 87 }, "bloqueante": false },
+    "retaFinal": { "capacidadeEstudo": 7, "demandaTotal": 17, "cobertura": { "percentual": 41 }, "bloqueante": false },
     "cobertura": "PERGUNTAR",
     "avisos": []
   }

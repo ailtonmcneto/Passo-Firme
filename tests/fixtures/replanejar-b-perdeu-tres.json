@@ -2,7 +2,7 @@
   "descricao": "B. Os blocos de A (ids 1, 2, 3… na ordem), nada concluído, hoje 11/11. Os 3 ESTUDO de 09 e 10/11 viram PERDIDO e voltam como demanda. A reserva de hoje (11-11#3) vira estudo antecipado de a.",
   "entrada": {
     "plano": { "inicio": "2026-11-09", "fim": "2026-11-22", "disponibilidade": { "0": 0, "1": 60, "2": 60, "3": 140, "4": 60, "5": 25, "6": 10 }, "diasFolga": ["2026-11-18"] },
-    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1, "blocosAlocados": 5 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2, "blocosAlocados": 4 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1, "blocosAlocados": 3 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3, "blocosAlocados": 2 }],
+    "topicos": [{ "id": "a", "nome": "a", "peso": 5, "dominio": 1, "blocosAlocados": 5 }, { "id": "b", "nome": "b", "peso": 4, "dominio": 2, "blocosAlocados": 4 }, { "id": "c", "nome": "c", "peso": 2, "dominio": 1, "blocosAlocados": 5 }, { "id": "d", "nome": "d", "peso": 1, "dominio": 3, "blocosAlocados": 3 }],
     "blocos": [
       { "id": 1, "data": "2026-11-09", "ordem": 1, "topicoId": "a", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
       { "id": 2, "data": "2026-11-09", "ordem": 2, "topicoId": "b", "tipo": "ESTUDO", "duracaoMin": 30, "status": "PENDENTE", "extra": false, "fixado": false, "motivo": "peso alto, domínio baixo" },
@@ -25,7 +25,7 @@
     ],
     "hoje": "2026-11-11"
   },
-  "demandaRestante": { "a": 5, "b": 4, "c": 3, "d": 2 },
+  "demandaRestante": { "a": 5, "b": 4, "c": 5, "d": 3 },
   "esperado": {
     "perdidos": [1, 2, 4],
     "blocosFuturos": [
@@ -48,13 +48,13 @@
       "viavel": false,
       "bloqueante": false,
       "capacidadeEstudo": 11,
-      "demandaTotal": 14,
-      "deficit": 3,
-      "cobertura": { "percentual": 78 },
+      "demandaTotal": 17,
+      "deficit": 6,
+      "cobertura": { "percentual": 64 },
       "escapatorias": {
-        "maisTempo": { "minutosPorDia": 30, "diasAMais": 2, "novoFim": "2026-11-24" },
+        "maisTempo": { "minutosPorDia": 35, "diasAMais": 3, "novoFim": "2026-11-25" },
         "reduzirDemanda": {
-          "topicos": [{ "id": "a", "antes": 5, "depois": 5 }, { "id": "b", "antes": 4, "depois": 4 }, { "id": "c", "antes": 3, "depois": 1 }, { "id": "d", "antes": 2, "depois": 1 }],
+          "topicos": [{ "id": "a", "antes": 5, "depois": 5 }, { "id": "b", "antes": 4, "depois": 4 }, { "id": "c", "antes": 5, "depois": 1 }, { "id": "d", "antes": 3, "depois": 1 }],
           "suficiente": true
         },
         "removerTopicos": { "removidos": ["d", "c"], "demandaRestante": 9 }
