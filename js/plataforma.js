@@ -1,4 +1,4 @@
-import { obterSessao, salvarRascunho, resumirDisponibilidade, avaliarRascunho, gerarPlanoLocal, marcarEstudo } from './api.js';
+import { obterSessao, salvarRascunho, resumirDisponibilidade, avaliarRascunho, gerarPlanoLocal, obterHoje, atualizarCadastro } from './api.js';
 import { hojeLocal, somarDias, diaDaSemana, diferencaEmDias } from './util/datas.js';
 
 const hoje = hojeLocal(new Date());
@@ -7,7 +7,6 @@ const dias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sáb
 const nomesEtapas = ['materias', 'perfil', 'periodo', 'horarios', 'conferir'];
 let rascunho;
 let cronograma = null;
-let marcacoes = new Set();
 let etapa = 'materias';
 let materiaAtual = 0;
 let inicioSemana;
@@ -55,6 +54,29 @@ async function salvar() {
     atualizarAviso();
 }
 
+// O plano já começou (hoje é o início ou depois)? Aí o início não muda mais, e rever o cadastro
+// aplica as alterações sobre o plano (atualizarCadastro) em vez de gerar outro.
+function emAndamento() {
+    return Boolean(cronograma) && hoje >= cronograma.plano.inicio;
+}
+
+// Trava o campo de início quando o plano está em andamento, com a data do plano.
+function atualizarTravaInicio() {
+    const inicio = buscar('#inicio');
+    inicio.readOnly = emAndamento();
+    if (emAndamento()) { inicio.value = cronograma.plano.inicio; rascunho.plano.inicio = cronograma.plano.inicio; }
+    atualizarProva();
+}
+
+// O próximo número livre para o id de matéria nova. Conta também as matérias do plano e as do
+// histórico de blocos: reaproveitar o id de uma matéria removida daria a ela o histórico antigo.
+function calcularProximoId() {
+    const ids = rascunho.topicos.map(topico => topico.id);
+    if (cronograma) ids.push(...cronograma.topicos.map(topico => topico.id), ...cronograma.blocos.map(bloco => bloco.topicoId));
+    const numeros = ids.filter(Boolean).map(id => Number(String(id).replace('materia-', ''))).filter(Number.isFinite);
+    return Math.max(0, ...numeros) + 1;
+}
+
 function atualizarAviso() {
     buscar('#aviso-rascunho').hidden = !cronograma || JSON.stringify(rascunho) === JSON.stringify(cronograma.cadastro);
 }
@@ -85,7 +107,7 @@ function mostrarEtapa(nome, foco = true) {
     });
     buscar('[data-acao="voltar"]').hidden = nome === 'materias';
     buscar('#continuar').textContent = nome === 'materias' ? 'Responder sobre minhas matérias →'
-        : nome === 'conferir' ? 'Montar meu plano →' : 'Continuar →';
+        : nome === 'conferir' ? (emAndamento() ? 'Aplicar alterações →' : 'Montar meu plano →') : 'Continuar →';
     buscar('#exemplo-materias').classList.toggle('etapa-ampla', nome === 'horarios');
     if (nome === 'perfil') preencherPerfil();
     if (nome === 'materias') renderizarMaterias();
@@ -159,7 +181,8 @@ function atualizarProva() {
     buscar('#campos-prova').hidden = !tem;
     buscar('#data-prova').required = tem;
     buscar('#nome-prova').required = tem;
-    buscar('#fim').min = buscar('#inicio').value;
+    // Com o plano em andamento, o fim não pode ficar no passado.
+    buscar('#fim').min = emAndamento() && hoje > buscar('#inicio').value ? hoje : buscar('#inicio').value;
     buscar('#fim').max = buscar('#inicio').value ? somarDias(buscar('#inicio').value, 365) : '';
     buscar('#data-prova').min = buscar('#inicio').value;
     buscar('#data-prova').max = buscar('#fim').value;
@@ -227,13 +250,23 @@ function alternativa(valor, texto) {
 }
 
 async function conferir() {
+    const alternativas = buscar('#alternativas-plano'); alternativas.replaceChildren();
+    // Plano em andamento: a avaliação de plano novo não vale (o início já passou e parte do
+    // tempo já foi usado). A viabilidade de verdade vem do replanejamento, depois de aplicar.
+    buscar('.numeros-plano').hidden = emAndamento();
+    if (emAndamento()) {
+        viabilidade = null;
+        mostrarEtapa('conferir');
+        buscar('#aviso-substituicao').hidden = true;
+        buscar('#situacao-plano').textContent = 'Seu plano já começou. Ao aplicar, ele é refeito de hoje em diante com as respostas e os horários novos. Os passos dados continuam no seu percurso.';
+        return;
+    }
     viabilidade = await avaliarRascunho(rascunho, hoje);
     mostrarEtapa('conferir');
     buscar('#numero-total').textContent = viabilidade.blocosNoPeriodo;
     buscar('#numero-estudo').textContent = viabilidade.capacidadeEstudo;
     buscar('#numero-demanda').textContent = viabilidade.demandaTotal;
     buscar('#aviso-substituicao').hidden = !cronograma;
-    const alternativas = buscar('#alternativas-plano'); alternativas.replaceChildren();
     const nomes = ids => rascunho.topicos.filter(topico => ids.includes(topico.id)).map(topico => topico.nome).join(', ');
     if (viabilidade.viavel) {
         buscar('#situacao-plano').textContent = 'Cabe no seu tempo. O algoritmo distribui os estudos conforme suas respostas e reserva espaço para revisões.';
@@ -283,26 +316,38 @@ async function avancar() {
     } else if (etapa === 'periodo') {
         coletarPeriodo();
         if (!buscar('#cadastro').reportValidity()) return;
-        if (rascunho.plano.inicio < hoje) throw new Error('Escolha uma data de início a partir de hoje.');
+        if (!emAndamento() && rascunho.plano.inicio < hoje) throw new Error('Escolha uma data de início a partir de hoje.');
         await resumirDisponibilidade(rascunho.plano, rascunho.celulas);
         await salvar(); mostrarEtapa('horarios');
     } else if (etapa === 'horarios') {
         await salvar(); await conferir();
+    } else if (emAndamento()) {
+        // Plano em andamento: as alterações são aplicadas sobre ele, sem perder o histórico.
+        await atualizarCadastro(rascunho, hoje);
+        await mostrarPlanoSalvo(hoje, 'Alterações aplicadas. O plano foi refeito de hoje em diante.');
     } else {
         const selecionada = buscar('input[name="escolha"]:checked');
         const resultado = await gerarPlanoLocal(rascunho, hoje, selecionada ? { tipo: selecionada.value } : null);
         if (resultado.bloqueado) throw new Error(viabilidade.bloqueante
             ? 'Ajuste os horários ou as matérias, ou escolha a reta final quando disponível.'
             : 'Escolha uma alternativa acima para continuar com o plano.');
-        const sessao = await obterSessao();
-        cronograma = sessao.cronograma; marcacoes = new Set(sessao.marcacoes);
-        inicioSemana = somarDias(cronograma.plano.inicio, -diaDaSemana(cronograma.plano.inicio));
-        buscar('#aba-percurso').disabled = false;
-        buscar('#estado-salvamento').textContent = 'Plano salvo neste navegador';
-        renderizarCronograma(); selecionarAba('percurso');
-        buscar('#exemplo-percurso h2').focus();
-        buscar('#anuncio').textContent = 'Seu cronograma foi calculado e salvo.';
+        await mostrarPlanoSalvo(resultado.plano.inicio, 'Seu cronograma foi calculado e salvo.');
     }
+}
+
+// Recebe a data da semana a mostrar e o aviso para leitores de tela; lê o plano gravado e
+// abre o percurso nessa semana.
+// Ex.: mostrarPlanoSalvo('2026-11-30', 'Seu cronograma foi calculado e salvo.').
+async function mostrarPlanoSalvo(referencia, aviso) {
+    const sessao = await obterSessao();
+    cronograma = sessao.cronograma;
+    atualizarTravaInicio();
+    inicioSemana = somarDias(referencia, -diaDaSemana(referencia));
+    buscar('#aba-percurso').disabled = false;
+    buscar('#estado-salvamento').textContent = 'Plano salvo neste navegador';
+    renderizarCronograma(); selecionarAba('percurso');
+    buscar('#exemplo-percurso h2').focus();
+    buscar('#anuncio').textContent = aviso;
 }
 
 async function voltar() {
@@ -316,6 +361,32 @@ async function voltar() {
     }
 }
 
+// Como cada status aparece no percurso (docs/front.md §3.6). O texto garante que o estado não
+// dependa só da cor; o CSS atenua e risca o pulado e o perdido, sem vermelho.
+const ESTADOS = {
+    PENDENTE: '○ Pendente',
+    CONCLUIDO: '✓ Passo dado',
+    PULADO: '↷ Pulado',
+    PERDIDO: '– Não feito',
+};
+
+// Recebe um bloco de estudo ou revisão e a cor da matéria; devolve o cartão dele no percurso.
+// Ex.: bloco CONCLUIDO de Matemática → cartão com "✓ Passo dado" e o motivo em "Por que agora?".
+// É um cartão sem ação: tocar nele não muda nada nesta entrega (o "Feito" vem com a tela de hoje).
+function cartaoDoBloco(bloco, cor) {
+    const cartao = elemento('div', 'demonstracao-estudo estado-' + bloco.status.toLowerCase());
+    cartao.id = 'bloco-' + bloco.id; cartao.dataset.cor = cor;
+    const tipo = elemento('span', 'demonstracao-estudo-assunto', bloco.tipo === 'REVISAO' ? 'Revisão' : 'Estudo');
+    if (bloco.extra) tipo.append(' ', elemento('span', 'etiqueta-bloco', 'extra'));
+    const motivo = elemento('span', 'motivo-estudo');
+    motivo.append(elemento('strong', null, 'Por que agora? '), bloco.motivo);
+    cartao.append(elemento('span', 'demonstracao-estudo-hora', bloco.hora + ' · 30 min'),
+        elemento('strong', 'demonstracao-estudo-materia', bloco.topicoNome),
+        tipo, motivo,
+        elemento('span', 'demonstracao-estudo-estado', ESTADOS[bloco.status]));
+    return cartao;
+}
+
 function renderizarCronograma() {
     const tabela = buscar('#grade-cronograma');
     const datas = Array.from({ length: 7 }, (_, indice) => somarDias(inicioSemana, indice));
@@ -324,7 +395,9 @@ function renderizarCronograma() {
     buscar('#semana-anterior').disabled = inicioSemana <= cronograma.plano.inicio;
     buscar('#semana-proxima').disabled = datas[6] >= cronograma.plano.fim;
     buscar('#periodo-plano').textContent = formatarData(cronograma.plano.inicio) + ' a ' + formatarData(cronograma.plano.fim) + ' · Estudos de 30 minutos.';
-    buscar('#aviso-cobertura').hidden = cronograma.cobertura !== 'ATIVA' && cronograma.viabilidade.viavel;
+    // Depois do fim do plano a viabilidade vem null: não há mais o que cobrir.
+    const parcial = Boolean(cronograma.viabilidade) && !cronograma.viabilidade.viavel;
+    buscar('#aviso-cobertura').hidden = cronograma.cobertura !== 'ATIVA' && !parcial;
     buscar('#aviso-cobertura').textContent = cronograma.cobertura === 'ATIVA'
         ? 'Reta final ativada até ' + formatarData(cronograma.plano.dataAvaliacao || cronograma.plano.fim) + '.'
         : 'Plano com cobertura parcial: ' + cronograma.viabilidade.cobertura.percentual + '%.';
@@ -332,29 +405,32 @@ function renderizarCronograma() {
     buscar('#legenda-materias').replaceChildren(...cronograma.topicos.map(topico => {
         const nome = elemento('span', 'legenda-materia', topico.nome); nome.dataset.cor = cores.get(topico.id); return nome;
     }));
-    const porSlot = new Map(cronograma.blocos.map(bloco => [bloco.data + '/' + bloco.hora, bloco]));
-    const horarios = [...new Set(cronograma.celulas.map(celula => celula.hora))].sort();
+    // Os blocos da semana por "data/hora". Uma lista, e não um bloco só, porque depois de mudar
+    // os horários um bloco mantido (passo dado, pulado) pode dividir o horário com um novo.
+    const daSemana = cronograma.blocos.filter(bloco => bloco.data >= datas[0] && bloco.data <= datas[6]);
+    const porSlot = new Map();
+    for (const bloco of daSemana) {
+        const chave = bloco.data + '/' + bloco.hora;
+        porSlot.set(chave, [...(porSlot.get(chave) ?? []), bloco]);
+    }
+    // As linhas são os horários pintados e também os dos blocos da semana, para que um passo
+    // dado num horário que depois foi despintado continue aparecendo.
+    const horarios = [...new Set([...cronograma.celulas.map(celula => celula.hora), ...daSemana.map(bloco => bloco.hora)])].sort();
     tabela.querySelector('tbody').replaceChildren(...horarios.map(hora => {
         const linha = elemento('tr');
         const titulo = elemento('th', null, hora); titulo.scope = 'row'; linha.append(titulo);
         datas.forEach(data => {
             const celula = elemento('td');
-            const bloco = porSlot.get(data + '/' + hora);
-            if (!bloco) celula.append(elemento('span', 'demonstracao-livre', data < cronograma.plano.inicio || data > cronograma.plano.fim ? '—' : 'Livre'));
-            else if (bloco.tipo === 'RESERVA') {
-                const reserva = elemento('div', 'bloco-reserva', 'Horário livre');
-                reserva.append(elemento('small', null, 'Reserva para revisões')); celula.append(reserva);
-            } else {
-                const botao = elemento('button', 'demonstracao-estudo');
-                botao.type = 'button'; botao.id = 'bloco-' + bloco.id; botao.dataset.bloco = bloco.id; botao.dataset.cor = cores.get(bloco.topicoId);
-                botao.setAttribute('aria-pressed', String(marcacoes.has(bloco.id)));
-                botao.setAttribute('aria-label', bloco.topicoNome + ', ' + formatarData(data) + ', ' + hora + '. ' + bloco.motivo);
-                botao.append(elemento('span', 'demonstracao-estudo-hora', hora + ' · 30 min'),
-                    elemento('strong', 'demonstracao-estudo-materia', bloco.topicoNome),
-                    elemento('span', 'demonstracao-estudo-assunto', (bloco.tipo === 'REVISAO' ? 'Revisão' : 'Estudo') + (bloco.extra ? ' extra' : '')),
-                    elemento('span', 'motivo-estudo', bloco.motivo),
-                    elemento('span', 'demonstracao-estudo-estado', marcacoes.has(bloco.id) ? '✓ Passo dado' : '○ Pendente'));
-                celula.append(botao);
+            const blocos = porSlot.get(data + '/' + hora) ?? [];
+            // Sem bloco: "—", e não "Livre", para não confundir com a reserva ("Horário livre").
+            if (!blocos.length) celula.append(elemento('span', 'demonstracao-livre', '—'));
+            for (const bloco of blocos) {
+                if (bloco.tipo === 'RESERVA') {
+                    const reserva = elemento('div', 'bloco-reserva', 'Horário livre');
+                    reserva.append(elemento('small', null, 'Reserva para revisões')); celula.append(reserva);
+                } else {
+                    celula.append(cartaoDoBloco(bloco, cores.get(bloco.topicoId)));
+                }
             }
             if (data < hoje) celula.classList.add('dia-passado');
             linha.append(celula);
@@ -391,12 +467,6 @@ buscar('#plataforma').addEventListener('click', evento => {
             botao.setAttribute('aria-pressed', String(indice < 0)); botao.textContent = indice < 0 ? '✓' : '+';
             await atualizarContador(); await salvar(); return;
         }
-        if (botao.dataset.bloco) {
-            const sessao = await marcarEstudo(botao.dataset.bloco, !marcacoes.has(botao.dataset.bloco));
-            marcacoes = new Set(sessao.marcacoes);
-            renderizarCronograma(); document.getElementById(botao.id)?.focus();
-            buscar('#anuncio').textContent = marcacoes.has(botao.dataset.bloco) ? 'Passo dado. Marcação salva.' : 'Estudo pendente. Marcação salva.'; return;
-        }
         if (botao.id === 'semana-anterior' || botao.id === 'semana-proxima') {
             inicioSemana = somarDias(inicioSemana, botao.id === 'semana-anterior' ? -7 : 7); renderizarCronograma(); return;
         }
@@ -425,17 +495,18 @@ buscar('[role="tablist"]').addEventListener('keydown', evento => {
 });
 
 executar(async () => {
+    // Antes de desenhar, a fachada replaneja o plano se ele é de outro dia (§4).
+    await obterHoje(hoje);
     const sessao = await obterSessao();
     rascunho = sessao.rascunho ?? { plano: { inicio: hoje, fim: somarDias(hoje, 13), dataAvaliacao: null, nomeAvaliacao: '' }, topicos: [], celulas: [] };
-    cronograma = sessao.cronograma; marcacoes = new Set(sessao.marcacoes);
-    const numeros = rascunho.topicos.map(topico => Number(topico.id.replace('materia-', ''))).filter(Number.isFinite);
-    proximoId = Math.max(0, ...numeros) + 1;
+    cronograma = sessao.cronograma;
+    proximoId = calcularProximoId();
     buscar('#inicio').value = rascunho.plano.inicio; buscar('#inicio').min = hoje;
     buscar('#fim').value = rascunho.plano.fim;
     buscar('#tem-prova').checked = Boolean(rascunho.plano.dataAvaliacao);
     buscar('#nome-prova').value = rascunho.plano.nomeAvaliacao ?? '';
     buscar('#data-prova').value = rascunho.plano.dataAvaliacao ?? '';
-    atualizarProva();
+    atualizarTravaInicio();
     buscar('#aba-materias').disabled = false;
     buscar('#aba-percurso').disabled = !cronograma;
     buscar('#continuar').disabled = false;
