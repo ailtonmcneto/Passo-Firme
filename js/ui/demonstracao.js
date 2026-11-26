@@ -78,7 +78,7 @@ export function iniciarDemonstracao(painel, {
             const editar = document.createElement("button");
             titulo.textContent = nome;
             textoDominio.textContent = `Domínio: ${dominio.texto}`;
-            textoPeso.textContent = `Peso no objetivo: ${peso.texto}`;
+            textoPeso.textContent = `Importância agora: ${peso.texto}`;
             editar.type = "button";
             editar.className = "demonstracao-link";
             editar.dataset.acao = "editar-materia";
