@@ -40,15 +40,15 @@ Para cada matéria: nome e duas perguntas de múltipla escolha. A tela converte 
 | resolvo tranquilo | 5 |
 | não sei | 3 |
 
-**Peso — "Quanto essa matéria pesa no seu objetivo (nota, prova)?"**
+**Peso — "Quanto essa matéria importa para você agora?"**
 
 | Resposta | Valor |
 |---|---|
-| quase nada | 1 |
+| muito pouco | 1 |
 | pouco | 2 |
-| o normal | 3 |
-| bastante | 4 |
-| é a maior parte | 5 |
+| médio | 3 |
+| muito | 4 |
+| é o principal | 5 |
 | não sei | 3 |
 
 - **Opcional, escondido em "mais opções":** "Quer definir quantos blocos essa matéria terá?" Se preenchido, vira `blocosDesejados` (matéria manual).
